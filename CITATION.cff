@@ -4,20 +4,18 @@ type: software
 title: "PurpleAir Temperature Sensor Calibration"
 version: 1.0.0
 date-released: 2025-02-02
-url: "https://github.com/yourusername/purpleair-calibration"
-repository-code: "https://github.com/yourusername/purpleair-calibration"
+url: "https://github.com/yunqianz728/purpleair-calibration"
+repository-code: "https://github.com/yunqianz728/purpleair-calibration"
 license: MIT
 authors:
   - family-names: "Zhang"
     given-names: "Yunqian"
-    orcid: "https://orcid.org/0000-0000-0000-0000"
     affiliation: "Department of Landscape Architecture and Environmental Planning, University of California, Berkeley"
   - family-names: "Rong"
     given-names: "Yan"
     affiliation: "College of Urban Planning and Public Affairs, University of Illinois Chicago"
   - family-names: "Liang"
     given-names: "Lu"
-    orcid: "https://orcid.org/0000-0000-0000-0000"
     affiliation: "Department of Landscape Architecture and Environmental Planning, University of California, Berkeley"
     email: "lianglu@berkeley.edu"
 keywords:
