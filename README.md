@@ -21,6 +21,7 @@ This repository contains the complete code and methodology for nationwide calibr
 - **Temporal Features**: Captures sensor thermal memory and radiation dynamics
 - **National Scale**: Validated across 31 U.S. states, 797,744 hourly observations
 - **Real-time Deployment**: Millisecond-level prediction latency, 45 MB model size
+- **🌐 User-Friendly Web App**: [Click here to use the web interface](app/) - No coding required!
 - **Open Access**: Free web interface available at [Hugging Face](https://huggingface.co/spaces/yunqianz/purpleair-calibration)
 
 ## Problem Statement
@@ -61,6 +62,36 @@ Our best-performing model combines:
 | **Temporal-TempStrat** | Moderate | 0.53 | 0.74 | **-20%** |
 | Temporal-National | All | 0.77 | 1.08 | Baseline |
 | Spatial-National | All | 1.06 | 1.44 | Baseline |
+
+## 🚀 Quick Start
+
+### For Non-Programmers: Use the Web App! 🌐
+
+**No installation, no coding, no command line needed!**
+
+1. **Run Locally** (Easiest):
+   ```bash
+   cd app/
+   pip install -r requirements.txt
+   streamlit run app.py
+   ```
+   Opens in your browser at `localhost:8501`
+
+2. **Or deploy for free**:
+   - See [app/README.md](app/README.md) for Streamlit Cloud / Hugging Face deployment
+
+**What you can do**:
+- 📤 Upload your CSV file with PurpleAir data
+- ⚙️ Get calibrated temperatures in seconds
+- 📥 Download results as CSV
+- 📊 View interactive charts
+- ❌ No technical knowledge required!
+
+**Full Web App Guide**: [app/README.md](app/README.md)
+
+---
+
+### For Programmers: Python Package
 
 ## Installation
 
