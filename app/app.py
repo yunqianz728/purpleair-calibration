@@ -16,6 +16,16 @@ import plotly.graph_objects as go
 import plotly.express as px
 from datetime import datetime
 import io
+import sys
+from pathlib import Path
+
+# Add utils directory to path
+sys.path.insert(0, str(Path(__file__).parent / 'utils'))
+
+# Import calibration modules
+from utils.era5_reader import ERA5Reader
+from utils.feature_engineering import FeatureEngineer
+from utils.model_predictor import TemperatureCalibrator
 
 # Page configuration
 st.set_page_config(
@@ -66,12 +76,16 @@ with st.sidebar:
 
     st.markdown("### About This Tool")
     st.info("""
-    This tool calibrates PurpleAir temperature sensor readings using machine learning.
+    This tool calibrates PurpleAir temperature sensor readings using trained XGBoost models.
 
     **Key Features:**
     - 90% error reduction
-    - MAE: 0.38-0.53°C
-    - Validated on 797,744 observations
+    - RMSE: 1.43°C overall
+    - Temperature-stratified models:
+      - Cold (<10°C): RMSE 1.52°C
+      - Moderate (10-30°C): RMSE 1.38°C
+      - Hot (>30°C): RMSE 1.45°C
+    - Validated on 2,682 sensors (2018-2022)
     """)
 
     st.markdown("### How It Works")
@@ -110,27 +124,29 @@ with tab1:
     with col1:
         st.markdown("### Required Columns")
         st.markdown("""
-        Your CSV should include:
-        - `timestamp` or `time` - Date/time of reading
+        Your CSV **must** include:
+        - `timestamp` or `time` - Date/time of reading (e.g., 2024-01-15 10:00)
         - `temperature` or `temp` - Sensor temperature (°F or °C)
         - `humidity` - Relative humidity (%)
+        - `latitude` - Sensor latitude (-90 to 90)
+        - `longitude` - Sensor longitude (-180 to 180)
 
-        Optional (for better accuracy):
-        - `latitude`, `longitude` - Sensor location
-        - `pm25` - PM2.5 reading
+        **Note**: Lat/lon are required to fetch meteorological data for accurate calibration.
         """)
 
     with col2:
-        st.markdown("### Model Selection")
-        model_choice = st.radio(
-            "Choose calibration model:",
-            [
-                "🏆 High Accuracy (Temporal-TempStrat) - Recommended",
-                "⚡ Fast (Temporal-National)",
-                "🌍 Spatial (Climate-Based)"
-            ],
-            help="High Accuracy provides best results (MAE 0.38-0.53°C)"
-        )
+        st.markdown("### Calibration Model")
+        st.info("""
+        **Temporal-TempStrat** (Active)
+
+        Temperature-stratified machine learning calibration using:
+        - 3 XGBoost models (Cold/Moderate/Hot)
+        - 63 engineered features
+        - Real-time ERA5 meteorological data
+        - Temporal features (12-hour history)
+
+        **Performance**: RMSE 1.43°C overall
+        """)
 
     if uploaded_file is not None:
         try:
@@ -146,10 +162,12 @@ with tab1:
             # Detect columns
             st.markdown("## Step 2: Column Detection")
 
-            # Auto-detect temperature column
+            # Auto-detect columns
             temp_cols = [col for col in df.columns if 'temp' in col.lower()]
             time_cols = [col for col in df.columns if any(x in col.lower() for x in ['time', 'date'])]
             humid_cols = [col for col in df.columns if 'humid' in col.lower()]
+            lat_cols = [col for col in df.columns if 'lat' in col.lower()]
+            lon_cols = [col for col in df.columns if 'lon' in col.lower()]
 
             col1, col2, col3 = st.columns(3)
 
@@ -160,7 +178,15 @@ with tab1:
                 time_col = st.selectbox("Timestamp column:", time_cols if time_cols else df.columns, index=0 if time_cols else 0)
 
             with col3:
-                humid_col = st.selectbox("Humidity column (optional):", ['None'] + list(df.columns))
+                humid_col = st.selectbox("Humidity column:", humid_cols if humid_cols else df.columns)
+
+            col1, col2 = st.columns(2)
+
+            with col1:
+                lat_col = st.selectbox("Latitude column:", lat_cols if lat_cols else df.columns)
+
+            with col2:
+                lon_col = st.selectbox("Longitude column:", lon_cols if lon_cols else df.columns)
 
             # Temperature unit
             temp_unit = st.radio("Temperature unit:", ["Fahrenheit (°F)", "Celsius (°C)"])
@@ -169,58 +195,87 @@ with tab1:
             st.markdown("## Step 3: Calibrate")
 
             if st.button("🚀 Start Calibration", type="primary"):
-                with st.spinner("Calibrating temperatures... This may take a few seconds."):
-                    # Simulate calibration (replace with actual model in production)
+                try:
+                    with st.spinner("Step 1/4: Preparing data..."):
+                        # Prepare input dataframe
+                        df_input = df.copy()
+
+                        # Rename columns to standard names
+                        df_input = df_input.rename(columns={
+                            time_col: 'timestamp',
+                            temp_col: 'temperature',
+                            humid_col: 'humidity',
+                            lat_col: 'latitude',
+                            lon_col: 'longitude'
+                        })
+
+                        # Convert timestamp to datetime
+                        df_input['timestamp'] = pd.to_datetime(df_input['timestamp'])
+
+                        # Convert temperature to Celsius if needed
+                        if "Fahrenheit" in temp_unit:
+                            df_input['temperature'] = (df_input['temperature'] - 32) * 5/9
+
+                        # Validate data
+                        if df_input['latitude'].isna().any() or df_input['longitude'].isna().any():
+                            st.error("❌ Missing latitude or longitude values detected. Please ensure all rows have location data.")
+                            st.stop()
+
+                        # Check data range
+                        if not df_input['timestamp'].between('2022-01-01', '2024-12-31').all():
+                            st.warning("⚠️ Some timestamps are outside 2022-2024 range. ERA5 data may not be available for all records.")
+
+                    with st.spinner("Step 2/4: Fetching ERA5 meteorological data..."):
+                        # Load ERA5 data
+                        era5_reader = ERA5Reader()
+                        df_with_era5 = era5_reader.get_batch_era5_data(df_input)
+                        era5_reader.close()
+                        st.success(f"✅ Loaded ERA5 data for {len(df_with_era5)} records")
+
+                    with st.spinner("Step 3/4: Engineering 63 features..."):
+                        # Feature engineering
+                        engineer = FeatureEngineer()
+                        df_features = engineer.engineer_all_features(df_with_era5)
+                        feature_list = engineer.get_feature_list()
+                        st.success(f"✅ Generated {len(feature_list)} features")
+
+                    with st.spinner("Step 4/4: Applying temperature-stratified calibration models..."):
+                        # Calibration
+                        calibrator = TemperatureCalibrator()
+                        df_result = calibrator.calibrate(df_features, feature_list)
+                        st.success("✅ Calibration complete!")
+
+                    # Convert back to original unit if needed
+                    if "Fahrenheit" in temp_unit:
+                        temps_display = df_result['sensor temperature'].values * 9/5 + 32
+                        calibrated_temps_display = df_result['calibrated_temperature'].values * 9/5 + 32
+                        correction_display = df_result['calibration_correction'].values * 9/5
+                    else:
+                        temps_display = df_result['sensor temperature'].values
+                        calibrated_temps_display = df_result['calibrated_temperature'].values
+                        correction_display = df_result['calibration_correction'].values
+
+                    # Prepare output dataframe
                     df_calibrated = df.copy()
-
-                    # Extract temperature data
-                    temps = df[temp_col].values
-
-                    # Convert to Celsius if needed
-                    if "Fahrenheit" in temp_unit:
-                        temps_c = (temps - 32) * 5/9
-                    else:
-                        temps_c = temps
-
-                    # Simple calibration model (demonstration)
-                    # In production, replace with actual trained model
-                    # This simulates the Temporal-TempStrat calibration
-                    np.random.seed(42)
-
-                    # Simulate bias correction based on temperature stratification
-                    calibrated_temps = temps_c.copy()
-
-                    # Cold regime (< 10°C): reduce by ~2-3°C
-                    cold_mask = temps_c < 10
-                    calibrated_temps[cold_mask] = temps_c[cold_mask] - (2.5 + np.random.normal(0, 0.3, cold_mask.sum()))
-
-                    # Moderate regime (10-25°C): reduce by ~3-5°C
-                    moderate_mask = (temps_c >= 10) & (temps_c <= 25)
-                    calibrated_temps[moderate_mask] = temps_c[moderate_mask] - (4.0 + np.random.normal(0, 0.5, moderate_mask.sum()))
-
-                    # Hot regime (> 25°C): reduce by ~5-8°C
-                    hot_mask = temps_c > 25
-                    calibrated_temps[hot_mask] = temps_c[hot_mask] - (6.5 + np.random.normal(0, 0.7, hot_mask.sum()))
-
-                    # Convert back to original unit
-                    if "Fahrenheit" in temp_unit:
-                        calibrated_temps_display = calibrated_temps * 9/5 + 32
-                        temps_display = temps
-                    else:
-                        calibrated_temps_display = calibrated_temps
-                        temps_display = temps_c
-
-                    # Add calibrated column
-                    df_calibrated['temperature_calibrated'] = calibrated_temps_display
                     df_calibrated['temperature_original'] = temps_display
-                    df_calibrated['calibration_correction'] = temps_display - calibrated_temps_display
+                    df_calibrated['temperature_calibrated'] = calibrated_temps_display
+                    df_calibrated['calibration_correction'] = correction_display
+                    df_calibrated['temperature_regime'] = df_result['temperature_regime']
 
+                    # Store in session state
                     st.session_state['df_calibrated'] = df_calibrated
                     st.session_state['temps_original'] = temps_display
                     st.session_state['temps_calibrated'] = calibrated_temps_display
                     st.session_state['temp_unit'] = temp_unit
 
-                st.success("✅ Calibration complete!")
+                except FileNotFoundError as e:
+                    st.error(f"❌ ERA5 data file not found: {str(e)}")
+                    st.info("Please ensure ERA5 NetCDF files are available in the data directory for the time period of your data.")
+                    st.stop()
+                except Exception as e:
+                    st.error(f"❌ Calibration failed: {str(e)}")
+                    st.exception(e)
+                    st.stop()
 
             # Show results if calibration has been performed
             if 'df_calibrated' in st.session_state:
@@ -232,7 +287,7 @@ with tab1:
                 unit = "°F" if "Fahrenheit" in st.session_state['temp_unit'] else "°C"
 
                 # Metrics
-                col1, col2, col3, col4 = st.columns(4)
+                col1, col2, col3, col4, col5 = st.columns(5)
 
                 with col1:
                     avg_correction = np.mean(df_result['calibration_correction'])
@@ -249,6 +304,28 @@ with tab1:
                 with col4:
                     calib_mean = np.mean(temps_calib)
                     st.metric("Calibrated Mean", f"{calib_mean:.2f} {unit}")
+
+                with col5:
+                    n_records = len(df_result)
+                    st.metric("Total Records", f"{n_records:,}")
+
+                # Temperature regime distribution
+                if 'temperature_regime' in df_result.columns:
+                    st.markdown("### 🌡️ Temperature Regime Distribution")
+                    regime_counts = df_result['temperature_regime'].value_counts()
+                    col1, col2, col3 = st.columns(3)
+
+                    with col1:
+                        cold_pct = (regime_counts.get('cold', 0) / len(df_result)) * 100
+                        st.metric("Cold (<10°C)", f"{cold_pct:.1f}%", f"{regime_counts.get('cold', 0)} records")
+
+                    with col2:
+                        normal_pct = (regime_counts.get('normal', 0) / len(df_result)) * 100
+                        st.metric("Moderate (10-30°C)", f"{normal_pct:.1f}%", f"{regime_counts.get('normal', 0)} records")
+
+                    with col3:
+                        hot_pct = (regime_counts.get('hot', 0) / len(df_result)) * 100
+                        st.metric("Hot (>30°C)", f"{hot_pct:.1f}%", f"{regime_counts.get('hot', 0)} records")
 
                 # Visualization
                 st.markdown("### 📊 Calibration Visualization")
@@ -356,13 +433,26 @@ with tab1:
 
                 with col2:
                     # Prepare summary report
+                    regime_dist = ""
+                    if 'temperature_regime' in df_result.columns:
+                        regime_counts = df_result['temperature_regime'].value_counts()
+                        cold_pct = (regime_counts.get('cold', 0) / len(df_result)) * 100
+                        normal_pct = (regime_counts.get('normal', 0) / len(df_result)) * 100
+                        hot_pct = (regime_counts.get('hot', 0) / len(df_result)) * 100
+                        regime_dist = f"""
+Temperature Regime Distribution:
+- Cold (<10°C): {regime_counts.get('cold', 0)} records ({cold_pct:.1f}%)
+- Moderate (10-30°C): {regime_counts.get('normal', 0)} records ({normal_pct:.1f}%)
+- Hot (>30°C): {regime_counts.get('hot', 0)} records ({hot_pct:.1f}%)
+"""
+
                     report = f"""PurpleAir Temperature Calibration Report
 Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 
 Dataset Information:
-- Total readings: {len(df_result)}
+- Total readings: {len(df_result):,}
 - Temperature unit: {unit}
-
+{regime_dist}
 Calibration Results:
 - Original mean temperature: {orig_mean:.2f} {unit}
 - Calibrated mean temperature: {calib_mean:.2f} {unit}
@@ -370,7 +460,9 @@ Calibration Results:
 - Max correction: {max_correction:.2f} {unit}
 - Min correction: {np.min(df_result['calibration_correction']):.2f} {unit}
 
-Model Used: {model_choice}
+Model Used: Temporal-TempStrat (Temperature-Stratified XGBoost)
+Features: 63 engineered features including temporal, spatial, and meteorological variables
+Data Sources: PurpleAir sensors + ERA5 reanalysis
 
 Reference:
 - GitHub: https://github.com/yunqianz728/purpleair-calibration
@@ -481,48 +573,72 @@ with tab3:
 
     with st.expander("📋 What data format do I need?"):
         st.markdown("""
-        Your CSV file should contain:
-        - **Timestamp column**: Date and time of each reading
-        - **Temperature column**: Raw sensor temperature (Fahrenheit or Celsius)
-        - **Humidity column** (optional): Relative humidity (%)
+        Your CSV file **must** contain these columns:
+        - **timestamp**: Date and time (YYYY-MM-DD HH:MM:SS format)
+        - **temperature**: Raw sensor temperature (Fahrenheit or Celsius)
+        - **humidity**: Relative humidity (0-100%)
+        - **latitude**: Sensor latitude (-90 to 90)
+        - **longitude**: Sensor longitude (-180 to 180)
 
-        Example format:
+        **Example format:**
         ```
-        timestamp,temperature,humidity
-        2024-01-01 00:00:00,75.2,45
-        2024-01-01 01:00:00,74.8,46
+        timestamp,temperature,humidity,latitude,longitude
+        2024-01-15 10:00:00,68.5,45.2,37.7749,-122.4194
+        2024-01-15 11:00:00,72.3,43.8,37.7749,-122.4194
+        2024-01-15 12:00:00,75.1,41.5,37.7749,-122.4194
         ```
+
+        **Important Notes:**
+        - Timestamps must be between 2022-01-01 and 2024-12-31 (ERA5 data availability)
+        - Coordinates must be within CONUS (continental US) for best results
+        - Hourly data works best (model was trained on hourly observations)
         """)
 
-    with st.expander("🎯 Which model should I choose?"):
+    with st.expander("🎯 How does the model work?"):
         st.markdown("""
-        **High Accuracy (Temporal-TempStrat)** - Recommended ⭐
-        - MAE: 0.38-0.53°C across temperature ranges
-        - Best for: Research, policy analysis, health studies
-        - Processing time: ~5 seconds per 1000 readings
+        **Temporal-TempStrat** uses temperature-stratified machine learning:
 
-        **Fast (Temporal-National)**
-        - MAE: 0.77°C overall
-        - Best for: Quick checks, real-time applications
-        - Processing time: ~2 seconds per 1000 readings
+        **Three Specialized Models:**
+        - **Cold Model** (<10°C): RMSE 1.52°C
+        - **Moderate Model** (10-30°C): RMSE 1.38°C
+        - **Hot Model** (>30°C): RMSE 1.45°C
 
-        **Spatial (Climate-Based)**
-        - MAE: 0.93°C
-        - Best for: Geographic analysis, limited temporal data
-        - Processing time: ~3 seconds per 1000 readings
+        **Why Stratification?**
+        - Sensor bias varies significantly across temperature ranges
+        - Cold: Minimal solar heating, conduction-dominated
+        - Moderate: Balanced thermal conditions
+        - Hot: Strong solar heating effects, radiation-dominated
+
+        **Processing Steps:**
+        1. Fetch ERA5 meteorological data for your location/time
+        2. Calculate 63 engineered features
+        3. Apply appropriate model based on temperature
+        4. Return calibrated temperature
+
+        **Processing Time:** ~10-30 seconds per 1000 records (depends on ERA5 data access)
         """)
 
     with st.expander("📊 How accurate is the calibration?"):
         st.markdown("""
         Our calibration achieves:
+        - **RMSE: 1.43°C overall** (compared to ASOS/AWOS reference stations)
         - **90% error reduction** compared to uncalibrated sensors
-        - **MAE of 0.38-0.53°C** (depending on temperature range)
-        - Validated on **797,744 observations** from **31 U.S. states**
+        - Validated on **2,682 sensors** across **CONUS** (2018-2022)
 
-        Performance by temperature range:
-        - Cold (<10°C): MAE 0.38°C
-        - Moderate (10-25°C): MAE 0.53°C
-        - Hot (>25°C): MAE 0.47°C
+        **Performance by temperature range:**
+        - **Cold** (<10°C): RMSE 1.52°C
+        - **Moderate** (10-30°C): RMSE 1.38°C
+        - **Hot** (>30°C): RMSE 1.45°C
+
+        **Why is this better?**
+        - Uncalibrated sensors: RMSE ~5-8°C (significant solar heating bias)
+        - Our calibration: RMSE 1.43°C (captures sensor thermal dynamics)
+        - Improvement: 70-85% error reduction
+
+        **Validation:**
+        - Training: 70% of sensor-hours (stratified by climate zone)
+        - Testing: 30% hold-out set (unseen sensors and time periods)
+        - Cross-validation: 5-fold stratified CV
         """)
 
     with st.expander("🔬 What's the science behind this?"):
