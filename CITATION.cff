@@ -1,0 +1,54 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "PurpleAir Temperature Sensor Calibration"
+version: 1.0.0
+date-released: 2025-02-02
+url: "https://github.com/yourusername/purpleair-calibration"
+repository-code: "https://github.com/yourusername/purpleair-calibration"
+license: MIT
+authors:
+  - family-names: "Zhang"
+    given-names: "Yunqian"
+    orcid: "https://orcid.org/0000-0000-0000-0000"
+    affiliation: "Department of Landscape Architecture and Environmental Planning, University of California, Berkeley"
+  - family-names: "Rong"
+    given-names: "Yan"
+    affiliation: "College of Urban Planning and Public Affairs, University of Illinois Chicago"
+  - family-names: "Liang"
+    given-names: "Lu"
+    orcid: "https://orcid.org/0000-0000-0000-0000"
+    affiliation: "Department of Landscape Architecture and Environmental Planning, University of California, Berkeley"
+    email: "lianglu@berkeley.edu"
+keywords:
+  - "PurpleAir"
+  - "temperature calibration"
+  - "low-cost sensors"
+  - "machine learning"
+  - "heat exposure"
+  - "urban climate"
+  - "environmental monitoring"
+  - "XGBoost"
+  - "gradient boosting"
+  - "SHAP analysis"
+abstract: >
+  A machine learning framework for calibrating PurpleAir temperature
+  sensors using temperature-based stratification and temporal features.
+  Achieves mean absolute error of 0.38-0.53°C across diverse U.S.
+  climatic conditions, representing 90% error reduction compared to
+  uncalibrated sensors. Validated on 797,744 hourly observations from
+  31 states.
+preferred-citation:
+  type: article
+  authors:
+    - family-names: "Zhang"
+      given-names: "Yunqian"
+    - family-names: "Rong"
+      given-names: "Yan"
+    - family-names: "Liang"
+      given-names: "Lu"
+  title: "Nationwide Calibration of PurpleAir Temperature Sensors for Heat Exposure Research"
+  year: 2025
+  journal: "[Journal Name - To Be Determined]"
+  doi: "10.xxxx/xxxxxx"
+  status: "submitted"

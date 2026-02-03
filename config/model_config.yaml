@@ -1,0 +1,207 @@
+# Model Configuration File
+# Default hyperparameters and settings for PurpleAir calibration models
+
+# General settings
+random_seed: 42
+n_jobs: -1  # Use all available CPU cores
+
+# Data splitting
+train_size: 0.64
+val_size: 0.16
+test_size: 0.20
+
+# Temperature stratification thresholds (climate-zone-specific percentiles)
+temperature_stratification:
+  Arid:
+    p25: 15.0  # 25th percentile threshold (°C)
+    p75: 30.0  # 75th percentile threshold (°C)
+  Temperate:
+    p25: 10.0
+    p75: 25.0
+  Continental:
+    p25: 5.0
+    p75: 22.0
+
+# XGBoost default hyperparameters (Temporal-TempStrat)
+xgboost:
+  cold_stratum:
+    learning_rate: 0.05
+    max_depth: 6
+    n_estimators: 500
+    subsample: 0.8
+    colsample_bytree: 0.8
+    reg_alpha: 1.0
+    reg_lambda: 2.0
+    min_child_weight: 3
+    objective: 'reg:squarederror'
+    eval_metric: 'mae'
+    early_stopping_rounds: 50
+
+  moderate_stratum:
+    learning_rate: 0.05
+    max_depth: 7
+    n_estimators: 600
+    subsample: 0.85
+    colsample_bytree: 0.85
+    reg_alpha: 1.5
+    reg_lambda: 2.5
+    min_child_weight: 2
+    objective: 'reg:squarederror'
+    eval_metric: 'mae'
+    early_stopping_rounds: 50
+
+  hot_stratum:
+    learning_rate: 0.05
+    max_depth: 8
+    n_estimators: 700
+    subsample: 0.9
+    colsample_bytree: 0.9
+    reg_alpha: 2.0
+    reg_lambda: 3.0
+    min_child_weight: 2
+    objective: 'reg:squarederror'
+    eval_metric: 'mae'
+    early_stopping_rounds: 50
+
+  national:  # Temporal-National (no stratification)
+    learning_rate: 0.05
+    max_depth: 7
+    n_estimators: 600
+    subsample: 0.85
+    colsample_bytree: 0.85
+    reg_alpha: 1.5
+    reg_lambda: 2.5
+    min_child_weight: 3
+    objective: 'reg:squarederror'
+    eval_metric: 'mae'
+    early_stopping_rounds: 50
+
+# CatBoost hyperparameters
+catboost:
+  learning_rate: 0.05
+  depth: 8
+  iterations: 1000
+  l2_leaf_reg: 3.0
+  bagging_temperature: 0.5
+  random_strength: 1.0
+  loss_function: 'MAE'
+  early_stopping_rounds: 50
+
+# LightGBM hyperparameters
+lightgbm:
+  learning_rate: 0.05
+  num_leaves: 80
+  n_estimators: 800
+  subsample: 0.85
+  colsample_bytree: 0.85
+  reg_alpha: 1.5
+  reg_lambda: 2.5
+  min_child_weight: 3
+  objective: 'regression'
+  metric: 'mae'
+  early_stopping_rounds: 50
+
+# Bayesian optimization settings
+optuna:
+  n_trials: 20
+  timeout: null  # No timeout (set to seconds if needed)
+  n_jobs: 4  # Parallel trials
+  sampler: 'TPE'  # Tree-structured Parzen Estimator
+  pruner: 'MedianPruner'
+  pruner_n_warmup_steps: 5
+
+  # Search space for XGBoost
+  xgboost_search_space:
+    learning_rate:
+      type: 'float'
+      low: 0.01
+      high: 0.3
+      log: true
+    max_depth:
+      type: 'int'
+      low: 3
+      high: 10
+    n_estimators:
+      type: 'int'
+      low: 100
+      high: 1000
+    subsample:
+      type: 'float'
+      low: 0.5
+      high: 1.0
+    colsample_bytree:
+      type: 'float'
+      low: 0.5
+      high: 1.0
+    reg_alpha:
+      type: 'float'
+      low: 0
+      high: 10
+    reg_lambda:
+      type: 'float'
+      low: 0
+      high: 10
+    min_child_weight:
+      type: 'int'
+      low: 1
+      high: 10
+
+# Feature engineering settings
+features:
+  # Temporal feature windows
+  lagged_hours: [1, 2, 3, 4, 5, 6]
+  rolling_windows: [3, 6, 12]  # hours
+  cumulative_radiation_windows: [3, 6]  # hours
+
+  # Feature groups to include
+  use_spatial_features: true
+  use_temporal_features: true
+  use_lagged_features: true
+  use_rolling_features: true
+  use_change_indicators: true
+  use_cumulative_radiation: true
+  use_thermal_persistence: true
+  use_derived_meteorology: true
+  use_engineered_terms: true
+
+  # Minimum data requirements
+  min_history_hours: 6  # Minimum historical data for temporal features
+
+# Sample weighting parameters
+sample_weighting:
+  enabled: true
+  distance_weight: 0.4  # Weight for spatial distance
+  elevation_weight: 0.3  # Weight for elevation difference
+  tcc_weight: 0.3  # Weight for tree canopy cover difference
+  distance_normalization: 3000  # meters
+  elevation_normalization: 50  # meters
+  tcc_normalization: 30  # percentage points
+
+# Quality control settings
+quality_control:
+  # ERA5 variable QC
+  era5:
+    set_negative_ssrd_to_zero: true
+    set_negative_precipitation_to_zero: true
+    truncate_sshf_percentiles: [0.01, 0.99]
+
+  # Sensor data QC
+  sensor:
+    clamp_humidity: [0, 100]  # Valid range for relative humidity
+    max_temperature: 60  # °C (flag values above)
+    min_temperature: -40  # °C (flag values below)
+
+# Logging settings
+logging:
+  level: 'INFO'  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  format: '<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan> - <level>{message}</level>'
+  log_file: 'logs/calibration.log'
+
+# Output settings
+output:
+  save_models: true
+  save_predictions: true
+  save_feature_importance: true
+  save_shap_values: false  # Warning: can be very large
+  model_format: 'joblib'  # 'joblib', 'pickle', or 'onnx'
+  compression: true
