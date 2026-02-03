@@ -2,8 +2,9 @@ cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 type: software
 title: "PurpleAir Temperature Sensor Calibration"
-version: 1.0.0
-date-released: 2025-02-02
+version: 1.0.2
+date-released: 2026-02-03
+doi: 10.5281/zenodo.18463819
 url: "https://github.com/yunqianz728/purpleair-calibration"
 repository-code: "https://github.com/yunqianz728/purpleair-calibration"
 license: MIT

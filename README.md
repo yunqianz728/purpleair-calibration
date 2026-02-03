@@ -2,7 +2,7 @@
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![DOI](https://img.shields.io/badge/DOI-10.xxxx%2Fxxxxxx-blue)](https://doi.org/10.xxxx/xxxxxx)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18463819.svg)](https://doi.org/10.5281/zenodo.18463819)
 [![Hugging Face](https://img.shields.io/badge/🤗-Demo-yellow)](https://huggingface.co/spaces/yunqianz/purpleair-calibration)
 
 ## Overview
