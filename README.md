@@ -71,7 +71,7 @@ Our best-performing model combines:
 ### Option 1: Conda Environment (Recommended)
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/purpleair-calibration.git
+git clone https://github.com/yunqianz728/purpleair-calibration.git
 cd purpleair-calibration
 
 # Create and activate conda environment
@@ -82,7 +82,7 @@ conda activate purpleair-calib
 ### Option 2: pip Installation
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/purpleair-calibration.git
+git clone https://github.com/yunqianz728/purpleair-calibration.git
 cd purpleair-calibration
 
 # Create virtual environment
@@ -450,7 +450,7 @@ We thank:
 
 - **Corresponding Author**: Lu Liang (lianglu@berkeley.edu)
 - **Lead Developer**: Yunqian Zhang
-- **Issues**: [GitHub Issues](https://github.com/yourusername/purpleair-calibration/issues)
+- **Issues**: [GitHub Issues](https://github.com/yunqianz728/purpleair-calibration/issues)
 - **Web Interface**: [Hugging Face Demo](https://huggingface.co/spaces/yunqianz/purpleair-calibration)
 
 ## Related Publications
