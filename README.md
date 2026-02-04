@@ -269,7 +269,8 @@ purpleair-calibration/
 
 All paired sensor-station training data, feature-engineered datasets, and model training scripts are available at:
 - **Hugging Face**: [https://huggingface.co/spaces/yunqianz/purpleair-calibration](https://huggingface.co/spaces/yunqianz/purpleair-calibration)
-- **Zenodo**: [DOI: 10.xxxx/zenodo.xxxxxx](https://doi.org/10.xxxx/zenodo.xxxxxx) (coming soon)
+- **Zenodo (Code)**: [DOI: 10.5281/zenodo.18463819](https://doi.org/10.5281/zenodo.18463819)
+- **Zenodo (ERA5 Data)**: DOI will be available upon publication
 
 ## Model Architecture
 
@@ -448,15 +449,26 @@ If you use this code or methodology in your research, please cite:
 @article{zhang2025purpleair,
   title={Nationwide Calibration of PurpleAir Temperature Sensors for Heat Exposure Research},
   author={Zhang, Yunqian and Rong, Yan and Liang, Lu},
-  journal={[Journal Name]},
   year={2025},
-  doi={10.xxxx/xxxxxx},
-  note={Submitted for publication}
+  note={Manuscript in preparation},
+  url={https://github.com/yunqianz728/purpleair-calibration}
+}
+```
+
+**Software Citation**:
+```bibtex
+@software{zhang2025purpleair_software,
+  author={Zhang, Yunqian and Rong, Yan and Liang, Lu},
+  title={PurpleAir Temperature Sensor Calibration Software},
+  year={2025},
+  publisher={Zenodo},
+  doi={10.5281/zenodo.18463819},
+  url={https://github.com/yunqianz728/purpleair-calibration}
 }
 ```
 
 **APA Format**:
-Zhang, Y., Rong, Y., & Liang, L. (2025). Nationwide calibration of PurpleAir temperature sensors for heat exposure research. *[Journal Name]*. https://doi.org/10.xxxx/xxxxxx
+Zhang, Y., Rong, Y., & Liang, L. (2025). *Nationwide calibration of PurpleAir temperature sensors for heat exposure research* [Software]. GitHub. https://github.com/yunqianz728/purpleair-calibration
 
 ## License
 

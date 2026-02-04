@@ -72,7 +72,9 @@ st.markdown('<div class="sub-header">Accurate Temperature Monitoring Made Easy</
 
 # Sidebar
 with st.sidebar:
-    st.image("https://via.placeholder.com/300x100/1f77b4/ffffff?text=PurpleAir+Calibration", use_container_width=True)
+    # Logo/Header
+    st.markdown('<h2 style="text-align: center; color: #1f77b4;">🌡️ PurpleAir Calibration</h2>', unsafe_allow_html=True)
+    st.markdown("---")
 
     st.markdown("### About This Tool")
     st.info("""

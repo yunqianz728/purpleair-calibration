@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 """
-Automated Zenodo Upload Script for ERA5 Data
-=============================================
+Resume Zenodo Upload - Continue uploading remaining files
+==========================================================
 
-This script uploads all ERA5 NetCDF files to Zenodo with proper metadata.
+This script continues uploading to an existing Zenodo deposition.
+Use this if your previous upload was interrupted.
 
 Usage:
-    python upload_to_zenodo.py
+    python upload_to_zenodo_resume.py <deposition_id>
 
-Prerequisites:
-    pip install requests tqdm
+Example:
+    python upload_to_zenodo_resume.py 18485026
 
 Author: Yunqian Zhang, Lu Liang
 """
@@ -63,12 +64,12 @@ METADATA = {
             {
                 "name": "Zhang, Yunqian",
                 "affiliation": "University of California, Berkeley",
-                "orcid": "0000-0002-XXXX-XXXX"  # Replace with real ORCID
+                "orcid": "0000-0002-XXXX-XXXX"
             },
             {
                 "name": "Liang, Lu",
                 "affiliation": "University of California, Berkeley",
-                "orcid": "0000-0002-XXXX-XXXX"  # Replace with real ORCID
+                "orcid": "0000-0002-XXXX-XXXX"
             }
         ],
         "keywords": [
@@ -107,37 +108,42 @@ def get_access_token():
         print("1. Go to: https://zenodo.org/account/settings/applications/tokens/new/")
         print("2. Create a new token with 'deposit:write' scope")
         print("3. Copy the token and paste it here\n")
-        print("Alternatively, set environment variable:")
-        print("  export ZENODO_ACCESS_TOKEN='your-token-here'\n")
 
         token = input("Enter your Zenodo access token: ").strip()
 
     return token
 
 
-def create_deposition(token):
-    """Create a new Zenodo deposition"""
-    print("\n📝 Creating new Zenodo deposition...")
+def get_deposition(deposition_id, token):
+    """Get existing deposition details"""
+    print(f"\n📋 Retrieving deposition {deposition_id}...")
 
-    headers = {"Content-Type": "application/json"}
+    url = f"{ZENODO_API_URL}/{deposition_id}"
     params = {"access_token": token}
 
-    response = requests.post(
-        ZENODO_API_URL,
-        json={},
-        headers=headers,
-        params=params
-    )
+    response = requests.get(url, params=params)
 
-    if response.status_code != 201:
-        print(f"❌ Failed to create deposition: {response.text}")
+    if response.status_code != 200:
+        print(f"❌ Failed to get deposition: {response.text}")
         sys.exit(1)
 
     deposition = response.json()
-    deposition_id = deposition['id']
+    print(f"✅ Found deposition: {deposition.get('title', 'Untitled')}")
 
-    print(f"✅ Created deposition ID: {deposition_id}")
     return deposition
+
+
+def get_uploaded_files(deposition):
+    """Get list of already uploaded files"""
+    files = deposition.get('files', [])
+    uploaded_filenames = [f['filename'] for f in files]
+
+    print(f"\n📂 Already uploaded: {len(uploaded_filenames)} files")
+    if uploaded_filenames:
+        for filename in uploaded_filenames:
+            print(f"  ✅ {filename}")
+
+    return uploaded_filenames
 
 
 def upload_file(deposition, token, file_path):
@@ -238,12 +244,11 @@ def publish_deposition(deposition_id, token):
     print(f"✅ Record ID: {record_id}")
     print(f"✅ URL: https://zenodo.org/record/{record_id}")
     print(f"\n📝 Next steps:")
-    print(f"1. Update app/utils/zenodo_downloader.py:")
+    print(f"1. Update .streamlit/secrets.toml:")
     print(f"   ZENODO_RECORD_ID = \"{record_id}\"")
-    print(f"\n2. Test download:")
-    print(f"   python app/utils/zenodo_downloader.py")
-    print(f"\n3. Deploy to Streamlit Cloud with secret:")
-    print(f"   ZENODO_RECORD_ID = \"{record_id}\"")
+    print(f"\n2. Test the app locally:")
+    print(f"   streamlit run app/app.py")
+    print(f"\n3. Deploy to Streamlit Cloud")
     print(f"{'='*70}\n")
 
     return published
@@ -251,8 +256,17 @@ def publish_deposition(deposition_id, token):
 
 def main():
     print("\n" + "="*70)
-    print("Zenodo ERA5 Data Upload Script")
+    print("Resume Zenodo Upload")
     print("="*70)
+
+    # Get deposition ID from command line
+    if len(sys.argv) < 2:
+        print("\n❌ Error: Deposition ID required")
+        print(f"\nUsage: python {sys.argv[0]} <deposition_id>")
+        print(f"\nExample: python {sys.argv[0]} 18485026")
+        sys.exit(1)
+
+    deposition_id = sys.argv[1]
 
     # Check if ERA5 data directory exists
     data_dir = Path(ERA5_DATA_DIR)
@@ -266,27 +280,7 @@ def main():
         print(f"\n❌ Error: No .nc files found in {data_dir}")
         sys.exit(1)
 
-    print(f"\n📁 Found {len(nc_files)} NetCDF files")
-    total_size = sum(f.stat().st_size for f in nc_files)
-    print(f"📊 Total size: {total_size / (1024**3):.2f} GB")
-
-    # Show file list
-    print(f"\nFiles to upload:")
-    for f in nc_files[:3]:
-        print(f"  • {f.name}")
-    if len(nc_files) > 6:
-        print(f"  • ...")
-    for f in nc_files[-3:]:
-        print(f"  • {f.name}")
-
-    # Confirm upload
-    print(f"\n⚠️  This will upload {total_size / (1024**3):.2f} GB to Zenodo.")
-    print(f"⚠️  This may take 2-3 hours depending on your internet speed.")
-
-    confirm = input("\nProceed with upload? (yes/no): ").strip().lower()
-    if confirm not in ['yes', 'y']:
-        print("\n❌ Upload cancelled.")
-        sys.exit(0)
+    print(f"\n📁 Found {len(nc_files)} NetCDF files locally")
 
     # Get access token
     token = get_access_token()
@@ -294,18 +288,58 @@ def main():
         print("\n❌ Access token required. Exiting.")
         sys.exit(1)
 
-    # Create deposition
-    deposition = create_deposition(token)
-    deposition_id = deposition['id']
+    # Get existing deposition
+    deposition = get_deposition(deposition_id, token)
 
-    # Upload files
+    # Get already uploaded files
+    uploaded_filenames = get_uploaded_files(deposition)
+
+    # Find files that still need to be uploaded
+    remaining_files = [f for f in nc_files if f.name not in uploaded_filenames]
+
+    if not remaining_files:
+        print("\n✅ All files already uploaded!")
+        print("\nProceed to add metadata and publish? (yes/no): ", end='')
+        confirm = input().strip().lower()
+        if confirm in ['yes', 'y']:
+            add_metadata(deposition_id, token, METADATA)
+            published = publish_deposition(deposition_id, token)
+
+            if published:
+                record_id = published.get('record_id')
+                with open('ZENODO_RECORD_ID.txt', 'w') as f:
+                    f.write(f"{record_id}\n")
+                print(f"✅ Record ID saved to: ZENODO_RECORD_ID.txt")
+        sys.exit(0)
+
+    # Show remaining files
+    print(f"\n📤 Need to upload: {len(remaining_files)} files")
+    remaining_size = sum(f.stat().st_size for f in remaining_files)
+    print(f"📊 Remaining size: {remaining_size / (1024**3):.2f} GB")
+
+    print(f"\nFiles to upload:")
+    for f in remaining_files[:5]:
+        print(f"  • {f.name}")
+    if len(remaining_files) > 5:
+        print(f"  • ... and {len(remaining_files) - 5} more")
+
+    # Confirm upload
+    print(f"\n⚠️  This will upload {remaining_size / (1024**3):.2f} GB to Zenodo.")
+    print(f"⚠️  Estimated time: {len(remaining_files) * 5} - {len(remaining_files) * 10} minutes")
+
+    confirm = input("\nProceed with upload? (yes/no): ").strip().lower()
+    if confirm not in ['yes', 'y']:
+        print("\n❌ Upload cancelled.")
+        sys.exit(0)
+
+    # Upload remaining files
     print(f"\n{'='*70}")
-    print(f"Uploading {len(nc_files)} files to Zenodo")
+    print(f"Uploading {len(remaining_files)} remaining files")
     print(f"{'='*70}")
 
     failed_files = []
-    for i, file_path in enumerate(nc_files, 1):
-        print(f"\n[{i}/{len(nc_files)}]")
+    for i, file_path in enumerate(remaining_files, 1):
+        print(f"\n[{len(uploaded_filenames) + i}/{len(nc_files)}]")
         success = upload_file(deposition, token, file_path)
         if not success:
             failed_files.append(file_path.name)
@@ -315,12 +349,9 @@ def main():
         for f in failed_files:
             print(f"  • {f}")
 
-        retry = input("\nDo you want to publish anyway? (yes/no): ").strip().lower()
-        if retry not in ['yes', 'y']:
-            print("\n❌ Upload incomplete. Deposition not published.")
-            print(f"   Deposition ID: {deposition_id}")
-            print(f"   You can continue uploading later or delete this deposition.")
-            sys.exit(1)
+        print(f"\n❌ Upload incomplete. Please retry:")
+        print(f"   python {sys.argv[0]} {deposition_id}")
+        sys.exit(1)
 
     # Add metadata
     add_metadata(deposition_id, token, METADATA)
@@ -329,7 +360,7 @@ def main():
     published = publish_deposition(deposition_id, token)
 
     if published:
-        # Save record ID to file for easy access
+        # Save record ID to file
         record_id = published.get('record_id')
         with open('ZENODO_RECORD_ID.txt', 'w') as f:
             f.write(f"{record_id}\n")
@@ -341,6 +372,9 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         print("\n\n⚠️  Upload interrupted by user.")
+        print(f"\nYou can resume later by running:")
+        if len(sys.argv) >= 2:
+            print(f"   python {sys.argv[0]} {sys.argv[1]}")
         sys.exit(1)
     except Exception as e:
         print(f"\n❌ Error: {str(e)}")
