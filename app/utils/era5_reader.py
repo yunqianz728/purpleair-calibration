@@ -13,27 +13,49 @@ import numpy as np
 from pathlib import Path
 from datetime import datetime
 import warnings
+import os
 
 warnings.filterwarnings('ignore')
 
 # ERA5数据路径（本地NetCDF文件）
 ERA5_DATA_DIR = "/Users/yunqianzhang/Desktop/PA/气象数据"
 
+# Zenodo配置
+ZENODO_RECORD_ID = os.getenv('ZENODO_RECORD_ID', 'XXXXXXX')  # 从环境变量读取
+USE_ZENODO = os.getenv('USE_ZENODO', 'false').lower() == 'true'
+
 
 class ERA5Reader:
-    """ERA5 NetCDF数据读取器"""
+    """ERA5 NetCDF数据读取器（支持本地文件和Zenodo自动下载）"""
 
-    def __init__(self, data_dir=ERA5_DATA_DIR):
+    def __init__(self, data_dir=ERA5_DATA_DIR, use_zenodo=USE_ZENODO,
+                 zenodo_record_id=ZENODO_RECORD_ID):
         """
         初始化ERA5读取器
 
         Parameters:
         -----------
         data_dir : str
-            ERA5 NetCDF文件所在目录
+            ERA5 NetCDF文件所在目录（本地模式）
+        use_zenodo : bool
+            是否使用Zenodo自动下载（云端部署时）
+        zenodo_record_id : str
+            Zenodo记录ID
         """
-        self.data_dir = Path(data_dir)
+        self.data_dir = Path(data_dir) if data_dir else None
+        self.use_zenodo = use_zenodo
+        self.zenodo_record_id = zenodo_record_id
         self.cache = {}  # 缓存已加载的数据集
+
+        # 如果启用Zenodo，导入下载器
+        if self.use_zenodo:
+            try:
+                from .zenodo_downloader import ZenodoERA5Downloader
+                self.downloader = ZenodoERA5Downloader(zenodo_record_id=zenodo_record_id)
+                print(f"✅ Zenodo downloader initialized (Record ID: {zenodo_record_id})")
+            except ImportError:
+                print("⚠️ zenodo_downloader not found, falling back to local files")
+                self.use_zenodo = False
 
     def get_era5_data(self, timestamp, latitude, longitude):
         """
@@ -59,12 +81,34 @@ class ERA5Reader:
 
         # 确定NC文件
         year_month = timestamp.strftime('%Y-%m')
-        nc_file = self.data_dir / f"{year_month}.nc"
 
-        if not nc_file.exists():
+        # 优先使用本地文件，如果不存在则尝试Zenodo
+        nc_file = None
+        if self.data_dir and self.data_dir.exists():
+            local_file = self.data_dir / f"{year_month}.nc"
+            if local_file.exists():
+                nc_file = local_file
+                # print(f"📂 Using local file: {year_month}.nc")
+
+        # 如果本地文件不存在且启用了Zenodo，从Zenodo下载
+        if nc_file is None and self.use_zenodo:
+            try:
+                print(f"📥 Downloading {year_month}.nc from Zenodo...")
+                nc_file = self.downloader.download_file(year_month, show_progress=False)
+                print(f"✅ Downloaded from Zenodo: {year_month}.nc")
+            except Exception as e:
+                raise FileNotFoundError(
+                    f"ERA5 data not available for {year_month}.\n"
+                    f"Local file not found and Zenodo download failed: {str(e)}"
+                )
+
+        # 如果两种方式都失败了
+        if nc_file is None:
             raise FileNotFoundError(
-                f"ERA5 data not found for {year_month}. "
-                f"File expected: {nc_file}"
+                f"ERA5 data not found for {year_month}.\n"
+                f"Local directory: {self.data_dir}\n"
+                f"Zenodo enabled: {self.use_zenodo}\n"
+                f"Please ensure data is available locally or enable Zenodo download."
             )
 
         # 加载数据集（使用缓存）
