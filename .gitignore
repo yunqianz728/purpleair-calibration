@@ -154,3 +154,36 @@ results/figures/*.svg
 
 # Keep directory structure with .gitkeep files
 !**/.gitkeep
+
+# Streamlit secrets
+.streamlit/secrets.toml
+ZENODO_RECORD_ID.txt
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data
+*.nc
+*.pkl
+test_calibration_results.csv
+
+# Temporary
+/tmp/
+*.log
