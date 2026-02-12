@@ -124,16 +124,42 @@ with tab1:
     col1, col2 = st.columns(2)
 
     with col1:
-        st.markdown("### Required Columns")
+        st.markdown("### Required Data for Upload")
+
+        st.markdown("#### 📍 **Spatial Model** (31 features)")
         st.markdown("""
-        Your CSV **must** include:
-        - `timestamp` or `time` - Date/time of reading (e.g., 2024-01-15 10:00)
-        - `temperature` or `temp` - Sensor temperature (°F or °C)
-        - `humidity` - Relative humidity (%)
+        **Required columns:**
+        - `timestamp` - Date/time (e.g., 2024-01-15 10:00)
+        - `temperature` - Current sensor temp (°F or °C)
+        - `humidity` - Current relative humidity (%)
         - `latitude` - Sensor latitude (-90 to 90)
         - `longitude` - Sensor longitude (-180 to 180)
 
-        **Note**: Lat/lon are required to fetch meteorological data for accurate calibration.
+        **Optional** (improve accuracy):
+        - `elevation` - Meters above sea level (default: 0)
+        - `tree_canopy_cover` - Tree cover % (default: 0)
+        - `life` or `age` - Days since deployment (default: 365)
+        """)
+
+        st.markdown("#### ⏱️ **Temporal Model** (61 features - Higher Accuracy)")
+        st.markdown("""
+        **All Spatial model columns PLUS:**
+        - **Historical data**: Include at least 6 hours of readings before each target timestamp
+        - Upload CSV with multiple rows (one per hour) for the same sensor
+        - Example: If calibrating 2024-01-15 12:00, include rows from 06:00 to 12:00
+
+        **Automatically derived from your data:**
+        - Lagged features (temp/humidity 1-6h ago)
+        - Rolling statistics (moving averages, std dev)
+        - Cumulative radiation (past 3-6h)
+        - Temperature trends & acceleration
+        - Hot/cold persistence counters
+
+        **Automatically fetched:**
+        - ERA5 meteorological data (solar radiation, wind, pressure, etc.) via lat/lon/time
+        - Dewpoint, VPD, wind speed/direction
+        - Time encodings (hour, day, sin/cos transforms)
+        - Interaction terms (temp×humidity, etc.)
         """)
 
     with col2:
@@ -170,7 +196,10 @@ with tab1:
             humid_cols = [col for col in df.columns if 'humid' in col.lower()]
             lat_cols = [col for col in df.columns if 'lat' in col.lower()]
             lon_cols = [col for col in df.columns if 'lon' in col.lower()]
+            elev_cols = [col for col in df.columns if any(x in col.lower() for x in ['elev', 'altitude', 'height'])]
+            life_cols = [col for col in df.columns if any(x in col.lower() for x in ['life', 'age', 'day'])]
 
+            st.markdown("#### Required Columns")
             col1, col2, col3 = st.columns(3)
 
             with col1:
@@ -190,6 +219,33 @@ with tab1:
             with col2:
                 lon_col = st.selectbox("Longitude column:", lon_cols if lon_cols else df.columns)
 
+            # Optional columns
+            st.markdown("#### Optional Columns (for better accuracy)")
+
+            col1, col2 = st.columns(2)
+
+            with col1:
+                use_elevation = st.checkbox("Include elevation data", value=bool(elev_cols))
+                if use_elevation:
+                    elev_col = st.selectbox(
+                        "Elevation column (meters):",
+                        elev_cols if elev_cols else df.columns,
+                        help="Sensor elevation above sea level in meters"
+                    )
+                else:
+                    elev_col = None
+
+            with col2:
+                use_life = st.checkbox("Include sensor age data", value=bool(life_cols))
+                if use_life:
+                    life_col = st.selectbox(
+                        "Sensor age column (days):",
+                        life_cols if life_cols else df.columns,
+                        help="Days since sensor deployment"
+                    )
+                else:
+                    life_col = None
+
             # Temperature unit
             temp_unit = st.radio("Temperature unit:", ["Fahrenheit (°F)", "Celsius (°C)"])
 
@@ -203,13 +259,21 @@ with tab1:
                         df_input = df.copy()
 
                         # Rename columns to standard names
-                        df_input = df_input.rename(columns={
+                        rename_dict = {
                             time_col: 'timestamp',
                             temp_col: 'temperature',
                             humid_col: 'humidity',
                             lat_col: 'latitude',
                             lon_col: 'longitude'
-                        })
+                        }
+
+                        # Add optional columns if provided
+                        if use_elevation and elev_col:
+                            rename_dict[elev_col] = 'elevation'
+                        if use_life and life_col:
+                            rename_dict[life_col] = 'life'
+
+                        df_input = df_input.rename(columns=rename_dict)
 
                         # Convert timestamp to datetime
                         df_input['timestamp'] = pd.to_datetime(df_input['timestamp'])
@@ -222,6 +286,22 @@ with tab1:
                         if df_input['latitude'].isna().any() or df_input['longitude'].isna().any():
                             st.error("❌ Missing latitude or longitude values detected. Please ensure all rows have location data.")
                             st.stop()
+
+                        # Show info about optional data
+                        optional_info = []
+                        if 'elevation' in df_input.columns:
+                            elev_range = f"{df_input['elevation'].min():.1f}-{df_input['elevation'].max():.1f}m"
+                            optional_info.append(f"Elevation: {elev_range}")
+                        else:
+                            optional_info.append("Elevation: Using default (0m)")
+
+                        if 'life' in df_input.columns:
+                            life_range = f"{df_input['life'].min():.0f}-{df_input['life'].max():.0f} days"
+                            optional_info.append(f"Sensor age: {life_range}")
+                        else:
+                            optional_info.append("Sensor age: Using default (365 days)")
+
+                        st.info("📊 " + " | ".join(optional_info))
 
                         # Check data range
                         if not df_input['timestamp'].between('2022-01-01', '2024-12-31').all():
@@ -575,25 +655,66 @@ with tab3:
 
     with st.expander("📋 What data format do I need?"):
         st.markdown("""
-        Your CSV file **must** contain these columns:
-        - **timestamp**: Date and time (YYYY-MM-DD HH:MM:SS format)
-        - **temperature**: Raw sensor temperature (Fahrenheit or Celsius)
-        - **humidity**: Relative humidity (0-100%)
+        ## 📍 Spatial Model (31 features)
+
+        **Required columns:**
+        - **timestamp**: Date/time (YYYY-MM-DD HH:MM:SS)
+        - **temperature**: Current sensor temp (°F or °C)
+        - **humidity**: Current relative humidity (0-100%)
         - **latitude**: Sensor latitude (-90 to 90)
         - **longitude**: Sensor longitude (-180 to 180)
 
-        **Example format:**
+        **Optional** (improve accuracy):
+        - **elevation**: Meters above sea level (default: 0)
+        - **tree_canopy_cover**: Tree cover % (default: 0)
+        - **life** or **age**: Days since deployment (default: 365)
+
+        **Example (single reading):**
+        ```csv
+        timestamp,temperature,humidity,latitude,longitude,elevation,life
+        2024-01-15 12:00:00,68.5,45.2,37.7749,-122.4194,15,450
         ```
-        timestamp,temperature,humidity,latitude,longitude
-        2024-01-15 10:00:00,68.5,45.2,37.7749,-122.4194
-        2024-01-15 11:00:00,72.3,43.8,37.7749,-122.4194
-        2024-01-15 12:00:00,75.1,41.5,37.7749,-122.4194
+
+        ---
+
+        ## ⏱️ Temporal Model (61 features - Higher Accuracy)
+
+        **Required columns:** All Spatial columns PLUS historical data
+
+        **Critical:** Upload CSV with **at least 6 hours of prior readings** for each target timestamp
+
+        **Example (time series for temporal model):**
+        ```csv
+        timestamp,temperature,humidity,latitude,longitude,elevation,life
+        2024-01-15 06:00:00,65.2,48.5,37.7749,-122.4194,15,450
+        2024-01-15 07:00:00,66.8,47.1,37.7749,-122.4194,15,450
+        2024-01-15 08:00:00,67.3,46.8,37.7749,-122.4194,15,450
+        2024-01-15 09:00:00,67.9,45.9,37.7749,-122.4194,15,450
+        2024-01-15 10:00:00,68.1,45.5,37.7749,-122.4194,15,450
+        2024-01-15 11:00:00,68.4,45.3,37.7749,-122.4194,15,450
+        2024-01-15 12:00:00,68.5,45.2,37.7749,-122.4194,15,450  ← Target
         ```
+
+        **What the app auto-derives from your data:**
+        - ✅ Lagged features (temp/humidity 1-6h ago)
+        - ✅ Rolling statistics (moving averages, std dev, ranges)
+        - ✅ Cumulative radiation (past 3-6h)
+        - ✅ Temperature trends & acceleration
+        - ✅ Hot/cold persistence counters
+
+        **What the app auto-fetches:**
+        - ✅ ERA5 meteorological data (solar radiation, wind, pressure, etc.) via lat/lon/time
+        - ✅ Derived meteorological features (dewpoint, VPD, wind speed/direction)
+        - ✅ Time encodings (hour, day, month, sin/cos transforms)
+        - ✅ Interaction terms (temp×humidity, temp×age)
+
+        ---
 
         **Important Notes:**
         - Timestamps must be between 2022-01-01 and 2024-12-31 (ERA5 data availability)
         - Coordinates must be within CONUS (continental US) for best results
         - Hourly data works best (model was trained on hourly observations)
+        - For Temporal model: **Include 6+ hours of history** before your target timestamp
         """)
 
     with st.expander("🎯 How does the model work?"):
@@ -641,6 +762,31 @@ with tab3:
         - Training: 70% of sensor-hours (stratified by climate zone)
         - Testing: 30% hold-out set (unseen sensors and time periods)
         - Cross-validation: 5-fold stratified CV
+        """)
+
+    with st.expander("🏔️ Should I include elevation and sensor age data?"):
+        st.markdown("""
+        **Yes, we highly recommend it!** These optional fields improve calibration accuracy:
+
+        **Elevation (meters above sea level):**
+        - Affects atmospheric pressure and temperature lapse rates
+        - Important for sensors at different altitudes (mountains vs. valleys)
+        - Default (0m) assumes sea level - less accurate for high-elevation sensors
+        - Impact: Can reduce error by 0.1-0.3°C for high-elevation sites
+
+        **Sensor Age (days since deployment):**
+        - Accounts for sensor degradation over time
+        - Older sensors may exhibit slightly different bias patterns
+        - Default (365 days) assumes 1-year-old sensor
+        - Impact: Minor effect (~0.05°C), but helps with very old/new sensors
+
+        **Where to find this data:**
+        - PurpleAir API provides both fields in sensor metadata
+        - Elevation: `sensor.altitude` field (in feet - convert to meters)
+        - Age: Calculate from `sensor.date_created` to measurement date
+        - Web interface: Check individual sensor page on purpleair.com
+
+        **Bottom line:** Include if available! Won't hurt if you don't, but helps for accurate results.
         """)
 
     with st.expander("🔬 What's the science behind this?"):
