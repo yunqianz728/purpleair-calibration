@@ -1,861 +1,436 @@
-"""
-PurpleAir Temperature Calibration Web App
-=========================================
+"""Public web application for PurpleAir temperature calibration."""
 
-A user-friendly web interface for calibrating PurpleAir temperature sensor readings.
+from __future__ import annotations
 
-Author: Yunqian Zhang, Lu Liang
-License: MIT
-DOI: 10.5281/zenodo.18463819
-"""
-
-import streamlit as st
-import pandas as pd
-import numpy as np
-import plotly.graph_objects as go
-import plotly.express as px
-from datetime import datetime
 import io
-import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
-# Add utils directory to path
-sys.path.insert(0, str(Path(__file__).parent / 'utils'))
+import numpy as np
+import pandas as pd
+import plotly.graph_objects as go
+import streamlit as st
 
-# Import calibration modules
-from utils.era5_reader import ERA5Reader
-from utils.feature_engineering import FeatureEngineer
+from utils.feature_engineering import ERA5_COLUMNS, FeatureEngineer
 from utils.model_predictor import TemperatureCalibrator
 
-# Page configuration
+
+APP_DIR = Path(__file__).resolve().parent
+GITHUB_URL = "https://github.com/yunqianz728/purpleair-calibration"
+ZENODO_CODE_URL = "https://doi.org/10.5281/zenodo.18463819"
+ZENODO_ERA5_URL = "https://doi.org/10.5281/zenodo.18485026"
+REQUIRED_NAMES = ("timestamp", "temperature", "humidity", "latitude", "longitude")
+
+ALIASES = {
+    "timestamp": ("timestamp", "time_stamp", "datetime", "date_time", "date created"),
+    "temperature": (
+        "temperature", "sensor temperature", "temp_f", "temp_c", "current_temp_f",
+    ),
+    "humidity": ("humidity", "relative_humidity", "rh", "current_humidity"),
+    "latitude": ("latitude", "lat", "sensor_lat"),
+    "longitude": ("longitude", "lon", "lng", "sensor_lon"),
+    "sensor_id": ("sensor_id", "sensor index", "sensor_index", "id"),
+    "elevation": ("elevation", "elevation_sensor", "altitude"),
+    "tree_canopy_cover": ("tree_canopy_cover", "sensor_tcc", "tcc"),
+    "life": ("life", "sensor_age", "age_days", "days_since_deployment"),
+}
+
+
 st.set_page_config(
     page_title="PurpleAir Temperature Calibration",
     page_icon="🌡️",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="expanded",
 )
 
-# Custom CSS
-st.markdown("""
-<style>
-    .main-header {
-        font-size: 2.5rem;
-        font-weight: bold;
-        color: #1f77b4;
-        text-align: center;
-        margin-bottom: 1rem;
-    }
-    .sub-header {
-        font-size: 1.2rem;
-        color: #666;
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-    .metric-card {
-        background-color: #f0f2f6;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        margin: 0.5rem 0;
-    }
-    .stButton>button {
-        width: 100%;
-        background-color: #1f77b4;
-        color: white;
-        font-weight: bold;
-    }
-</style>
-""", unsafe_allow_html=True)
+st.markdown(
+    """
+    <style>
+    :root { --ink:#132238; --muted:#5d6b7d; --blue:#1769aa; --cyan:#16a3b6; --paper:#f5f8fb; }
+    .stApp { background: linear-gradient(180deg, #f7fbff 0, #ffffff 28rem); color: var(--ink); }
+    .block-container { max-width: 1180px; padding-top: 2rem; padding-bottom: 4rem; }
+    .hero { padding: 2.2rem 2.4rem; border: 1px solid #dce8f3; border-radius: 22px;
+            background: radial-gradient(circle at 90% 10%, #d8f5f7, transparent 34%),
+                        linear-gradient(135deg, #ffffff, #eff7ff); box-shadow: 0 18px 45px rgba(31,70,105,.08); }
+    .eyebrow { color:#167c8b; font-size:.78rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
+    .hero h1 { font-size: clamp(2.2rem, 5vw, 4.2rem); line-height:1.02; margin:.55rem 0 .85rem; color:#10233d; }
+    .hero p { max-width:760px; font-size:1.08rem; line-height:1.65; color:#4e6176; }
+    .pill { display:inline-block; margin:.75rem .45rem 0 0; padding:.36rem .72rem; border-radius:999px;
+            background:#e7f3ff; color:#15548a; font-size:.82rem; font-weight:700; }
+    .section-card { padding:1.25rem 1.35rem; border:1px solid #e0e9f1; border-radius:16px; background:#fff; }
+    .micro { color:#66778a; font-size:.88rem; }
+    [data-testid="stMetric"] { padding:1rem 1.1rem; border:1px solid #e1eaf2; border-radius:14px; background:#fff; }
+    [data-testid="stFileUploader"] { border:1px dashed #83abc9; border-radius:16px; padding:.5rem; background:#f8fbfe; }
+    .stButton > button, .stDownloadButton > button { border-radius:10px; font-weight:700; min-height:2.75rem; }
+    .stTabs [data-baseweb="tab-list"] { gap:.5rem; }
+    .stTabs [data-baseweb="tab"] { border-radius:10px 10px 0 0; padding:.65rem 1rem; }
+    footer { visibility:hidden; }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
-# Title
-st.markdown('<div class="main-header">🌡️ PurpleAir Temperature Calibration Tool</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-header">Accurate Temperature Monitoring Made Easy</div>', unsafe_allow_html=True)
 
-# Sidebar
-with st.sidebar:
-    # Logo/Header
-    st.markdown('<h2 style="text-align: center; color: #1f77b4;">🌡️ PurpleAir Calibration</h2>', unsafe_allow_html=True)
-    st.markdown("---")
+@st.cache_resource
+def load_calibrator() -> TemperatureCalibrator:
+    return TemperatureCalibrator()
 
-    st.markdown("### About This Tool")
-    st.info("""
-    This tool calibrates PurpleAir temperature sensor readings using trained XGBoost models.
 
-    **Key Features:**
-    - 90% error reduction
-    - RMSE: 1.43°C overall
-    - Temperature-stratified models:
-      - Cold (<10°C): RMSE 1.52°C
-      - Moderate (10-30°C): RMSE 1.38°C
-      - Hot (>30°C): RMSE 1.45°C
-    - Validated on 2,682 sensors (2018-2022)
-    """)
+@st.cache_data
+def sample_bytes() -> bytes:
+    return (APP_DIR / "sample_data.csv").read_bytes()
 
-    st.markdown("### How It Works")
-    st.markdown("""
-    1. **Upload** your PurpleAir data (CSV)
-    2. **Select** calibration model
-    3. **Download** corrected temperatures
-    """)
 
-    st.markdown("---")
-    st.markdown("### Resources")
-    st.markdown("""
-    - [GitHub Repository](https://github.com/yunqianz728/purpleair-calibration)
-    - [Paper DOI](https://doi.org/10.5281/zenodo.18463819)
-    - [Documentation](https://github.com/yunqianz728/purpleair-calibration#readme)
-    """)
+def read_uploaded_csv(uploaded_file) -> pd.DataFrame:
+    raw = uploaded_file.getvalue()
+    for encoding in ("utf-8-sig", "utf-8", "latin-1"):
+        try:
+            return pd.read_csv(io.BytesIO(raw), encoding=encoding)
+        except UnicodeDecodeError:
+            continue
+    raise ValueError("The CSV encoding could not be read. Save the file as UTF-8 and try again.")
 
-    st.markdown("---")
-    st.caption("Developed by Yunqian Zhang & Lu Liang")
-    st.caption("University of California, Berkeley")
 
-# Main content
-tab1, tab2, tab3 = st.tabs(["📤 Upload & Calibrate", "📊 Example Demo", "❓ Help"])
+def guess_column(columns, standard_name):
+    normalized = {str(column).strip().lower(): column for column in columns}
+    for alias in ALIASES[standard_name]:
+        if alias in normalized:
+            return normalized[alias]
+    for column in columns:
+        lower = str(column).lower()
+        if any(alias in lower for alias in ALIASES[standard_name]):
+            return column
+    return None
 
-with tab1:
-    st.markdown("## Step 1: Upload Your Data")
 
-    uploaded_file = st.file_uploader(
-        "Upload PurpleAir CSV file",
-        type=['csv'],
-        help="Upload a CSV file containing PurpleAir sensor data with temperature readings"
+def column_selector(label, standard_name, columns, required=True):
+    detected = guess_column(columns, standard_name)
+    options = list(columns) if required else ["— not provided —", *columns]
+    if detected in options:
+        index = options.index(detected)
+    else:
+        index = 0
+    return st.selectbox(label, options, index=index, key=f"map_{standard_name}")
+
+
+def validate_and_prepare(df, mapping, unit, mode):
+    errors, warnings = [], []
+    if len(df) == 0:
+        errors.append("The file contains no data rows.")
+    if len(df) > 100_000:
+        errors.append("The public app accepts up to 100,000 rows per run.")
+    required_selected = [mapping[name] for name in REQUIRED_NAMES]
+    if len(set(required_selected)) != len(required_selected):
+        errors.append("Each required field must map to a different CSV column.")
+
+    standardized = df.copy()
+    rename = {source: target for target, source in mapping.items() if source != "— not provided —"}
+    standardized = standardized.rename(columns=rename)
+    standardized["timestamp"] = pd.to_datetime(standardized["timestamp"], errors="coerce")
+    for name in ("temperature", "humidity", "latitude", "longitude"):
+        standardized[name] = pd.to_numeric(standardized[name], errors="coerce")
+    for name in ("elevation", "tree_canopy_cover", "life", *ERA5_COLUMNS):
+        if name in standardized:
+            standardized[name] = pd.to_numeric(standardized[name], errors="coerce")
+
+    missing_required = standardized[list(REQUIRED_NAMES)].isna().any(axis=1)
+    if missing_required.any():
+        errors.append(f"{int(missing_required.sum()):,} rows have invalid or missing required values.")
+    if (~standardized["humidity"].dropna().between(0, 100)).any():
+        errors.append("Humidity must be between 0 and 100 percent.")
+    if (~standardized["latitude"].dropna().between(-90, 90)).any():
+        errors.append("Latitude must be between -90 and 90 degrees.")
+    if (~standardized["longitude"].dropna().between(-180, 180)).any():
+        errors.append("Longitude must be between -180 and 180 degrees.")
+
+    if unit == "Fahrenheit (°F)":
+        standardized["temperature"] = (standardized["temperature"] - 32) * 5 / 9
+    if (~standardized["temperature"].dropna().between(-60, 80)).any():
+        warnings.append("Some converted temperatures fall outside −60 to 80°C. Confirm the selected unit.")
+
+    key_columns = ["timestamp"]
+    if "sensor_id" in standardized and standardized["sensor_id"].notna().any():
+        key_columns.insert(0, "sensor_id")
+    else:
+        key_columns = ["latitude", "longitude", "timestamp"]
+    duplicates = standardized.duplicated(key_columns, keep="first")
+    if duplicates.any():
+        warnings.append(f"{int(duplicates.sum()):,} duplicate sensor-time rows were removed.")
+        standardized = standardized.loc[~duplicates].copy()
+
+    if "sensor_id" not in standardized:
+        warnings.append("Coordinates are being used to group readings. Add sensor_id when one file contains multiple devices.")
+    for optional in ("elevation", "tree_canopy_cover", "life"):
+        if optional not in standardized:
+            warnings.append(f"{optional} is absent; XGBoost will use its learned missing-value path.")
+
+    if mode == "paper":
+        missing_weather = [name for name in ERA5_COLUMNS if name not in standardized]
+        if missing_weather:
+            errors.append("Paper mode requires these exact ERA5 columns: " + ", ".join(missing_weather))
+        elif standardized[list(ERA5_COLUMNS)].isna().any().any():
+            errors.append("Paper mode requires complete ERA5 values in every row.")
+
+    return standardized, errors, warnings
+
+
+def result_table(original, calibrated, unit):
+    output = original.copy().reset_index(drop=True)
+    celsius = calibrated["calibrated_temperature_c"].to_numpy()
+    correction_c = calibrated["calibration_correction_c"].to_numpy()
+    if unit == "Fahrenheit (°F)":
+        output["temperature_calibrated"] = celsius * 9 / 5 + 32
+        output["calibration_correction"] = correction_c * 9 / 5
+    else:
+        output["temperature_calibrated"] = celsius
+        output["calibration_correction"] = correction_c
+    output["model_used"] = calibrated["model_used"].to_numpy()
+    output["history_status"] = calibrated["history_status"].to_numpy()
+    return output
+
+
+def calibration_report(output, mode, unit, metadata):
+    unit_symbol = "°F" if "Fahrenheit" in unit else "°C"
+    correction = output["calibration_correction"]
+    lines = [
+        "# PurpleAir temperature calibration report",
+        "",
+        f"Generated: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}",
+        f"Mode: {'Temporal-National paper model' if mode == 'paper' else 'Adaptive sensor-only deployment models'}",
+        f"Records: {len(output):,}",
+        f"Temperature unit: {unit_symbol}",
+        f"Mean applied correction: {correction.mean():.2f} {unit_symbol}",
+        f"Median applied correction: {correction.median():.2f} {unit_symbol}",
+        "",
+        "The applied correction is a model output. It is not an error estimate for this uploaded dataset.",
+        "Review the model scope and limitations before scientific or operational use.",
+        "",
+        f"Source code: {GITHUB_URL}",
+        f"Code archive: {ZENODO_CODE_URL}",
+        "",
+        "## Model metadata",
+        "",
+    ]
+    for name, details in metadata.items():
+        if isinstance(details, dict) and "label" in details:
+            lines.append(f"- {details['label']}: MAE {details.get('test_mae_c', '—')}°C; RMSE {details.get('test_rmse_c', '—')}°C")
+    return "\n".join(lines) + "\n"
+
+
+def render_results(output, mode, unit, metadata, prefix="result"):
+    unit_symbol = "°F" if "Fahrenheit" in unit else "°C"
+    original_column = "temperature"
+    correction = output["calibration_correction"]
+    cols = st.columns(4)
+    cols[0].metric("Readings calibrated", f"{len(output):,}")
+    cols[1].metric("Mean correction", f"{correction.mean():.2f} {unit_symbol}")
+    cols[2].metric("Median correction", f"{correction.median():.2f} {unit_symbol}")
+    temporal_share = (output["history_status"] != "warm-up").mean() * 100
+    cols[3].metric("Full-history rows", f"{temporal_share:.1f}%")
+
+    plot_df = output.copy()
+    if len(plot_df) > 2_000:
+        plot_df = plot_df.iloc[np.linspace(0, len(plot_df) - 1, 2_000, dtype=int)]
+    x = pd.to_datetime(plot_df.get("timestamp"), errors="coerce")
+    if x.isna().all():
+        x = np.arange(len(plot_df))
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=x, y=plot_df[original_column], name="Sensor", mode="lines", line=dict(color="#e07a3f", width=1.8)))
+    fig.add_trace(go.Scatter(x=x, y=plot_df["temperature_calibrated"], name="Calibrated", mode="lines", line=dict(color="#1769aa", width=2.2)))
+    fig.update_layout(
+        height=410, margin=dict(l=20, r=20, t=40, b=20), template="plotly_white",
+        title="Sensor and calibrated temperature", yaxis_title=f"Temperature ({unit_symbol})",
+        hovermode="x unified", legend=dict(orientation="h", y=1.12),
+    )
+    st.plotly_chart(fig, width="stretch")
+
+    left, right = st.columns([1.15, 0.85])
+    with left:
+        st.markdown("#### Output preview")
+        show_columns = [name for name in ("timestamp", "sensor_id", "temperature", "temperature_calibrated", "calibration_correction", "model_used", "history_status") if name in output]
+        st.dataframe(output[show_columns].head(30), width="stretch", hide_index=True)
+    with right:
+        st.markdown("#### Processing summary")
+        counts = output["model_used"].value_counts().rename_axis("Model").reset_index(name="Rows")
+        st.dataframe(counts, width="stretch", hide_index=True)
+        st.caption("A correction value describes the adjustment applied to a sensor reading. Validation error requires independent reference observations.")
+
+    csv = output.to_csv(index=False).encode("utf-8-sig")
+    report = calibration_report(output, mode, unit, metadata)
+    download_left, download_right = st.columns(2)
+    download_left.download_button(
+        "Download calibrated CSV", csv,
+        file_name=f"purpleair_calibrated_{datetime.now().strftime('%Y%m%d_%H%M')}.csv",
+        mime="text/csv", width="stretch", key=f"{prefix}_csv",
+    )
+    download_right.download_button(
+        "Download method report", report,
+        file_name=f"purpleair_calibration_report_{datetime.now().strftime('%Y%m%d_%H%M')}.md",
+        mime="text/markdown", width="stretch", key=f"{prefix}_report",
     )
 
-    col1, col2 = st.columns(2)
 
-    with col1:
-        st.markdown("### Required Data for Upload")
+with st.sidebar:
+    st.markdown("### PurpleAir calibration")
+    st.caption("Open research software · Version 2.0")
+    st.markdown("---")
+    st.markdown("**Final study model**")
+    st.metric("Held-out MAE", "0.64°C")
+    st.caption("Temporal-National XGBoost · 63 features · R² 0.992")
+    st.markdown("---")
+    st.markdown(f"[GitHub repository]({GITHUB_URL})")
+    st.markdown(f"[Archived code]({ZENODO_CODE_URL})")
+    st.markdown(f"[ERA5 archive]({ZENODO_ERA5_URL})")
+    st.markdown("---")
+    st.caption("Yunqian Zhang · Yan Rong · Lu Liang")
+    st.caption("MIT License")
 
-        st.markdown("#### 📍 **Spatial Model** (31 features)")
-        st.markdown("""
-        **Required columns:**
-        - `timestamp` - Date/time (e.g., 2024-01-15 10:00)
-        - `temperature` - Current sensor temp (°F or °C)
-        - `humidity` - Current relative humidity (%)
-        - `latitude` - Sensor latitude (-90 to 90)
-        - `longitude` - Sensor longitude (-180 to 180)
 
-        **Optional** (improve accuracy):
-        - `elevation` - Meters above sea level (default: 0)
-        - `tree_canopy_cover` - Tree cover % (default: 0)
-        - `life` or `age` - Days since deployment (default: 365)
-        """)
+st.markdown(
+    """
+    <div class="hero">
+      <div class="eyebrow">Open research tool · Nationwide calibration</div>
+      <h1>Turn PurpleAir heat bias into research-ready temperature.</h1>
+      <p>Upload hourly sensor readings, inspect every assumption, and export calibrated temperatures with a reproducible model record. The workflow follows the final nationwide study across 31 U.S. states.</p>
+      <span class="pill">797,744 hourly observations</span>
+      <span class="pill">98 PurpleAir sensors</span>
+      <span class="pill">Single national XGBoost model</span>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
-        st.markdown("#### ⏱️ **Temporal Model** (61 features - Higher Accuracy)")
-        st.markdown("""
-        **All Spatial model columns PLUS:**
-        - **Historical data**: Include at least 6 hours of readings before each target timestamp
-        - Upload CSV with multiple rows (one per hour) for the same sensor
-        - Example: If calibrating 2024-01-15 12:00, include rows from 06:00 to 12:00
+st.write("")
+calibrate_tab, example_tab, method_tab = st.tabs(["Calibrate data", "Working example", "Method & limits"])
 
-        **Automatically derived from your data:**
-        - Lagged features (temp/humidity 1-6h ago)
-        - Rolling statistics (moving averages, std dev)
-        - Cumulative radiation (past 3-6h)
-        - Temperature trends & acceleration
-        - Hot/cold persistence counters
+with calibrate_tab:
+    st.markdown("## Calibrate your CSV")
+    st.caption("Your file is processed in this session. The app does not retain uploaded data.")
+    mode_label = st.radio(
+        "Choose a workflow",
+        ["Direct calibration · five required columns", "Final paper model · ERA5 columns required"],
+        horizontal=True,
+        help="Direct calibration uses deployment models trained from the same study dataset. Paper mode runs the exact 63-feature Temporal-National model.",
+    )
+    mode = "paper" if mode_label.startswith("Final") else "accessible"
 
-        **Automatically fetched:**
-        - ERA5 meteorological data (solar radiation, wind, pressure, etc.) via lat/lon/time
-        - Dewpoint, VPD, wind speed/direction
-        - Time encodings (hour, day, sin/cos transforms)
-        - Interaction terms (temp×humidity, etc.)
-        """)
+    intro_left, intro_right = st.columns([1.7, 1])
+    with intro_left:
+        uploaded = st.file_uploader("Drop a CSV here", type="csv", help="Maximum 100,000 rows")
+    with intro_right:
+        st.markdown("##### Start from a known-good file")
+        st.download_button(
+            "Download example CSV", sample_bytes(), file_name="purpleair_example.csv",
+            mime="text/csv", width="stretch",
+        )
+        st.caption("The example contains hourly Fahrenheit readings from one sensor.")
 
-    with col2:
-        st.markdown("### Calibration Model")
-        st.info("""
-        **Temporal-TempStrat** (Active)
-
-        Temperature-stratified machine learning calibration using:
-        - 3 XGBoost models (Cold/Moderate/Hot)
-        - 63 engineered features
-        - Real-time ERA5 meteorological data
-        - Temporal features (12-hour history)
-
-        **Performance**: RMSE 1.43°C overall
-        """)
-
-    if uploaded_file is not None:
+    if uploaded is not None:
         try:
-            # Read uploaded file
-            df = pd.read_csv(uploaded_file)
-
-            st.success(f"✅ File uploaded successfully! {len(df)} rows detected.")
-
-            # Show preview
-            with st.expander("📋 Preview Data (first 5 rows)"):
-                st.dataframe(df.head())
-
-            # Detect columns
-            st.markdown("## Step 2: Column Detection")
-
-            # Auto-detect columns
-            temp_cols = [col for col in df.columns if 'temp' in col.lower()]
-            time_cols = [col for col in df.columns if any(x in col.lower() for x in ['time', 'date'])]
-            humid_cols = [col for col in df.columns if 'humid' in col.lower()]
-            lat_cols = [col for col in df.columns if 'lat' in col.lower()]
-            lon_cols = [col for col in df.columns if 'lon' in col.lower()]
-            elev_cols = [col for col in df.columns if any(x in col.lower() for x in ['elev', 'altitude', 'height'])]
-            life_cols = [col for col in df.columns if any(x in col.lower() for x in ['life', 'age', 'day'])]
-
-            st.markdown("#### Required Columns")
-            col1, col2, col3 = st.columns(3)
-
-            with col1:
-                temp_col = st.selectbox("Temperature column:", temp_cols if temp_cols else df.columns)
-
-            with col2:
-                time_col = st.selectbox("Timestamp column:", time_cols if time_cols else df.columns, index=0 if time_cols else 0)
-
-            with col3:
-                humid_col = st.selectbox("Humidity column:", humid_cols if humid_cols else df.columns)
-
-            col1, col2 = st.columns(2)
-
-            with col1:
-                lat_col = st.selectbox("Latitude column:", lat_cols if lat_cols else df.columns)
-
-            with col2:
-                lon_col = st.selectbox("Longitude column:", lon_cols if lon_cols else df.columns)
-
-            # Optional columns
-            st.markdown("#### Optional Columns (for better accuracy)")
-
-            col1, col2 = st.columns(2)
-
-            with col1:
-                use_elevation = st.checkbox("Include elevation data", value=bool(elev_cols))
-                if use_elevation:
-                    elev_col = st.selectbox(
-                        "Elevation column (meters):",
-                        elev_cols if elev_cols else df.columns,
-                        help="Sensor elevation above sea level in meters"
-                    )
-                else:
-                    elev_col = None
-
-            with col2:
-                use_life = st.checkbox("Include sensor age data", value=bool(life_cols))
-                if use_life:
-                    life_col = st.selectbox(
-                        "Sensor age column (days):",
-                        life_cols if life_cols else df.columns,
-                        help="Days since sensor deployment"
-                    )
-                else:
-                    life_col = None
-
-            # Temperature unit
-            temp_unit = st.radio("Temperature unit:", ["Fahrenheit (°F)", "Celsius (°C)"])
-
-            # Calibration button
-            st.markdown("## Step 3: Calibrate")
-
-            if st.button("🚀 Start Calibration", type="primary"):
-                try:
-                    with st.spinner("Step 1/4: Preparing data..."):
-                        # Prepare input dataframe
-                        df_input = df.copy()
-
-                        # Rename columns to standard names
-                        rename_dict = {
-                            time_col: 'timestamp',
-                            temp_col: 'temperature',
-                            humid_col: 'humidity',
-                            lat_col: 'latitude',
-                            lon_col: 'longitude'
-                        }
-
-                        # Add optional columns if provided
-                        if use_elevation and elev_col:
-                            rename_dict[elev_col] = 'elevation'
-                        if use_life and life_col:
-                            rename_dict[life_col] = 'life'
-
-                        df_input = df_input.rename(columns=rename_dict)
-
-                        # Convert timestamp to datetime
-                        df_input['timestamp'] = pd.to_datetime(df_input['timestamp'])
-
-                        # Convert temperature to Celsius if needed
-                        if "Fahrenheit" in temp_unit:
-                            df_input['temperature'] = (df_input['temperature'] - 32) * 5/9
-
-                        # Validate data
-                        if df_input['latitude'].isna().any() or df_input['longitude'].isna().any():
-                            st.error("❌ Missing latitude or longitude values detected. Please ensure all rows have location data.")
-                            st.stop()
-
-                        # Show info about optional data
-                        optional_info = []
-                        if 'elevation' in df_input.columns:
-                            elev_range = f"{df_input['elevation'].min():.1f}-{df_input['elevation'].max():.1f}m"
-                            optional_info.append(f"Elevation: {elev_range}")
-                        else:
-                            optional_info.append("Elevation: Using default (0m)")
-
-                        if 'life' in df_input.columns:
-                            life_range = f"{df_input['life'].min():.0f}-{df_input['life'].max():.0f} days"
-                            optional_info.append(f"Sensor age: {life_range}")
-                        else:
-                            optional_info.append("Sensor age: Using default (365 days)")
-
-                        st.info("📊 " + " | ".join(optional_info))
-
-                        # Check data range
-                        if not df_input['timestamp'].between('2022-01-01', '2024-12-31').all():
-                            st.warning("⚠️ Some timestamps are outside 2022-2024 range. ERA5 data may not be available for all records.")
-
-                    with st.spinner("Step 2/4: Fetching ERA5 meteorological data..."):
-                        # Load ERA5 data
-                        era5_reader = ERA5Reader()
-                        df_with_era5 = era5_reader.get_batch_era5_data(df_input)
-                        era5_reader.close()
-                        st.success(f"✅ Loaded ERA5 data for {len(df_with_era5)} records")
-
-                    with st.spinner("Step 3/4: Engineering 63 features..."):
-                        # Feature engineering
-                        engineer = FeatureEngineer()
-                        df_features = engineer.engineer_all_features(df_with_era5)
-                        feature_list = engineer.get_feature_list()
-                        st.success(f"✅ Generated {len(feature_list)} features")
-
-                    with st.spinner("Step 4/4: Applying temperature-stratified calibration models..."):
-                        # Calibration
-                        calibrator = TemperatureCalibrator()
-                        df_result = calibrator.calibrate(df_features, feature_list)
-                        st.success("✅ Calibration complete!")
-
-                    # Convert back to original unit if needed
-                    if "Fahrenheit" in temp_unit:
-                        temps_display = df_result['sensor temperature'].values * 9/5 + 32
-                        calibrated_temps_display = df_result['calibrated_temperature'].values * 9/5 + 32
-                        correction_display = df_result['calibration_correction'].values * 9/5
-                    else:
-                        temps_display = df_result['sensor temperature'].values
-                        calibrated_temps_display = df_result['calibrated_temperature'].values
-                        correction_display = df_result['calibration_correction'].values
-
-                    # Prepare output dataframe
-                    df_calibrated = df.copy()
-                    df_calibrated['temperature_original'] = temps_display
-                    df_calibrated['temperature_calibrated'] = calibrated_temps_display
-                    df_calibrated['calibration_correction'] = correction_display
-                    df_calibrated['temperature_regime'] = df_result['temperature_regime']
-
-                    # Store in session state
-                    st.session_state['df_calibrated'] = df_calibrated
-                    st.session_state['temps_original'] = temps_display
-                    st.session_state['temps_calibrated'] = calibrated_temps_display
-                    st.session_state['temp_unit'] = temp_unit
-
-                except FileNotFoundError as e:
-                    st.error(f"❌ ERA5 data file not found: {str(e)}")
-                    st.info("Please ensure ERA5 NetCDF files are available in the data directory for the time period of your data.")
-                    st.stop()
-                except Exception as e:
-                    st.error(f"❌ Calibration failed: {str(e)}")
-                    st.exception(e)
-                    st.stop()
-
-            # Show results if calibration has been performed
-            if 'df_calibrated' in st.session_state:
-                st.markdown("## Step 4: Results")
-
-                df_result = st.session_state['df_calibrated']
-                temps_orig = st.session_state['temps_original']
-                temps_calib = st.session_state['temps_calibrated']
-                unit = "°F" if "Fahrenheit" in st.session_state['temp_unit'] else "°C"
-
-                # Metrics
-                col1, col2, col3, col4, col5 = st.columns(5)
-
-                with col1:
-                    avg_correction = np.mean(df_result['calibration_correction'])
-                    st.metric("Average Correction", f"{avg_correction:.2f} {unit}")
-
-                with col2:
-                    max_correction = np.max(df_result['calibration_correction'])
-                    st.metric("Max Correction", f"{max_correction:.2f} {unit}")
-
-                with col3:
-                    orig_mean = np.mean(temps_orig)
-                    st.metric("Original Mean", f"{orig_mean:.2f} {unit}")
-
-                with col4:
-                    calib_mean = np.mean(temps_calib)
-                    st.metric("Calibrated Mean", f"{calib_mean:.2f} {unit}")
-
-                with col5:
-                    n_records = len(df_result)
-                    st.metric("Total Records", f"{n_records:,}")
-
-                # Temperature regime distribution
-                if 'temperature_regime' in df_result.columns:
-                    st.markdown("### 🌡️ Temperature Regime Distribution")
-                    regime_counts = df_result['temperature_regime'].value_counts()
-                    col1, col2, col3 = st.columns(3)
-
-                    with col1:
-                        cold_pct = (regime_counts.get('cold', 0) / len(df_result)) * 100
-                        st.metric("Cold (<10°C)", f"{cold_pct:.1f}%", f"{regime_counts.get('cold', 0)} records")
-
-                    with col2:
-                        normal_pct = (regime_counts.get('normal', 0) / len(df_result)) * 100
-                        st.metric("Moderate (10-30°C)", f"{normal_pct:.1f}%", f"{regime_counts.get('normal', 0)} records")
-
-                    with col3:
-                        hot_pct = (regime_counts.get('hot', 0) / len(df_result)) * 100
-                        st.metric("Hot (>30°C)", f"{hot_pct:.1f}%", f"{regime_counts.get('hot', 0)} records")
-
-                # Visualization
-                st.markdown("### 📊 Calibration Visualization")
-
-                # Time series plot
-                fig = go.Figure()
-
-                # Sample data if too many points
-                n_points = len(df_result)
-                if n_points > 1000:
-                    sample_idx = np.linspace(0, n_points-1, 1000, dtype=int)
-                else:
-                    sample_idx = np.arange(n_points)
-
-                fig.add_trace(go.Scatter(
-                    y=temps_orig[sample_idx],
-                    mode='lines',
-                    name='Original Temperature',
-                    line=dict(color='#ff7f0e', width=2),
-                    hovertemplate='Original: %{y:.2f}' + unit + '<extra></extra>'
-                ))
-
-                fig.add_trace(go.Scatter(
-                    y=temps_calib[sample_idx],
-                    mode='lines',
-                    name='Calibrated Temperature',
-                    line=dict(color='#1f77b4', width=2),
-                    hovertemplate='Calibrated: %{y:.2f}' + unit + '<extra></extra>'
-                ))
-
-                fig.update_layout(
-                    title="Temperature: Original vs Calibrated",
-                    xaxis_title="Data Point",
-                    yaxis_title=f"Temperature ({unit})",
-                    hovermode='x unified',
-                    height=400,
-                    template='plotly_white'
-                )
-
-                st.plotly_chart(fig, use_container_width=True)
-
-                # Distribution comparison
-                col1, col2 = st.columns(2)
-
-                with col1:
-                    fig_hist = go.Figure()
-                    fig_hist.add_trace(go.Histogram(
-                        x=temps_orig,
-                        name='Original',
-                        nbinsx=30,
-                        opacity=0.7,
-                        marker_color='#ff7f0e'
-                    ))
-                    fig_hist.add_trace(go.Histogram(
-                        x=temps_calib,
-                        name='Calibrated',
-                        nbinsx=30,
-                        opacity=0.7,
-                        marker_color='#1f77b4'
-                    ))
-                    fig_hist.update_layout(
-                        title="Temperature Distribution",
-                        xaxis_title=f"Temperature ({unit})",
-                        yaxis_title="Frequency",
-                        barmode='overlay',
-                        height=350,
-                        template='plotly_white'
-                    )
-                    st.plotly_chart(fig_hist, use_container_width=True)
-
-                with col2:
-                    fig_corr = go.Figure()
-                    fig_corr.add_trace(go.Histogram(
-                        x=df_result['calibration_correction'],
-                        nbinsx=30,
-                        marker_color='#2ca02c'
-                    ))
-                    fig_corr.update_layout(
-                        title="Calibration Correction Distribution",
-                        xaxis_title=f"Correction ({unit})",
-                        yaxis_title="Frequency",
-                        height=350,
-                        template='plotly_white'
-                    )
-                    st.plotly_chart(fig_corr, use_container_width=True)
-
-                # Download section
-                st.markdown("### 💾 Download Results")
-
-                col1, col2 = st.columns(2)
-
-                with col1:
-                    # Prepare CSV
-                    csv_buffer = io.StringIO()
-                    df_result.to_csv(csv_buffer, index=False)
-                    csv_data = csv_buffer.getvalue()
-
-                    st.download_button(
-                        label="📥 Download Calibrated Data (CSV)",
-                        data=csv_data,
-                        file_name=f"purpleair_calibrated_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
-                        mime="text/csv",
-                        help="Download complete dataset with calibrated temperatures"
-                    )
-
-                with col2:
-                    # Prepare summary report
-                    regime_dist = ""
-                    if 'temperature_regime' in df_result.columns:
-                        regime_counts = df_result['temperature_regime'].value_counts()
-                        cold_pct = (regime_counts.get('cold', 0) / len(df_result)) * 100
-                        normal_pct = (regime_counts.get('normal', 0) / len(df_result)) * 100
-                        hot_pct = (regime_counts.get('hot', 0) / len(df_result)) * 100
-                        regime_dist = f"""
-Temperature Regime Distribution:
-- Cold (<10°C): {regime_counts.get('cold', 0)} records ({cold_pct:.1f}%)
-- Moderate (10-30°C): {regime_counts.get('normal', 0)} records ({normal_pct:.1f}%)
-- Hot (>30°C): {regime_counts.get('hot', 0)} records ({hot_pct:.1f}%)
-"""
-
-                    report = f"""PurpleAir Temperature Calibration Report
-Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-
-Dataset Information:
-- Total readings: {len(df_result):,}
-- Temperature unit: {unit}
-{regime_dist}
-Calibration Results:
-- Original mean temperature: {orig_mean:.2f} {unit}
-- Calibrated mean temperature: {calib_mean:.2f} {unit}
-- Average correction: {avg_correction:.2f} {unit}
-- Max correction: {max_correction:.2f} {unit}
-- Min correction: {np.min(df_result['calibration_correction']):.2f} {unit}
-
-Model Used: Temporal-TempStrat (Temperature-Stratified XGBoost)
-Features: 63 engineered features including temporal, spatial, and meteorological variables
-Data Sources: PurpleAir sensors + ERA5 reanalysis
-
-Reference:
-- GitHub: https://github.com/yunqianz728/purpleair-calibration
-- DOI: 10.5281/zenodo.18463819
-- Paper: Nationwide Calibration of PurpleAir Temperature Sensors
-
-Citation:
-Zhang, Y., Rong, Y., & Liang, L. (2025). Nationwide Calibration of
-PurpleAir Temperature Sensors for Heat Exposure Research.
-"""
-
-                    st.download_button(
-                        label="📄 Download Summary Report (TXT)",
-                        data=report,
-                        file_name=f"calibration_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
-                        mime="text/plain",
-                        help="Download summary statistics and methodology"
-                    )
-
-        except Exception as e:
-            st.error(f"❌ Error processing file: {str(e)}")
-            st.info("Please ensure your CSV file is properly formatted and contains temperature data.")
-
-with tab2:
-    st.markdown("## 🎯 Interactive Demo")
-    st.info("This demo shows how the calibration works with sample data.")
-
-    if st.button("Generate Sample Data"):
-        # Generate synthetic PurpleAir data
-        np.random.seed(42)
-        n_samples = 500
-
-        # Simulate biased PurpleAir readings
-        true_temps = np.random.normal(20, 10, n_samples)  # True temperature in Celsius
-
-        # Add bias (simulating sensor heating effect)
-        bias = 3 + 0.1 * true_temps + np.random.normal(0, 1, n_samples)
-        sensor_temps = true_temps + bias
-
-        # Apply calibration
-        calibrated_temps = sensor_temps - (3.5 + 0.08 * sensor_temps)
-
-        # Create DataFrame
-        dates = pd.date_range(start='2024-01-01', periods=n_samples, freq='h')
-        demo_df = pd.DataFrame({
-            'timestamp': dates,
-            'temperature_sensor': sensor_temps,
-            'temperature_calibrated': calibrated_temps,
-            'temperature_true': true_temps
-        })
-
-        # Plot
-        fig = go.Figure()
-
-        fig.add_trace(go.Scatter(
-            x=demo_df['timestamp'],
-            y=demo_df['temperature_sensor'],
-            mode='lines',
-            name='Uncalibrated Sensor',
-            line=dict(color='red', width=2)
-        ))
-
-        fig.add_trace(go.Scatter(
-            x=demo_df['timestamp'],
-            y=demo_df['temperature_calibrated'],
-            mode='lines',
-            name='Calibrated',
-            line=dict(color='blue', width=2)
-        ))
-
-        fig.add_trace(go.Scatter(
-            x=demo_df['timestamp'],
-            y=demo_df['temperature_true'],
-            mode='lines',
-            name='Reference (True)',
-            line=dict(color='green', width=2, dash='dash')
-        ))
-
-        fig.update_layout(
-            title="Calibration Demo: Sensor vs Reference Temperature",
-            xaxis_title="Time",
-            yaxis_title="Temperature (°C)",
-            hovermode='x unified',
-            height=500,
-            template='plotly_white'
+            raw_df = read_uploaded_csv(uploaded)
+        except Exception as exc:
+            st.error(str(exc))
+            st.stop()
+        st.success(f"Loaded {len(raw_df):,} rows and {len(raw_df.columns)} columns.")
+        with st.expander("Preview and map columns", expanded=True):
+            st.dataframe(raw_df.head(10), width="stretch", hide_index=True)
+            map_cols = st.columns(3)
+            mapping = {}
+            for index, name in enumerate(REQUIRED_NAMES):
+                with map_cols[index % 3]:
+                    mapping[name] = column_selector(name.replace("_", " ").title(), name, raw_df.columns)
+            st.markdown("**Optional context**")
+            optional_cols = st.columns(4)
+            for index, name in enumerate(("sensor_id", "elevation", "tree_canopy_cover", "life")):
+                with optional_cols[index]:
+                    mapping[name] = column_selector(name.replace("_", " ").title(), name, raw_df.columns, required=False)
+            unit = st.radio("Input temperature unit", ["Fahrenheit (°F)", "Celsius (°C)"], horizontal=True)
+
+        if st.button("Validate and calibrate", type="primary", width="stretch"):
+            prepared, errors, warnings = validate_and_prepare(raw_df, mapping, unit, mode)
+            for warning in warnings:
+                st.warning(warning)
+            if errors:
+                for error in errors:
+                    st.error(error)
+            else:
+                with st.spinner("Engineering features and running XGBoost…"):
+                    engineered = FeatureEngineer().engineer_all_features(prepared)
+                    calibrator = load_calibrator()
+                    calibrated = calibrator.calibrate(engineered, mode=mode)
+                    output = result_table(prepared, calibrated, unit)
+                    st.session_state["calibration_output"] = output
+                    st.session_state["calibration_mode"] = mode
+                    st.session_state["calibration_unit"] = unit
+                st.success("Calibration completed with a traceable model label for every row.")
+
+        if "calibration_output" in st.session_state:
+            st.markdown("## Results")
+            render_results(
+                st.session_state["calibration_output"],
+                st.session_state["calibration_mode"],
+                st.session_state["calibration_unit"],
+                load_calibrator().get_model_info(),
+                prefix="upload",
+            )
+
+with example_tab:
+    st.markdown("## Run the real pipeline on included data")
+    st.write("This example uses the packaged XGBoost deployment models. It demonstrates file structure, temporal warm-up, charts, and downloads.")
+    if st.button("Run working example", type="primary", key="run_example"):
+        sample = pd.read_csv(APP_DIR / "sample_data.csv")
+        sample["temperature"] = (sample["temperature"] - 32) * 5 / 9
+        engineered = FeatureEngineer().engineer_all_features(sample)
+        calibrated = load_calibrator().calibrate(engineered, mode="accessible")
+        output = result_table(sample, calibrated, "Celsius (°C)")
+        st.session_state["example_output"] = output
+    if "example_output" in st.session_state:
+        render_results(
+            st.session_state["example_output"], "accessible", "Celsius (°C)",
+            load_calibrator().get_model_info(), prefix="example",
         )
 
-        st.plotly_chart(fig, use_container_width=True)
+with method_tab:
+    st.markdown("## What the tool implements")
+    paper_col, direct_col = st.columns(2)
+    with paper_col:
+        st.markdown("### Final paper model")
+        st.write("A single Temporal-National XGBoost model uses 63 sensor, site, ERA5, and temporal features. It achieved 0.64°C MAE, 0.87°C RMSE, and R² = 0.992 on the held-out test set reported in the final manuscript.")
+        st.info("Use this mode when your table already contains SSHF, SSRD, STRD, TP, u10, and v10 from ERA5 in the same units used by the archive.")
+    with direct_col:
+        st.markdown("### Direct calibration")
+        st.write("Two deployment models make the site usable from standard PurpleAir exports. Continuous sequences switch to the sensor-only temporal model after six prior hourly records. Isolated and early readings use the instant warm-up model.")
+        st.info("These deployment models are validated separately and identified in every downloaded row.")
 
-        # Error metrics
-        col1, col2, col3 = st.columns(3)
+    metadata = load_calibrator().get_model_info()
+    rows = []
+    for key in ("paper", "sensor_temporal", "instant"):
+        item = metadata.get(key, {})
+        if item:
+            rows.append({
+                "Model": item.get("label", key), "Features": item.get("features"),
+                "Held-out MAE (°C)": item.get("test_mae_c"),
+                "Held-out RMSE (°C)": item.get("test_rmse_c"), "R²": item.get("test_r2"),
+            })
+    if rows:
+        st.dataframe(pd.DataFrame(rows), width="stretch", hide_index=True)
 
-        uncalib_mae = np.mean(np.abs(demo_df['temperature_sensor'] - demo_df['temperature_true']))
-        calib_mae = np.mean(np.abs(demo_df['temperature_calibrated'] - demo_df['temperature_true']))
-        improvement = ((uncalib_mae - calib_mae) / uncalib_mae) * 100
+    st.markdown("### Scope and responsible use")
+    st.markdown(
+        """
+        - The study covers PA-II sensors in Arid, Temperate, and Continental U.S. climate zones from June 2022 through December 2024.
+        - Site installation, enclosure changes, firmware changes, unusual shading, and extreme microclimates can shift performance.
+        - ERA5 has several days of latency. Paper-mode near-real-time deployment requires an operational meteorological substitute that has been validated against the training inputs.
+        - Calibrated output supports research and screening. Safety-critical heat warnings should retain reference-grade observations and established operational protocols.
+        - Uploaded timestamps should represent local standard time, matching the study feature engineering.
+        """
+    )
+    st.markdown("### Citation")
+    st.code(
+        "Zhang, Y., Rong, Y., & Liang, L. Nationwide Evaluation and Calibration of "
+        "PurpleAir Temperature Sensors for Urban Thermal Environment Research.",
+        language=None,
+    )
 
-        with col1:
-            st.metric("Uncalibrated MAE", f"{uncalib_mae:.2f}°C")
-
-        with col2:
-            st.metric("Calibrated MAE", f"{calib_mae:.2f}°C", f"-{improvement:.1f}%")
-
-        with col3:
-            st.metric("Error Reduction", f"{improvement:.1f}%")
-
-with tab3:
-    st.markdown("## ❓ Frequently Asked Questions")
-
-    with st.expander("📋 What data format do I need?"):
-        st.markdown("""
-        ## 📍 Spatial Model (31 features)
-
-        **Required columns:**
-        - **timestamp**: Date/time (YYYY-MM-DD HH:MM:SS)
-        - **temperature**: Current sensor temp (°F or °C)
-        - **humidity**: Current relative humidity (0-100%)
-        - **latitude**: Sensor latitude (-90 to 90)
-        - **longitude**: Sensor longitude (-180 to 180)
-
-        **Optional** (improve accuracy):
-        - **elevation**: Meters above sea level (default: 0)
-        - **tree_canopy_cover**: Tree cover % (default: 0)
-        - **life** or **age**: Days since deployment (default: 365)
-
-        **Example (single reading):**
-        ```csv
-        timestamp,temperature,humidity,latitude,longitude,elevation,life
-        2024-01-15 12:00:00,68.5,45.2,37.7749,-122.4194,15,450
-        ```
-
-        ---
-
-        ## ⏱️ Temporal Model (61 features - Higher Accuracy)
-
-        **Required columns:** All Spatial columns PLUS historical data
-
-        **Critical:** Upload CSV with **at least 6 hours of prior readings** for each target timestamp
-
-        **Example (time series for temporal model):**
-        ```csv
-        timestamp,temperature,humidity,latitude,longitude,elevation,life
-        2024-01-15 06:00:00,65.2,48.5,37.7749,-122.4194,15,450
-        2024-01-15 07:00:00,66.8,47.1,37.7749,-122.4194,15,450
-        2024-01-15 08:00:00,67.3,46.8,37.7749,-122.4194,15,450
-        2024-01-15 09:00:00,67.9,45.9,37.7749,-122.4194,15,450
-        2024-01-15 10:00:00,68.1,45.5,37.7749,-122.4194,15,450
-        2024-01-15 11:00:00,68.4,45.3,37.7749,-122.4194,15,450
-        2024-01-15 12:00:00,68.5,45.2,37.7749,-122.4194,15,450  ← Target
-        ```
-
-        **What the app auto-derives from your data:**
-        - ✅ Lagged features (temp/humidity 1-6h ago)
-        - ✅ Rolling statistics (moving averages, std dev, ranges)
-        - ✅ Cumulative radiation (past 3-6h)
-        - ✅ Temperature trends & acceleration
-        - ✅ Hot/cold persistence counters
-
-        **What the app auto-fetches:**
-        - ✅ ERA5 meteorological data (solar radiation, wind, pressure, etc.) via lat/lon/time
-        - ✅ Derived meteorological features (dewpoint, VPD, wind speed/direction)
-        - ✅ Time encodings (hour, day, month, sin/cos transforms)
-        - ✅ Interaction terms (temp×humidity, temp×age)
-
-        ---
-
-        **Important Notes:**
-        - Timestamps must be between 2022-01-01 and 2024-12-31 (ERA5 data availability)
-        - Coordinates must be within CONUS (continental US) for best results
-        - Hourly data works best (model was trained on hourly observations)
-        - For Temporal model: **Include 6+ hours of history** before your target timestamp
-        """)
-
-    with st.expander("🎯 How does the model work?"):
-        st.markdown("""
-        **Temporal-TempStrat** uses temperature-stratified machine learning:
-
-        **Three Specialized Models:**
-        - **Cold Model** (<10°C): RMSE 1.52°C
-        - **Moderate Model** (10-30°C): RMSE 1.38°C
-        - **Hot Model** (>30°C): RMSE 1.45°C
-
-        **Why Stratification?**
-        - Sensor bias varies significantly across temperature ranges
-        - Cold: Minimal solar heating, conduction-dominated
-        - Moderate: Balanced thermal conditions
-        - Hot: Strong solar heating effects, radiation-dominated
-
-        **Processing Steps:**
-        1. Fetch ERA5 meteorological data for your location/time
-        2. Calculate 63 engineered features
-        3. Apply appropriate model based on temperature
-        4. Return calibrated temperature
-
-        **Processing Time:** ~10-30 seconds per 1000 records (depends on ERA5 data access)
-        """)
-
-    with st.expander("📊 How accurate is the calibration?"):
-        st.markdown("""
-        Our calibration achieves:
-        - **RMSE: 1.43°C overall** (compared to ASOS/AWOS reference stations)
-        - **90% error reduction** compared to uncalibrated sensors
-        - Validated on **2,682 sensors** across **CONUS** (2018-2022)
-
-        **Performance by temperature range:**
-        - **Cold** (<10°C): RMSE 1.52°C
-        - **Moderate** (10-30°C): RMSE 1.38°C
-        - **Hot** (>30°C): RMSE 1.45°C
-
-        **Why is this better?**
-        - Uncalibrated sensors: RMSE ~5-8°C (significant solar heating bias)
-        - Our calibration: RMSE 1.43°C (captures sensor thermal dynamics)
-        - Improvement: 70-85% error reduction
-
-        **Validation:**
-        - Training: 70% of sensor-hours (stratified by climate zone)
-        - Testing: 30% hold-out set (unseen sensors and time periods)
-        - Cross-validation: 5-fold stratified CV
-        """)
-
-    with st.expander("🏔️ Should I include elevation and sensor age data?"):
-        st.markdown("""
-        **Yes, we highly recommend it!** These optional fields improve calibration accuracy:
-
-        **Elevation (meters above sea level):**
-        - Affects atmospheric pressure and temperature lapse rates
-        - Important for sensors at different altitudes (mountains vs. valleys)
-        - Default (0m) assumes sea level - less accurate for high-elevation sensors
-        - Impact: Can reduce error by 0.1-0.3°C for high-elevation sites
-
-        **Sensor Age (days since deployment):**
-        - Accounts for sensor degradation over time
-        - Older sensors may exhibit slightly different bias patterns
-        - Default (365 days) assumes 1-year-old sensor
-        - Impact: Minor effect (~0.05°C), but helps with very old/new sensors
-
-        **Where to find this data:**
-        - PurpleAir API provides both fields in sensor metadata
-        - Elevation: `sensor.altitude` field (in feet - convert to meters)
-        - Age: Calculate from `sensor.date_created` to measurement date
-        - Web interface: Check individual sensor page on purpleair.com
-
-        **Bottom line:** Include if available! Won't hurt if you don't, but helps for accurate results.
-        """)
-
-    with st.expander("🔬 What's the science behind this?"):
-        st.markdown("""
-        This tool implements the methodology from:
-
-        **Nationwide Calibration of PurpleAir Temperature Sensors for Heat Exposure Research**
-
-        Zhang, Y., Rong, Y., & Liang, L. (2025)
-
-        Key innovations:
-        1. **Temperature stratification**: Separate models for different thermal regimes
-        2. **Temporal features**: Captures sensor thermal memory (lagged temperatures, rolling statistics)
-        3. **63 engineered features**: Combines sensor, meteorological, and spatial data
-        4. **Gradient boosting**: XGBoost models optimized for each temperature range
-
-        📄 Full paper: [DOI 10.5281/zenodo.18463819](https://doi.org/10.5281/zenodo.18463819)
-        """)
-
-    with st.expander("💻 Can I use this programmatically?"):
-        st.markdown("""
-        Yes! For automated processing or integration into your workflow:
-
-        **Option 1: Python Package**
-        ```python
-        pip install git+https://github.com/yunqianz728/purpleair-calibration
-
-        from purpleair_calibration import calibrate_temperature
-        calibrated_df = calibrate_temperature(your_data)
-        ```
-
-        **Option 2: Clone Repository**
-        ```bash
-        git clone https://github.com/yunqianz728/purpleair-calibration
-        cd purpleair-calibration
-        python examples/quick_start_example.py
-        ```
-
-        See full documentation at: https://github.com/yunqianz728/purpleair-calibration
-        """)
-
-    with st.expander("📧 Need help or found a bug?"):
-        st.markdown("""
-        We're here to help!
-
-        **Report issues:**
-        - GitHub Issues: https://github.com/yunqianz728/purpleair-calibration/issues
-
-        **Contact:**
-        - Email: lianglu@berkeley.edu
-        - Include your data format and any error messages
-
-        **Contributing:**
-        - We welcome contributions! See CONTRIBUTING.md
-        - Fork the repository and submit a pull request
-        """)
-
-# Footer
 st.markdown("---")
-col1, col2, col3 = st.columns(3)
-
-with col1:
-    st.markdown("**📖 Citation**")
-    st.caption("Zhang et al. (2025)")
-
-with col2:
-    st.markdown("**🔗 Links**")
-    st.caption("[GitHub](https://github.com/yunqianz728/purpleair-calibration) | [DOI](https://doi.org/10.5281/zenodo.18463819)")
-
-with col3:
-    st.markdown("**📜 License**")
-    st.caption("MIT License")
+st.caption("PurpleAir Temperature Calibration · Open source under the MIT License · Model outputs include provenance for every row")

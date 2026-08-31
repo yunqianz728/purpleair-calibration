@@ -1,200 +1,121 @@
-"""
-Model Predictor for PurpleAir Temperature Calibration
-======================================================
+"""Model loading and prediction for the public calibration app."""
 
-Loads trained XGBoost models and performs temperature-stratified prediction.
+from __future__ import annotations
 
-Models:
-- Cold model: T < 10°C
-- Normal model: 10°C ≤ T ≤ 30°C
-- Hot model: T > 30°C
-
-Author: Yunqian Zhang, Lu Liang
-"""
-
-import pickle
-import pandas as pd
-import numpy as np
+import json
 from pathlib import Path
-import warnings
 
-warnings.filterwarnings('ignore')
+import numpy as np
+import pandas as pd
+from xgboost import XGBRegressor
 
-# 模型文件路径
-MODEL_DIR = Path(__file__).parent.parent / "models"
 
-MODELS = {
-    'cold': MODEL_DIR / "station_temperature_cold_xgboost.pkl",
-    'normal': MODEL_DIR / "station_temperature_normal_xgboost.pkl",
-    'hot': MODEL_DIR / "station_temperature_hot_xgboost.pkl"
+MODEL_DIR = Path(__file__).resolve().parent.parent / "models"
+
+INSTANT_FEATURES = [
+    "day", "elevation_sensor", "humidity", "life", "sensor_lat", "sensor_lon",
+    "sensor_tcc", "sensor temperature", "year", "humidity_squared",
+    "temp_squared_sensor", "temp_humidity_product_sensor",
+    "temp_life_interaction_sensor", "dewpoint_sensor",
+    "dewpoint_depression_sensor", "vapor_pressure_deficit_sensor", "hour_sin",
+    "hour_cos", "month_sin", "month_cos", "polar_day_night", "day_of_month",
+    "is_hot", "is_cold",
+]
+
+SENSOR_TEMPORAL_FEATURES = INSTANT_FEATURES + [
+    "sensor_temp_1h_ago", "sensor_temp_2h_ago", "sensor_temp_3h_ago",
+    "sensor_temp_4h_ago", "sensor_temp_5h_ago", "sensor_temp_6h_ago",
+    "humidity_1h_ago", "humidity_2h_ago", "humidity_3h_ago",
+    "temp_change_1h", "temp_change_2h", "temp_change_3h", "temp_acceleration",
+    "temp_ma_3h", "temp_ma_6h", "temp_ma_12h", "temp_std_3h",
+    "temp_std_6h", "temp_std_12h", "temp_range_3h", "temp_range_6h",
+    "temp_trend_3h", "temp_trend_6h", "hot_streak", "cold_streak",
+]
+
+PAPER_FEATURES = [
+    "day", "elevation_sensor", "humidity", "life", "sensor_lat", "sensor_lon",
+    "sensor_tcc", "sensor temperature", "year", "sshf", "ssrd", "strd", "tp",
+    "humidity_squared", "temp_squared_sensor", "temp_humidity_product_sensor",
+    "temp_life_interaction_sensor", "dewpoint_sensor",
+    "dewpoint_depression_sensor", "vapor_pressure_deficit_sensor", "hour_sin",
+    "hour_cos", "month_sin", "month_cos", "diurnal_radiation",
+    "polar_day_night", "day_of_month", "sensor_temp_1h_ago",
+    "sensor_temp_2h_ago", "sensor_temp_3h_ago", "sensor_temp_4h_ago",
+    "sensor_temp_5h_ago", "sensor_temp_6h_ago", "humidity_1h_ago",
+    "humidity_2h_ago", "humidity_3h_ago", "ssrd_1h_ago", "ssrd_2h_ago",
+    "temp_change_1h", "temp_change_2h", "temp_change_3h", "temp_acceleration",
+    "temp_ma_3h", "temp_ma_6h", "temp_ma_12h", "temp_std_3h",
+    "temp_std_6h", "temp_std_12h", "temp_range_3h", "temp_range_6h",
+    "temp_trend_3h", "temp_trend_6h", "ssrd_sum_3h", "ssrd_sum_6h",
+    "ssrd_change", "hot_streak", "cold_streak", "u10", "v10",
+    "wind_speed", "wind_direction", "is_hot", "is_cold",
+]
+
+MODEL_FILES = {
+    "instant": "sensor_only_instant_xgboost.ubj",
+    "sensor_temporal": "sensor_only_temporal_xgboost.ubj",
+    "paper": "paper_temporal_national_xgboost.ubj",
 }
 
 
 class TemperatureCalibrator:
-    """温度分层校准器"""
+    """Apply the paper model or the accessible sensor-only deployment models."""
 
-    def __init__(self):
-        """加载所有模型"""
-        self.models = {}
-        self._load_models()
+    def __init__(self, model_dir: Path = MODEL_DIR):
+        self.model_dir = Path(model_dir)
+        self.models = {name: self._load_model(filename) for name, filename in MODEL_FILES.items()}
+        metadata_path = self.model_dir / "model_metadata.json"
+        self.metadata = json.loads(metadata_path.read_text()) if metadata_path.exists() else {}
 
-    def _load_models(self):
-        """加载XGBoost模型"""
-        for model_name, model_path in MODELS.items():
-            if not model_path.exists():
-                raise FileNotFoundError(f"Model not found: {model_path}")
-
-            try:
-                with open(model_path, 'rb') as f:
-                    self.models[model_name] = pickle.load(f)
-                print(f"✅ Loaded {model_name} model from {model_path.name}")
-            except Exception as e:
-                raise IOError(f"Failed to load {model_name} model: {str(e)}")
+    def _load_model(self, filename: str) -> XGBRegressor:
+        path = self.model_dir / filename
+        if not path.exists():
+            raise FileNotFoundError(f"Required model is missing: {path.name}")
+        model = XGBRegressor()
+        model.load_model(path)
+        return model
 
     @staticmethod
-    def determine_temperature_regime(temperature):
-        """
-        确定温度范围
+    def _predict(model: XGBRegressor, features: pd.DataFrame, columns: list[str]) -> np.ndarray:
+        return model.predict(features[columns])
 
-        Parameters:
-        -----------
-        temperature : float
-            传感器温度（摄氏度）
+    def calibrate(self, features: pd.DataFrame, mode: str = "accessible") -> pd.DataFrame:
+        """Add calibrated temperature, correction, model, and history status."""
+        result = features.copy()
+        full_history = result["_history_hours"] >= 6
 
-        Returns:
-        --------
-        str : 'cold', 'normal', 或 'hot'
-        """
-        if temperature < 10:
-            return 'cold'
-        elif temperature > 30:
-            return 'hot'
+        if mode == "paper":
+            required_weather = ["sshf", "ssrd", "strd", "tp", "u10", "v10"]
+            missing = [name for name in required_weather if result[name].isna().any()]
+            if missing:
+                raise ValueError(
+                    "Paper model requires complete ERA5 columns: " + ", ".join(missing)
+                )
+            predictions = self._predict(self.models["paper"], result, PAPER_FEATURES)
+            model_used = np.repeat("Temporal-National (paper model)", len(result)).astype(object)
+        elif mode == "accessible":
+            predictions = np.empty(len(result), dtype=float)
+            predictions[~full_history] = self._predict(
+                self.models["instant"], result.loc[~full_history], INSTANT_FEATURES
+            )
+            predictions[full_history] = self._predict(
+                self.models["sensor_temporal"],
+                result.loc[full_history],
+                SENSOR_TEMPORAL_FEATURES,
+            )
+            model_used = np.where(
+                full_history,
+                "Sensor-only temporal",
+                "Sensor-only instant (warm-up)",
+            )
         else:
-            return 'normal'
+            raise ValueError(f"Unknown calibration mode: {mode}")
 
-    def calibrate(self, df_features, feature_list):
-        """
-        校准温度
+        result["calibrated_temperature_c"] = predictions
+        result["calibration_correction_c"] = result["sensor temperature"] - predictions
+        result["model_used"] = model_used
+        result["history_status"] = np.where(full_history, "6+ prior hourly records", "warm-up")
+        return result
 
-        Parameters:
-        -----------
-        df_features : pandas.DataFrame
-            包含所有63个特征的数据框
-        feature_list : list
-            模型所需的特征列表（63个特征）
-
-        Returns:
-        --------
-        pandas.DataFrame : 添加了calibrated_temperature列的数据框
-        """
-        df_result = df_features.copy()
-        calibrated_temps = []
-
-        for idx, row in df_result.iterrows():
-            sensor_temp = row['sensor temperature']
-
-            # 确定使用哪个模型
-            regime = self.determine_temperature_regime(sensor_temp)
-
-            # 选择模型
-            model = self.models[regime]
-
-            # 准备特征
-            try:
-                features = row[feature_list].values.reshape(1, -1)
-
-                # 预测校准后的温度
-                calibrated_temp = model.predict(features)[0]
-
-                calibrated_temps.append(calibrated_temp)
-
-            except Exception as e:
-                print(f"Warning: Prediction failed for row {idx}: {str(e)}")
-                # 如果预测失败，使用原始温度
-                calibrated_temps.append(sensor_temp)
-
-        # 添加校准后的温度列
-        df_result['calibrated_temperature'] = calibrated_temps
-
-        # 计算校准修正量
-        df_result['calibration_correction'] = df_result['sensor temperature'] - df_result['calibrated_temperature']
-
-        # 添加温度范围标签
-        df_result['temperature_regime'] = df_result['sensor temperature'].apply(
-            self.determine_temperature_regime
-        )
-
-        return df_result
-
-    def get_model_info(self):
-        """返回模型信息"""
-        info = {}
-        for model_name, model in self.models.items():
-            info[model_name] = {
-                'type': type(model).__name__,
-                'n_features': model.n_features_in_ if hasattr(model, 'n_features_in_') else 'Unknown'
-            }
-        return info
-
-
-# 便捷函数
-def calibrate_temperature(df_features, feature_list):
-    """
-    便捷函数：校准温度
-
-    Parameters:
-    -----------
-    df_features : pandas.DataFrame
-        包含所有特征的数据框
-    feature_list : list
-        特征列表
-
-    Returns:
-    --------
-    pandas.DataFrame : 校准后的数据
-    """
-    calibrator = TemperatureCalibrator()
-    return calibrator.calibrate(df_features, feature_list)
-
-
-if __name__ == "__main__":
-    # 测试代码
-    print("Model Predictor - 测试")
-    print("=" * 50)
-
-    # 创建测试数据
-    from feature_engineering import FeatureEngineer
-
-    test_df = pd.DataFrame({
-        'timestamp': pd.date_range('2024-01-15 10:00', periods=10, freq='h'),
-        'temperature': [8, 12, 18, 25, 32, 28, 22, 15, 10, 5],  # 覆盖cold/normal/hot
-        'humidity': [50] * 10,
-        'latitude': [37.7749] * 10,
-        'longitude': [-122.4194] * 10,
-        'sshf': [100] * 10,
-        'ssrd': [500] * 10,
-        'strd': [300] * 10,
-        'tp': [0] * 10,
-        'u10': [2] * 10,
-        'v10': [1] * 10,
-    })
-
-    print("\n输入数据（原始传感器温度）:")
-    print(test_df[['timestamp', 'temperature']].head())
-
-    # 特征工程
-    engineer = FeatureEngineer()
-    df_features = engineer.engineer_all_features(test_df)
-    feature_list = engineer.get_feature_list()
-
-    print(f"\n生成特征: {len(feature_list)} 个")
-
-    # 校准
-    calibrator = TemperatureCalibrator()
-    result = calibrator.calibrate(df_features, feature_list)
-
-    print("\n校准结果:")
-    print(result[['timestamp', 'sensor temperature', 'calibrated_temperature',
-                  'calibration_correction', 'temperature_regime']].head(10))
-
-    print("\n✅ 模型预测测试完成！")
+    def get_model_info(self) -> dict:
+        return self.metadata

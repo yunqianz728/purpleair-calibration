@@ -2,8 +2,8 @@ cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 type: software
 title: "PurpleAir Temperature Sensor Calibration"
-version: 1.0.2
-date-released: 2026-02-03
+version: 2.0.0
+date-released: 2026-08-31
 doi: 10.5281/zenodo.18463819
 url: "https://github.com/yunqianz728/purpleair-calibration"
 repository-code: "https://github.com/yunqianz728/purpleair-calibration"
@@ -32,11 +32,10 @@ keywords:
   - "SHAP analysis"
 abstract: >
   A machine learning framework for calibrating PurpleAir temperature
-  sensors using temperature-based stratification and temporal features.
-  Achieves mean absolute error of 0.38-0.53°C across diverse U.S.
-  climatic conditions, representing 90% error reduction compared to
-  uncalibrated sensors. Validated on 797,744 hourly observations from
-  31 states.
+  sensors using a single national XGBoost model with temporal features.
+  The final 63-feature model achieves mean absolute error of 0.64°C and
+  R-squared of 0.992 on the held-out test set. The study includes 797,744
+  hourly observations from 31 U.S. states.
 preferred-citation:
   type: article
   authors:
@@ -46,8 +45,6 @@ preferred-citation:
       given-names: "Yan"
     - family-names: "Liang"
       given-names: "Lu"
-  title: "Nationwide Calibration of PurpleAir Temperature Sensors for Heat Exposure Research"
-  year: 2025
-  journal: "[Journal Name - To Be Determined]"
-  doi: "10.xxxx/xxxxxx"
+  title: "Nationwide Evaluation and Calibration of PurpleAir Temperature Sensors for Urban Thermal Environment Research"
+  year: 2026
   status: "submitted"
