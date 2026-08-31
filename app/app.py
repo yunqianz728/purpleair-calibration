@@ -40,7 +40,7 @@ st.set_page_config(
     page_title="PurpleAir Temperature Calibration",
     page_icon="🌡️",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="auto",
 )
 
 st.markdown(
@@ -313,6 +313,18 @@ with calibrate_tab:
         help="Direct calibration uses deployment models trained from the same study dataset. Paper mode runs the exact 63-feature Temporal-National model.",
     )
     mode = "paper" if mode_label.startswith("Final") else "accessible"
+
+    if mode == "paper":
+        st.info(
+            "Paper model: 0.64°C held-out MAE and 0.87°C RMSE. "
+            "This workflow requires complete ERA5 inputs and runs the exact 63-feature model."
+        )
+    else:
+        st.info(
+            "Direct mode: 0.813°C held-out MAE after six prior hourly records; "
+            "1.149°C during warm-up. The paper model's 0.64°C MAE applies to the "
+            "ERA5-enriched workflow."
+        )
 
     intro_left, intro_right = st.columns([1.7, 1])
     with intro_left:

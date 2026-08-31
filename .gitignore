@@ -1,189 +1,64 @@
-# Python
+# Python caches and build products
 __pycache__/
 *.py[cod]
-*$py.class
 *.so
 .Python
 build/
-develop-eggs/
 dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
 *.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
 
 # Virtual environments
+.venv/
 venv/
 env/
 ENV/
-env.bak/
-venv.bak/
 
-# Jupyter Notebook
-.ipynb_checkpoints
-*.ipynb_checkpoints/
-
-# PyCharm
-.idea/
-
-# VS Code
-.vscode/
-
-# Spyder
-.spyderproject
-.spyproject
-
-# macOS
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# Windows
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-
-# Linux
-*~
-
-# Data files (large datasets should not be committed)
-results/models/*.pkl
-results/models/*.joblib
-results/models/*.h5
-results/models/*.bin
-results/predictions/*.csv
-results/evaluation/*.csv
-data/raw/*.csv
-data/raw/*.nc
-data/raw/*.grib
-data/processed/*.csv
-data/processed/*.parquet
-
-# Logs
-*.log
-logs/
-
-# ERA5 downloaded files
-*.grib
-*.grib2
-*.nc
-
-# Temporary files
-*.tmp
-*.bak
-*.swp
-*.swo
-*~
-
-# Test coverage
-htmlcov/
-.tox/
+# Test and analysis output
+.pytest_cache/
 .coverage
 .coverage.*
-.cache
-nosetests.xml
 coverage.xml
-*.cover
+htmlcov/
+.mypy_cache/
 .hypothesis/
-.pytest_cache/
+*.prof
 
-# Documentation builds
-docs/_build/
-docs/_static/
-docs/_templates/
+# Editors and operating systems
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
 
-# Environment variables
+# Credentials and local configuration
 .env
-.env.local
-.env.*.local
-
-# API keys (NEVER commit these!)
+.env.*
+!.env.example
 api_keys.txt
 credentials.json
 config/secrets.yaml
-
-# Model checkpoints (too large for git)
-checkpoints/
-*.ckpt
-
-# Database
-*.db
-*.sqlite
-
-# Compiled C extensions
-*.so
-
-# Distribution / packaging
-.Python
-build/
-*.egg-info/
-
-# MyPy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Pyre type checker
-.pyre/
-
-# Profiling
-*.prof
-
-# IDEs
-*.sublime-project
-*.sublime-workspace
-
-# Optuna study databases
-optuna_studies/
-*.db
-
-# Large result files
-results/figures/*.png
-results/figures/*.jpg
-results/figures/*.pdf
-results/figures/*.svg
-
-# Keep directory structure with .gitkeep files
-!**/.gitkeep
-
-# Streamlit secrets
 .streamlit/secrets.toml
 ZENODO_RECORD_ID.txt
 
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-env/
-venv/
-ENV/
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Data
+# Downloaded research data and generated results
 *.nc
+*.grib
+*.grib2
+*.parquet
 *.pkl
-test_calibration_results.csv
+*.joblib
+data/raw/
+data/processed/
+results/
+logs/
+optuna_studies/
+*.db
+*.sqlite
 
-# Temporary
-/tmp/
+# Temporary files
 *.log
+*.tmp
+*.bak
+*~
+test_calibration_results.csv

@@ -1,6 +1,8 @@
 # PurpleAir temperature calibration
 
 [![Live app](https://img.shields.io/badge/Live_app-open-1769aa)](https://huggingface.co/spaces/yunqianz/purpleair-calibration)
+[![Tests](https://github.com/yunqianz728/purpleair-calibration/actions/workflows/test.yml/badge.svg)](https://github.com/yunqianz728/purpleair-calibration/actions/workflows/test.yml)
+[![Version](https://img.shields.io/badge/version-2.0.0-15548a.svg)](CHANGELOG.md)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18463819.svg)](https://doi.org/10.5281/zenodo.18463819)
 [![License: MIT](https://img.shields.io/badge/License-MIT-167c8b.svg)](LICENSE)
 
@@ -99,9 +101,8 @@ app/
   models/                        Three deployed XGBoost models + metadata
   utils/feature_engineering.py   Sensor-isolated temporal features
   utils/model_predictor.py       Model selection and provenance
-data/                             Acquisition and processing modules
-models/                           Research calibration modules
-docs/                             Method and usage documentation
+docs/                             Maintained usage and FAQ documentation
+legacy/                           Superseded prototypes and release utilities
 ```
 
 ## Scope
@@ -125,6 +126,24 @@ docs/                             Method and usage documentation
 - PurpleAir data: <https://www2.purpleair.com/>
 - HadISD reference data: <https://www.metoffice.gov.uk/hadobs/hadisd/>
 - ERA5 source: <https://cds.climate.copernicus.eu/>
+
+## Documentation and support
+
+- [Usage guide](docs/USAGE.md)
+- [Frequently asked questions](docs/FAQ.md)
+- [Contributing](CONTRIBUTING.md)
+- [Changelog](CHANGELOG.md)
+- [Report a problem](https://github.com/yunqianz728/purpleair-calibration/issues)
+
+Historical pre-final prototypes and deployment notes are retained under
+[`legacy/`](legacy/README.md) and [`docs/archive/`](docs/archive/README.md) for
+provenance. They are clearly separated from the maintained final workflow.
+
+## Citation
+
+GitHub can generate citation text from [`CITATION.cff`](CITATION.cff). For a
+versioned software citation, use the archived code DOI
+[10.5281/zenodo.18463819](https://doi.org/10.5281/zenodo.18463819).
 
 ## Authors and license
 
