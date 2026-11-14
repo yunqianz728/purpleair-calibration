@@ -1,0 +1,65 @@
+feature_a,feature_b,r
+temp_range_3h,temp_std_3h,0.9984775656608541
+sensor_temp_1h_ago,temp_ma_3h,0.9975405646545566
+ssrd_1h_ago,ssrd_sum_3h,0.9954475075733787
+temp_range_6h,temp_std_6h,0.9938913512283302
+sensor_temp_2h_ago,temp_ma_6h,0.9916720459927245
+sensor_temp_3h_ago,temp_ma_6h,0.9913313949477839
+sensor temperature,temp_ma_3h,0.9902814446408313
+sensor_temp_2h_ago,temp_ma_3h,0.9887268207903956
+sensor temperature,sensor_temp_1h_ago,0.987372479439941
+sensor_temp_1h_ago,sensor_temp_2h_ago,0.9868454757326407
+sensor_temp_2h_ago,sensor_temp_3h_ago,0.9866941989243699
+sensor_temp_3h_ago,sensor_temp_4h_ago,0.9866276465214388
+sensor_temp_4h_ago,sensor_temp_5h_ago,0.9865987946230727
+sensor_temp_5h_ago,sensor_temp_6h_ago,0.9865444117041919
+temp_ma_3h,temp_ma_6h,0.9845495869901757
+sensor_temp_1h_ago,temp_ma_6h,0.980192870141355
+sensor_temp_4h_ago,temp_ma_6h,0.9792564857243017
+humidity,humidity_squared,0.9759537390673186
+sensor_temp_5h_ago,temp_ma_12h,0.9738391093430704
+sensor_temp_6h_ago,temp_ma_12h,0.9737547591928577
+humidity,humidity_1h_ago,0.9736265405617259
+humidity_1h_ago,humidity_2h_ago,0.9727328909722659
+humidity_2h_ago,humidity_3h_ago,0.9725349853548734
+ssrd_2h_ago,ssrd_sum_6h,0.971693440011103
+sensor_temp_4h_ago,temp_ma_12h,0.967749207381915
+sensor_temp_3h_ago,temp_ma_3h,0.9653723251560073
+temp_ma_12h,temp_ma_6h,0.9640428956266758
+temp_change_2h,temp_trend_3h,0.9638715637339312
+diurnal_radiation,ssrd,0.9633202496003043
+sensor temperature,sensor_temp_2h_ago,0.9619951538171021
+sensor_temp_1h_ago,sensor_temp_3h_ago,0.9615236736074053
+sensor_temp_2h_ago,sensor_temp_4h_ago,0.9614532326013766
+sensor_temp_3h_ago,sensor_temp_5h_ago,0.9614305692924998
+sensor_temp_4h_ago,sensor_temp_6h_ago,0.9613938410325625
+dewpoint_sensor,temp_humidity_product_sensor,0.9584000239597008
+sensor temperature,temp_ma_6h,0.9582018317012873
+sensor_temp_5h_ago,temp_ma_6h,0.9565902100282668
+sensor_temp_3h_ago,temp_ma_12h,0.95573520126866
+ssrd_2h_ago,ssrd_sum_3h,0.9519529320623052
+ssrd,ssrd_sum_3h,0.9507021928638942
+humidity_1h_ago,humidity_squared,0.9499733407798946
+dewpoint_depression_sensor,humidity,-0.9480106057773341
+ssrd,ssrd_1h_ago,0.9479695099094424
+ssrd_1h_ago,ssrd_2h_ago,0.9474222691552985
+sensor temperature,temp_squared_sensor,0.9439645034459898
+sensor_temp_2h_ago,temp_ma_12h,0.9383451503228878
+temp_squared_sensor,vapor_pressure_deficit_sensor,0.9379602412153517
+sensor_temp_4h_ago,temp_ma_3h,0.9334057830334586
+temp_ma_3h,temp_squared_sensor,0.9303385412738979
+sensor_temp_1h_ago,temp_squared_sensor,0.9296047831878689
+sensor temperature,sensor_temp_3h_ago,0.9286902301738976
+sensor_temp_3h_ago,sensor_temp_6h_ago,0.928491886713117
+sensor_temp_2h_ago,sensor_temp_5h_ago,0.9284526934461771
+sensor_temp_1h_ago,sensor_temp_4h_ago,0.9284190828079479
+sensor_temp_6h_ago,temp_ma_6h,0.9257414500613519
+temp_ma_12h,temp_ma_3h,0.9226946661321679
+humidity,humidity_2h_ago,0.9226670431563465
+temp_change_2h,temp_change_3h,0.9225511844214648
+dewpoint_depression_sensor,humidity_1h_ago,-0.9221186708853428
+humidity_1h_ago,humidity_3h_ago,0.9216907103175882
+sensor_temp_1h_ago,temp_ma_12h,0.9164389793570673
+temp_change_3h,temp_trend_3h,0.9153962191508708
+ssrd_sum_3h,ssrd_sum_6h,0.908403389414464
+humidity_2h_ago,humidity_squared,0.9018370094952995

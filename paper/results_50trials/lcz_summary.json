@@ -1,0 +1,38 @@
+{
+ "sensor": {
+  "n": 98,
+  "n_classified": 98,
+  "pct_built": 77.6,
+  "top": {
+   "LCZ 6 open low-rise": 48,
+   "LCZ 8 large low-rise": 18,
+   "LCZ D low plants": 13,
+   "LCZ 3 compact low-rise": 4,
+   "LCZ A dense trees": 3
+  }
+ },
+ "station not used": {
+  "n": 500,
+  "n_classified": 465,
+  "pct_built": 9.0,
+  "top": {
+   "LCZ D low plants": 276,
+   "LCZ A dense trees": 37,
+   "LCZ B scattered trees": 35,
+   "LCZ F bare soil or sand": 33,
+   "LCZ G water": 27
+  }
+ },
+ "station used": {
+  "n": 69,
+  "n_classified": 67,
+  "pct_built": 11.9,
+  "top": {
+   "LCZ D low plants": 43,
+   "LCZ F bare soil or sand": 9,
+   "LCZ 6 open low-rise": 4,
+   "LCZ 8 large low-rise": 4,
+   "LCZ E bare rock or paved": 3
+  }
+ }
+}

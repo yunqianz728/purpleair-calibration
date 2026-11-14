@@ -1,0 +1,181 @@
+{
+ "threshold_C": 15.0,
+ "min_summer_obs": 200,
+ "temperate_gap": {
+  "below": 14.3,
+  "above": 16.64,
+  "largest_gap_at_sensor": 145358
+ },
+ "n_sensors_classified": 76,
+ "n_qc_flagged_excluded": 8,
+ "regimes": {
+  "Dry": {
+   "n_rows": 541872,
+   "n_sensors": 47,
+   "summer_dewpoint_C": 10.15,
+   "mean_RH_%": 43.8,
+   "raw": {
+    "bias_all": 5.454,
+    "bias_night": 0.475,
+    "bias_midday": 13.247,
+    "MAE_all": 6.846
+   },
+   "calibrated_test_split": {
+    "MAE": 0.743,
+    "bias": 0.001,
+    "MAE_night": 0.696,
+    "MAE_midday": 0.735,
+    "n": 108424
+   },
+   "calibrated_leave_sensors_out": {
+    "MAE": 2.016,
+    "bias": 0.378,
+    "MAE_night": 2.069,
+    "MAE_midday": 1.954
+   },
+   "states": [
+    "Alaska",
+    "California",
+    "Colorado",
+    "Idaho",
+    "Illinois",
+    "Minnesota",
+    "Montana",
+    "Nebraska",
+    "Nevada",
+    "Oregon",
+    "Washington",
+    "Wyoming"
+   ],
+   "zones": {
+    "C_Temperate": 292051,
+    "D_Continental": 154492,
+    "B_Arid": 95329
+   }
+  },
+  "Moist": {
+   "n_rows": 215048,
+   "n_sensors": 27,
+   "summer_dewpoint_C": 17.06,
+   "mean_RH_%": 46.9,
+   "raw": {
+    "bias_all": 5.239,
+    "bias_night": 2.296,
+    "bias_midday": 11.348,
+    "MAE_all": 5.811
+   },
+   "calibrated_test_split": {
+    "MAE": 0.655,
+    "bias": 0.006,
+    "MAE_night": 0.624,
+    "MAE_midday": 0.65,
+    "n": 42919
+   },
+   "calibrated_leave_sensors_out": {
+    "MAE": 1.514,
+    "bias": 0.587,
+    "MAE_night": 1.458,
+    "MAE_midday": 1.464
+   },
+   "states": [
+    "Connecticut",
+    "Illinois",
+    "Maine",
+    "Maryland",
+    "Michigan",
+    "Minnesota",
+    "Missouri",
+    "Nebraska",
+    "New Jersey",
+    "Ohio",
+    "Oklahoma",
+    "Pennsylvania",
+    "South Carolina",
+    "Tennessee",
+    "Texas"
+   ],
+   "zones": {
+    "D_Continental": 165292,
+    "C_Temperate": 49756
+   }
+  }
+ },
+ "temperate_only": {
+  "Dry": {
+   "n_rows": 292051,
+   "n_sensors": 26,
+   "summer_dewpoint_C": 10.42,
+   "mean_RH_%": 45.7,
+   "raw": {
+    "bias_all": 5.456,
+    "bias_night": -0.051,
+    "bias_midday": 13.875,
+    "MAE_all": 6.949
+   },
+   "calibrated_test_split": {
+    "MAE": 0.707,
+    "bias": 0.005,
+    "MAE_night": 0.665,
+    "MAE_midday": 0.677,
+    "n": 58311
+   },
+   "calibrated_leave_sensors_out": {
+    "MAE": 1.68,
+    "bias": 0.351,
+    "MAE_night": 1.722,
+    "MAE_midday": 1.576
+   },
+   "states": [
+    "California",
+    "Oregon",
+    "Washington"
+   ]
+  },
+  "Moist": {
+   "n_rows": 49756,
+   "n_sensors": 7,
+   "summer_dewpoint_C": 19.1,
+   "mean_RH_%": 45.5,
+   "raw": {
+    "bias_all": 5.182,
+    "bias_night": 2.656,
+    "bias_midday": 10.656,
+    "MAE_all": 5.629
+   },
+   "calibrated_test_split": {
+    "MAE": 0.751,
+    "bias": 0.028,
+    "MAE_night": 0.694,
+    "MAE_midday": 0.748,
+    "n": 9907
+   },
+   "calibrated_leave_sensors_out": {
+    "MAE": 1.806,
+    "bias": 0.499,
+    "MAE_night": 1.688,
+    "MAE_midday": 1.706
+   },
+   "states": [
+    "Maryland",
+    "Oklahoma",
+    "South Carolina",
+    "Tennessee",
+    "Texas"
+   ]
+  }
+ },
+ "residual_vs_humidity": {
+  "Dry": {
+   "Q1_dry": 2.844,
+   "Q2": 2.119,
+   "Q3": 1.617,
+   "Q4_humid": 1.422
+  },
+  "Moist": {
+   "Q1_dry": 1.73,
+   "Q2": 1.624,
+   "Q3": 1.447,
+   "Q4_humid": 1.222
+  }
+ }
+}

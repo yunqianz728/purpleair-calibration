@@ -1,0 +1,668 @@
+kind,id,lat,lon,lcz_code,lcz,built
+sensor,143214,44.90534,-93.232285,6.0,LCZ 6 open low-rise,True
+sensor,143226,44.91171,-93.227066,6.0,LCZ 6 open low-rise,True
+sensor,145358,39.283955,-76.58122,2.0,LCZ 2 compact mid-rise,True
+sensor,145470,44.90896,-93.23099,6.0,LCZ 6 open low-rise,True
+sensor,147312,38.52332,-121.51864,6.0,LCZ 6 open low-rise,True
+sensor,148611,37.347942,-121.92802,8.0,LCZ 8 large low-rise,True
+sensor,150948,43.238663,-123.35232,6.0,LCZ 6 open low-rise,True
+sensor,151686,60.131805,-149.44121,6.0,LCZ 6 open low-rise,True
+sensor,154883,39.530712,-119.762634,8.0,LCZ 8 large low-rise,True
+sensor,155809,40.268673,-74.78257,5.0,LCZ 5 open mid-rise,True
+sensor,156903,38.728893,-90.38184,6.0,LCZ 6 open low-rise,True
+sensor,157877,44.901764,-93.2089,5.0,LCZ 5 open mid-rise,True
+sensor,158197,37.391632,-122.07227,6.0,LCZ 6 open low-rise,True
+sensor,161045,38.525597,-121.489746,6.0,LCZ 6 open low-rise,True
+sensor,161597,47.562637,-122.28818,6.0,LCZ 6 open low-rise,True
+sensor,162283,48.174004,-122.14715,6.0,LCZ 6 open low-rise,True
+sensor,162317,47.89957,-122.26916,6.0,LCZ 6 open low-rise,True
+sensor,162461,40.862347,-96.790375,14.0,LCZ D low plants,False
+sensor,165105,47.528915,-122.32472,6.0,LCZ 6 open low-rise,True
+sensor,166335,37.644207,-120.96677,6.0,LCZ 6 open low-rise,True
+sensor,167039,47.0898,-122.26328,8.0,LCZ 8 large low-rise,True
+sensor,167367,37.62684,-120.96893,6.0,LCZ 6 open low-rise,True
+sensor,169697,34.18683,-118.38929,3.0,LCZ 3 compact low-rise,True
+sensor,169949,41.94179,-87.94657,12.0,LCZ B scattered trees,False
+sensor,169959,41.971695,-87.94878,8.0,LCZ 8 large low-rise,True
+sensor,169963,41.953754,-87.93368,6.0,LCZ 6 open low-rise,True
+sensor,171181,47.169106,-122.50463,8.0,LCZ 8 large low-rise,True
+sensor,174061,38.501804,-121.48695,6.0,LCZ 6 open low-rise,True
+sensor,175973,43.658604,-110.718605,9.0,LCZ 9 sparsely built,True
+sensor,176751,46.61038,-112.02547,6.0,LCZ 6 open low-rise,True
+sensor,179619,42.395412,-83.00891,6.0,LCZ 6 open low-rise,True
+sensor,180813,37.719246,-77.46027,11.0,LCZ A dense trees,False
+sensor,180825,47.54362,-122.31782,8.0,LCZ 8 large low-rise,True
+sensor,182191,29.635967,-95.179085,6.0,LCZ 6 open low-rise,True
+sensor,182389,41.60954,-83.795815,6.0,LCZ 6 open low-rise,True
+sensor,183611,38.573475,-121.2721,8.0,LCZ 8 large low-rise,True
+sensor,184003,44.83155,-93.50169,6.0,LCZ 6 open low-rise,True
+sensor,185935,39.574512,-104.87434,8.0,LCZ 8 large low-rise,True
+sensor,188155,40.62554,-75.45235,8.0,LCZ 8 large low-rise,True
+sensor,188297,38.545692,-106.92496,6.0,LCZ 6 open low-rise,True
+sensor,188701,59.232346,-135.48012,11.0,LCZ A dense trees,False
+sensor,190223,43.20907,-123.348305,3.0,LCZ 3 compact low-rise,True
+sensor,190581,37.388298,-122.073166,6.0,LCZ 6 open low-rise,True
+sensor,191573,43.63,-116.65072,6.0,LCZ 6 open low-rise,True
+sensor,192969,44.552994,-119.646126,16.0,LCZ F bare soil or sand,False
+sensor,193171,45.05231,-93.36097,8.0,LCZ 8 large low-rise,True
+sensor,194103,39.14821,-123.19366,6.0,LCZ 6 open low-rise,True
+sensor,194173,39.12377,-123.20594,6.0,LCZ 6 open low-rise,True
+sensor,194783,41.268993,-72.891266,6.0,LCZ 6 open low-rise,True
+sensor,195003,41.747383,-72.63669,8.0,LCZ 8 large low-rise,True
+sensor,195333,40.780205,-99.740486,6.0,LCZ 6 open low-rise,True
+sensor,195337,46.89481,-103.37774,14.0,LCZ D low plants,False
+sensor,195917,39.14482,-121.43053,16.0,LCZ F bare soil or sand,False
+sensor,196833,40.693913,-96.8533,14.0,LCZ D low plants,False
+sensor,198641,32.71743,-117.17044,10.0,LCZ 10 heavy industry,True
+sensor,199781,39.13671,-123.2095,6.0,LCZ 6 open low-rise,True
+sensor,202233,46.357327,-104.28058,14.0,LCZ D low plants,False
+sensor,204067,34.889416,-95.77546,14.0,LCZ D low plants,False
+sensor,204375,43.643017,-70.27749,8.0,LCZ 8 large low-rise,True
+sensor,204891,39.507404,-119.787636,8.0,LCZ 8 large low-rise,True
+sensor,205451,41.31493,-122.31264,6.0,LCZ 6 open low-rise,True
+sensor,206827,33.960133,-118.40416,6.0,LCZ 6 open low-rise,True
+sensor,208491,34.0204,-118.285774,8.0,LCZ 8 large low-rise,True
+sensor,210111,37.359585,-121.948784,3.0,LCZ 3 compact low-rise,True
+sensor,210543,43.64244,-70.27794,8.0,LCZ 8 large low-rise,True
+sensor,211523,33.239765,-97.59357,6.0,LCZ 6 open low-rise,True
+sensor,212013,35.04255,-90.00705,6.0,LCZ 6 open low-rise,True
+sensor,214895,35.648926,-95.95801,14.0,LCZ D low plants,False
+sensor,215435,37.34407,-121.92001,8.0,LCZ 8 large low-rise,True
+sensor,215467,37.394493,-122.070854,6.0,LCZ 6 open low-rise,True
+sensor,216045,41.135235,-100.69574,14.0,LCZ D low plants,False
+sensor,217457,42.36324,-122.84905,6.0,LCZ 6 open low-rise,True
+sensor,218089,32.895985,-80.016594,8.0,LCZ 8 large low-rise,True
+sensor,221795,42.179512,-72.707726,11.0,LCZ A dense trees,False
+sensor,222311,42.218407,-72.558815,6.0,LCZ 6 open low-rise,True
+sensor,223271,29.62297,-95.647736,14.0,LCZ D low plants,False
+sensor,223304,42.382286,-82.99628,6.0,LCZ 6 open low-rise,True
+sensor,225515,47.24022,-123.12192,6.0,LCZ 6 open low-rise,True
+sensor,225715,32.62299,-108.15243,13.0,"LCZ C bush, scrub",False
+sensor,229187,41.603985,-88.077126,6.0,LCZ 6 open low-rise,True
+sensor,229525,41.603985,-88.0772,6.0,LCZ 6 open low-rise,True
+sensor,229551,41.603985,-88.077126,6.0,LCZ 6 open low-rise,True
+sensor,229563,41.6039,-88.07719,6.0,LCZ 6 open low-rise,True
+sensor,229567,41.603985,-88.077126,6.0,LCZ 6 open low-rise,True
+sensor,230019,41.603985,-88.077126,6.0,LCZ 6 open low-rise,True
+sensor,232987,42.42001,-83.003265,6.0,LCZ 6 open low-rise,True
+sensor,234473,48.261414,-101.29443,16.0,LCZ F bare soil or sand,False
+sensor,236123,36.036,-96.011024,14.0,LCZ D low plants,False
+sensor,236187,43.911545,-92.49213,14.0,LCZ D low plants,False
+sensor,237019,46.597954,-111.98093,8.0,LCZ 8 large low-rise,True
+sensor,238073,32.798492,-117.1256,3.0,LCZ 3 compact low-rise,True
+sensor,238303,41.26559,-72.88493,14.0,LCZ D low plants,False
+sensor,240281,33.956985,-118.40638,12.0,LCZ B scattered trees,False
+sensor,242869,34.289,-85.9701,9.0,LCZ 9 sparsely built,True
+sensor,243737,44.420067,-72.01979,6.0,LCZ 6 open low-rise,True
+sensor,244811,30.33309,-97.735214,6.0,LCZ 6 open low-rise,True
+sensor,246665,35.236897,-111.81543,14.0,LCZ D low plants,False
+sensor,249137,41.499737,-88.16972,14.0,LCZ D low plants,False
+station used,702770-26438,60.129,-149.418,14.0,LCZ D low plants,False
+station used,703626-25323,59.243,-135.511,12.0,LCZ B scattered trees,False
+station used,720305-53964,33.254,-97.581,16.0,LCZ F bare soil or sand,False
+station used,720388-00469,47.104,-122.287,14.0,LCZ D low plants,False
+station used,722080-13880,32.899,-80.041,14.0,LCZ D low plants,False
+station used,722164-53949,35.668,-95.949,,,
+station used,722436-12906,29.617,-95.167,16.0,LCZ F bare soil or sand,False
+station used,722543-12977,29.62,-95.657,14.0,LCZ D low plants,False
+station used,722544-13958,30.321,-97.76,6.0,LCZ 6 open low-rise,True
+station used,722721-93063,32.633,-108.167,13.0,"LCZ C bush, scrub",False
+station used,722874-93134,34.024,-118.291,8.0,LCZ 8 large low-rise,True
+station used,722880-23152,34.2,-118.365,8.0,LCZ 8 large low-rise,True
+station used,722900-23188,32.734,-117.183,15.0,LCZ E bare rock or paved,False
+station used,722903-03131,32.815,-117.137,16.0,LCZ F bare soil or sand,False
+station used,722950-23174,33.938,-118.387,16.0,LCZ F bare soil or sand,False
+station used,723084-93775,37.709,-77.435,12.0,LCZ B scattered trees,False
+station used,723340-13893,35.056,-89.986,14.0,LCZ D low plants,False
+station used,723564-53908,36.042,-95.99,16.0,LCZ F bare soil or sand,False
+station used,723566-93950,34.882,-95.782,14.0,LCZ D low plants,False
+station used,723760-99999,35.217,-111.817,14.0,LCZ D low plants,False
+station used,724095-14792,40.277,-74.816,14.0,LCZ D low plants,False
+station used,724340-13994,38.752,-90.373,14.0,LCZ D low plants,False
+station used,724666-93067,39.56,-104.848,,,
+station used,724677-93007,38.533,-106.933,14.0,LCZ D low plants,False
+station used,724830-23232,38.507,-121.496,14.0,LCZ D low plants,False
+station used,724833-23206,38.567,-121.3,14.0,LCZ D low plants,False
+station used,724837-93216,39.133,-121.433,16.0,LCZ F bare soil or sand,False
+station used,724880-23185,39.508,-119.768,15.0,LCZ E bare rock or paved,False
+station used,724926-23258,37.625,-120.955,16.0,LCZ F bare soil or sand,False
+station used,724945-23293,37.359,-121.924,14.0,LCZ D low plants,False
+station used,725045-14758,41.259,-72.889,14.0,LCZ D low plants,False
+station used,725087-14752,41.735,-72.651,14.0,LCZ D low plants,False
+station used,725170-14737,40.65,-75.448,14.0,LCZ D low plants,False
+station used,725300-94846,41.96,-87.932,14.0,LCZ D low plants,False
+station used,725345-14834,41.5,-88.167,6.0,LCZ 6 open low-rise,True
+station used,725348-04831,41.604,-88.085,14.0,LCZ D low plants,False
+station used,725360-94830,41.587,-83.805,14.0,LCZ D low plants,False
+station used,725375-14822,42.407,-83.009,14.0,LCZ D low plants,False
+station used,725510-14939,40.848,-96.765,14.0,LCZ D low plants,False
+station used,725620-24023,41.122,-100.669,14.0,LCZ D low plants,False
+station used,725624-14994,40.789,-99.771,14.0,LCZ D low plants,False
+station used,725905-23275,39.128,-123.2,16.0,LCZ F bare soil or sand,False
+station used,725957-24215,41.315,-122.317,6.0,LCZ 6 open low-rise,True
+station used,725970-24225,42.375,-122.877,16.0,LCZ F bare soil or sand,False
+station used,726060-14764,43.642,-70.304,14.0,LCZ D low plants,False
+station used,726140-54742,44.42,-72.019,6.0,LCZ 6 open low-rise,True
+station used,726440-14925,43.904,-92.492,14.0,LCZ D low plants,False
+station used,726575-94960,45.062,-93.351,14.0,LCZ D low plants,False
+station used,726579-94963,44.832,-93.471,14.0,LCZ D low plants,False
+station used,726580-14922,44.885,-93.231,14.0,LCZ D low plants,False
+station used,726777-94055,46.352,-104.261,14.0,LCZ D low plants,False
+station used,726813-94195,43.65,-116.633,14.0,LCZ D low plants,False
+station used,726904-24231,43.234,-123.358,14.0,LCZ D low plants,False
+station used,727676-24013,48.252,-101.269,14.0,LCZ D low plants,False
+station used,727720-24144,46.604,-111.989,14.0,LCZ D low plants,False
+station used,727925-94227,47.238,-123.141,14.0,LCZ D low plants,False
+station used,727935-24234,47.546,-122.315,8.0,LCZ 8 large low-rise,True
+station used,727937-24222,47.923,-122.283,14.0,LCZ D low plants,False
+station used,727945-04205,48.161,-122.159,14.0,LCZ D low plants,False
+station used,742060-24207,47.15,-122.483,15.0,LCZ E bare rock or paved,False
+station used,744910-14703,42.2,-72.533,14.0,LCZ D low plants,False
+station used,744915-14775,42.16,-72.712,14.0,LCZ D low plants,False
+station used,745090-23244,37.406,-122.048,14.0,LCZ D low plants,False
+station used,745944-93784,39.281,-76.611,8.0,LCZ 8 large low-rise,True
+station used,999999-04125,44.556,-119.646,13.0,"LCZ C bush, scrub",False
+station used,999999-04131,43.662,-110.712,14.0,LCZ D low plants,False
+station used,999999-63857,34.285,-85.962,14.0,LCZ D low plants,False
+station used,999999-94080,46.895,-103.377,14.0,LCZ D low plants,False
+station used,999999-94996,40.695,-96.854,14.0,LCZ D low plants,False
+station not used,722223-13899,30.476,-87.186,,,
+station not used,744652-53897,37.811,-88.549,14.0,LCZ D low plants,False
+station not used,725490-99999,42.55,-94.183,14.0,LCZ D low plants,False
+station not used,722547-53942,30.679,-97.679,14.0,LCZ D low plants,False
+station not used,722867-23156,33.933,-116.967,6.0,LCZ 6 open low-rise,True
+station not used,716880-99999,50.15,-123.117,11.0,LCZ A dense trees,False
+station not used,994570-99999,24.456,-81.877,0.0,,
+station not used,747188-23158,33.619,-114.715,16.0,LCZ F bare soil or sand,False
+station not used,725685-24019,42.75,-105.383,6.0,LCZ 6 open low-rise,True
+station not used,725374-99999,42.223,-87.746,17.0,LCZ G water,False
+station not used,714770-99999,54.15,-131.65,0.0,,
+station not used,999999-23802,31.881,-87.737,12.0,LCZ B scattered trees,False
+station not used,999999-54808,40.053,-88.373,14.0,LCZ D low plants,False
+station not used,722575-99999,31.083,-97.683,14.0,LCZ D low plants,False
+station not used,702730-26451,61.169,-150.028,14.0,LCZ D low plants,False
+station not used,997300-99999,39.527,-75.81,8.0,LCZ 8 large low-rise,True
+station not used,744653-63814,38.149,-89.699,14.0,LCZ D low plants,False
+station not used,723095-93719,35.068,-77.048,14.0,LCZ D low plants,False
+station not used,722131-03713,35.541,-78.39,12.0,LCZ B scattered trees,False
+station not used,994790-99999,28.45,-96.4,17.0,LCZ G water,False
+station not used,999999-63892,32.837,-88.137,12.0,LCZ B scattered trees,False
+station not used,999999-23012,39.717,-104.9,6.0,LCZ 6 open low-rise,True
+station not used,722021-92816,28.014,-82.345,14.0,LCZ D low plants,False
+station not used,998201-99999,30.35,-88.567,17.0,LCZ G water,False
+station not used,999999-14856,42.1,-83.167,14.0,LCZ D low plants,False
+station not used,723441-54921,41.73,-98.054,14.0,LCZ D low plants,False
+station not used,702758-27517,70.344,-150.945,14.0,LCZ D low plants,False
+station not used,999999-26445,61.572,-149.54,14.0,LCZ D low plants,False
+station not used,703817-99999,58.2,-136.35,17.0,LCZ G water,False
+station not used,722693-93097,32.84,-105.991,16.0,LCZ F bare soil or sand,False
+station not used,724756-23159,37.701,-112.149,14.0,LCZ D low plants,False
+station not used,724580-13984,39.551,-97.651,14.0,LCZ D low plants,False
+station not used,999999-24152,45.511,-118.425,11.0,LCZ A dense trees,False
+station not used,710358-99999,65.211,-123.436,16.0,LCZ F bare soil or sand,False
+station not used,999999-04140,46.885,-110.29,14.0,LCZ D low plants,False
+station not used,724640-93058,38.289,-104.506,16.0,LCZ F bare soil or sand,False
+station not used,747946-12886,28.617,-80.683,12.0,LCZ B scattered trees,False
+station not used,724116-13868,37.133,-80.683,14.0,LCZ D low plants,False
+station not used,726284-94836,46.35,-87.4,14.0,LCZ D low plants,False
+station not used,724356-53866,39.585,-85.8,14.0,LCZ D low plants,False
+station not used,999999-64757,44.233,-79.781,12.0,LCZ B scattered trees,False
+station not used,725084-54767,41.742,-72.182,14.0,LCZ D low plants,False
+station not used,999999-53927,36.135,-97.108,14.0,LCZ D low plants,False
+station not used,720636-00222,38.35,-93.683,14.0,LCZ D low plants,False
+station not used,722243-03738,34.891,-79.759,14.0,LCZ D low plants,False
+station not used,712740-99999,54.267,-112.483,14.0,LCZ D low plants,False
+station not used,702040-26703,63.767,-171.733,0.0,,
+station not used,725067-99999,41.667,-70.267,6.0,LCZ 6 open low-rise,True
+station not used,712380-99999,53.683,-112.867,17.0,LCZ G water,False
+station not used,724946-93232,37.333,-121.817,16.0,LCZ F bare soil or sand,False
+station not used,747809-03832,33.983,-83.668,14.0,LCZ D low plants,False
+station not used,722068-99999,30.333,-81.517,14.0,LCZ D low plants,False
+station not used,747043-03165,34.083,-118.033,8.0,LCZ 8 large low-rise,True
+station not used,A00019-53969,34.226,-99.284,14.0,LCZ D low plants,False
+station not used,722953-03183,35.067,-118.15,16.0,LCZ F bare soil or sand,False
+station not used,720268-53882,30.983,-84.633,12.0,LCZ B scattered trees,False
+station not used,722178-53953,35.021,-94.621,14.0,LCZ D low plants,False
+station not used,727486-04983,48.154,-94.517,9.0,LCZ 9 sparsely built,True
+station not used,725037-94745,41.062,-73.705,14.0,LCZ D low plants,False
+station not used,725305-99999,41.908,-88.249,14.0,LCZ D low plants,False
+station not used,999999-04223,48.541,-121.446,12.0,LCZ B scattered trees,False
+station not used,725342-13809,38.76,-87.599,14.0,LCZ D low plants,False
+station not used,711550-99999,53.3,-113.6,14.0,LCZ D low plants,False
+station not used,727985-94276,48.52,-123.026,14.0,LCZ D low plants,False
+station not used,747950-12867,28.233,-80.6,0.0,,
+station not used,723448-53934,35.726,-91.647,14.0,LCZ D low plants,False
+station not used,727456-99999,46.722,-92.043,14.0,LCZ D low plants,False
+station not used,723758-54928,45.497,-91.001,14.0,LCZ D low plants,False
+station not used,998179-99999,41.383,-82.5,17.0,LCZ G water,False
+station not used,725294-00383,35.017,-80.083,14.0,LCZ D low plants,False
+station not used,722505-12904,26.23,-97.656,14.0,LCZ D low plants,False
+station not used,722183-04972,45.823,-92.373,14.0,LCZ D low plants,False
+station not used,726945-99999,44.483,-123.283,14.0,LCZ D low plants,False
+station not used,997789-99999,58.967,-135.217,0.0,,
+station not used,760400-99999,32.4,-115.183,14.0,LCZ D low plants,False
+station not used,720415-00140,43.433,-86.0,14.0,LCZ D low plants,False
+station not used,997290-99999,41.174,-73.181,17.0,LCZ G water,False
+station not used,724630-99999,38.083,-102.617,6.0,LCZ 6 open low-rise,True
+station not used,711480-99999,49.183,-98.9,14.0,LCZ D low plants,False
+station not used,714510-99999,56.333,-103.283,11.0,LCZ A dense trees,False
+station not used,997693-99999,36.88,-76.33,17.0,LCZ G water,False
+station not used,719140-99999,48.767,-123.117,11.0,LCZ A dense trees,False
+station not used,726067-99999,42.2,-70.72,,,
+station not used,726391-00385,38.783,-106.217,,,
+station not used,714970-99999,60.233,-123.467,11.0,LCZ A dense trees,False
+station not used,744550-94982,41.613,-90.595,14.0,LCZ D low plants,False
+station not used,999999-03074,32.614,-106.741,16.0,LCZ F bare soil or sand,False
+station not used,719130-99999,58.733,-94.05,15.0,LCZ E bare rock or paved,False
+station not used,724620-23061,37.439,-105.862,16.0,LCZ F bare soil or sand,False
+station not used,723060-13722,35.892,-78.782,14.0,LCZ D low plants,False
+station not used,997996-99999,42.467,-82.867,17.0,LCZ G water,False
+station not used,722261-00360,27.267,-80.85,14.0,LCZ D low plants,False
+station not used,720592-00186,30.46,-87.877,12.0,LCZ B scattered trees,False
+station not used,702185-26622,60.383,-166.2,14.0,LCZ D low plants,False
+station not used,724339-99999,37.75,-89.017,14.0,LCZ D low plants,False
+station not used,726438-94994,43.156,-90.678,14.0,LCZ D low plants,False
+station not used,720674-00249,33.633,-85.15,11.0,LCZ A dense trees,False
+station not used,717130-99999,47.35,-70.017,14.0,LCZ D low plants,False
+station not used,744665-04838,42.121,-87.905,14.0,LCZ D low plants,False
+station not used,726586-99999,43.65,-94.417,14.0,LCZ D low plants,False
+station not used,719150-99999,64.193,-83.359,16.0,LCZ F bare soil or sand,False
+station not used,722785-23111,33.55,-112.367,16.0,LCZ F bare soil or sand,False
+station not used,722561-99999,31.638,-97.074,14.0,LCZ D low plants,False
+station not used,715160-99999,49.05,-105.483,14.0,LCZ D low plants,False
+station not used,714630-99999,42.867,-79.25,17.0,LCZ G water,False
+station not used,720316-12984,27.779,-97.691,14.0,LCZ D low plants,False
+station not used,710390-99999,62.117,-136.2,11.0,LCZ A dense trees,False
+station not used,727506-04952,43.913,-95.109,14.0,LCZ D low plants,False
+station not used,715230-99999,49.267,-73.35,11.0,LCZ A dense trees,False
+station not used,999999-94728,40.779,-73.969,11.0,LCZ A dense trees,False
+station not used,726413-04875,43.417,-88.133,11.0,LCZ A dense trees,False
+station not used,998015-99999,43.333,-70.55,11.0,LCZ A dense trees,False
+station not used,720258-04997,46.619,-93.31,14.0,LCZ D low plants,False
+station not used,723098-93798,38.527,-77.859,14.0,LCZ D low plants,False
+station not used,712280-99999,52.833,-111.867,14.0,LCZ D low plants,False
+station not used,725417-54822,42.566,-84.433,14.0,LCZ D low plants,False
+station not used,997694-99999,39.58,-75.58,0.0,,
+station not used,998004-99999,41.633,-71.333,14.0,LCZ D low plants,False
+station not used,727937-99999,47.9,-122.283,8.0,LCZ 8 large low-rise,True
+station not used,A00031-03725,38.994,-79.144,14.0,LCZ D low plants,False
+station not used,702590-26523,60.579,-151.242,14.0,LCZ D low plants,False
+station not used,726415-99999,42.62,-89.042,14.0,LCZ D low plants,False
+station not used,712750-99999,54.0,-111.267,14.0,LCZ D low plants,False
+station not used,710630-99999,45.383,-75.717,14.0,LCZ D low plants,False
+station not used,710610-99999,54.1,-114.45,12.0,LCZ B scattered trees,False
+station not used,720355-03732,39.6,-78.767,12.0,LCZ B scattered trees,False
+station not used,702490-99999,62.1,-152.75,15.0,LCZ E bare rock or paved,False
+station not used,714730-99999,48.783,-123.033,0.0,,
+station not used,723090-13754,34.9,-76.883,16.0,LCZ F bare soil or sand,False
+station not used,718370-99999,49.367,-113.117,14.0,LCZ D low plants,False
+station not used,724768-24051,40.436,-104.632,14.0,LCZ D low plants,False
+station not used,763940-99999,25.866,-100.237,16.0,LCZ F bare soil or sand,False
+station not used,723174-93783,36.048,-79.474,14.0,LCZ D low plants,False
+station not used,722015-12850,24.583,-81.683,14.0,LCZ D low plants,False
+station not used,722691-00366,32.2,-81.87,12.0,LCZ B scattered trees,False
+station not used,703330-99999,56.95,-158.617,14.0,LCZ D low plants,False
+station not used,710900-99999,70.486,-68.517,0.0,,
+station not used,723626-03737,36.399,-76.016,12.0,LCZ B scattered trees,False
+station not used,714040-99999,58.967,-110.433,17.0,LCZ G water,False
+station not used,727680-94008,48.214,-106.621,14.0,LCZ D low plants,False
+station not used,715370-99999,50.82,-112.05,14.0,LCZ D low plants,False
+station not used,727677-94041,47.646,-101.441,14.0,LCZ D low plants,False
+station not used,997782-99999,36.967,-76.417,8.0,LCZ 8 large low-rise,True
+station not used,722146-12816,29.692,-82.276,14.0,LCZ D low plants,False
+station not used,722196-53863,33.878,-84.298,14.0,LCZ D low plants,False
+station not used,724560-13996,39.072,-95.626,14.0,LCZ D low plants,False
+station not used,711620-99999,61.917,-113.717,17.0,LCZ G water,False
+station not used,723723-23184,34.649,-112.422,16.0,LCZ F bare soil or sand,False
+station not used,723440-13964,35.333,-94.365,14.0,LCZ D low plants,False
+station not used,720607-00199,34.717,-80.85,11.0,LCZ A dense trees,False
+station not used,720354-63901,34.699,-99.338,14.0,LCZ D low plants,False
+station not used,724115-99999,37.95,-79.833,12.0,LCZ B scattered trees,False
+station not used,716420-99999,47.82,-83.347,11.0,LCZ A dense trees,False
+station not used,716030-99999,43.827,-66.088,14.0,LCZ D low plants,False
+station not used,726482-99999,45.717,-87.1,14.0,LCZ D low plants,False
+station not used,726569-04933,44.859,-94.382,14.0,LCZ D low plants,False
+station not used,725069-99999,41.683,-69.983,9.0,LCZ 9 sparsely built,True
+station not used,726184-94709,44.05,-70.283,14.0,LCZ D low plants,False
+station not used,702647-99999,63.87,-148.97,6.0,LCZ 6 open low-rise,True
+station not used,701730-99999,66.0,-153.7,11.0,LCZ A dense trees,False
+station not used,714610-99999,55.8,-117.883,14.0,LCZ D low plants,False
+station not used,720344-54920,42.732,-95.556,14.0,LCZ D low plants,False
+station not used,710590-99999,69.27,-119.22,,,
+station not used,999999-23199,32.817,-115.683,14.0,LCZ D low plants,False
+station not used,724175-99999,39.283,-80.217,11.0,LCZ A dense trees,False
+station not used,726437-94940,43.967,-90.733,14.0,LCZ D low plants,False
+station not used,720313-03052,35.613,-100.996,14.0,LCZ D low plants,False
+station not used,722041-12993,29.445,-90.261,12.0,LCZ B scattered trees,False
+station not used,725810-24193,40.721,-114.036,16.0,LCZ F bare soil or sand,False
+station not used,743941-99999,42.933,-71.433,15.0,LCZ E bare rock or paved,False
+station not used,722157-04949,40.52,-90.652,14.0,LCZ D low plants,False
+station not used,714320-99999,43.25,-79.217,17.0,LCZ G water,False
+station not used,999999-13994,38.753,-90.374,14.0,LCZ D low plants,False
+station not used,716680-99999,45.92,-66.6,11.0,LCZ A dense trees,False
+station not used,724094-99999,40.883,-74.283,6.0,LCZ 6 open low-rise,True
+station not used,720286-53977,32.444,-97.817,14.0,LCZ D low plants,False
+station not used,725786-24151,42.189,-112.249,6.0,LCZ 6 open low-rise,True
+station not used,722640-93035,30.371,-104.017,13.0,"LCZ C bush, scrub",False
+station not used,726387-14850,44.739,-85.568,14.0,LCZ D low plants,False
+station not used,722200-12832,29.727,-85.025,14.0,LCZ D low plants,False
+station not used,713410-99999,49.617,-113.817,14.0,LCZ D low plants,False
+station not used,703670-25322,58.411,-135.709,11.0,LCZ A dense trees,False
+station not used,724060-93721,39.173,-76.684,14.0,LCZ D low plants,False
+station not used,744656-53891,38.379,-88.413,14.0,LCZ D low plants,False
+station not used,712870-99999,54.767,-112.817,12.0,LCZ B scattered trees,False
+station not used,726415-94854,42.617,-89.033,14.0,LCZ D low plants,False
+station not used,998007-99999,48.467,-122.467,14.0,LCZ D low plants,False
+station not used,710359-99999,45.27,-72.17,6.0,LCZ 6 open low-rise,True
+station not used,714410-99999,49.017,-97.55,14.0,LCZ D low plants,False
+station not used,999999-93115,32.567,-117.117,16.0,LCZ F bare soil or sand,False
+station not used,727675-94011,48.417,-101.35,15.0,LCZ E bare rock or paved,False
+station not used,726419-94929,46.547,-90.918,14.0,LCZ D low plants,False
+station not used,726356-99999,42.12,-86.48,6.0,LCZ 6 open low-rise,True
+station not used,725197-94794,43.145,-75.384,14.0,LCZ D low plants,False
+station not used,726500-14972,43.168,-95.21,,,
+station not used,999999-14931,40.783,-91.125,14.0,LCZ D low plants,False
+station not used,710377-99999,56.37,-94.7,17.0,LCZ G water,False
+station not used,999999-63849,37.25,-86.233,12.0,LCZ B scattered trees,False
+station not used,723104-53867,33.972,-80.994,8.0,LCZ 8 large low-rise,True
+station not used,710460-99999,69.62,-140.2,0.0,,
+station not used,710774-99999,55.842,-108.418,12.0,LCZ B scattered trees,False
+station not used,722346-54824,42.993,-84.139,14.0,LCZ D low plants,False
+station not used,725846-99999,39.32,-120.133,14.0,LCZ D low plants,False
+station not used,725124-64705,40.777,-79.95,14.0,LCZ D low plants,False
+station not used,724955-93227,38.208,-122.28,14.0,LCZ D low plants,False
+station not used,702035-26704,63.687,-170.493,0.0,,
+station not used,723783-03195,35.946,-112.155,14.0,LCZ D low plants,False
+station not used,724917-23233,36.664,-121.608,16.0,LCZ F bare soil or sand,False
+station not used,724045-93720,38.341,-75.51,14.0,LCZ D low plants,False
+station not used,999999-13730,39.417,-77.383,14.0,LCZ D low plants,False
+station not used,726883-04113,45.826,-119.261,16.0,LCZ F bare soil or sand,False
+station not used,723037-93765,34.733,-76.657,14.0,LCZ D low plants,False
+station not used,717460-99999,43.0,-82.3,14.0,LCZ D low plants,False
+station not used,718280-99999,54.8,-66.8,14.0,LCZ D low plants,False
+station not used,997338-99999,42.0,-87.5,17.0,LCZ G water,False
+station not used,749171-00479,35.135,-118.439,16.0,LCZ F bare soil or sand,False
+station not used,722678-23052,36.742,-104.508,14.0,LCZ D low plants,False
+station not used,727555-99999,48.066,-96.185,14.0,LCZ D low plants,False
+station not used,718670-99999,53.967,-101.1,11.0,LCZ A dense trees,False
+station not used,744657-53887,38.515,-89.092,14.0,LCZ D low plants,False
+station not used,715640-99999,49.183,-98.083,14.0,LCZ D low plants,False
+station not used,725409-04882,41.921,-84.586,14.0,LCZ D low plants,False
+station not used,712890-99999,52.333,-112.583,14.0,LCZ D low plants,False
+station not used,723536-53986,36.383,-97.8,14.0,LCZ D low plants,False
+station not used,714440-99999,50.65,-99.933,11.0,LCZ A dense trees,False
+station not used,726836-04201,45.769,-122.864,14.0,LCZ D low plants,False
+station not used,717380-99999,47.967,-84.787,12.0,LCZ B scattered trees,False
+station not used,727883-24220,47.034,-120.531,14.0,LCZ D low plants,False
+station not used,747335-03059,30.586,-100.649,14.0,LCZ D low plants,False
+station not used,720175-53919,33.636,-91.756,12.0,LCZ B scattered trees,False
+station not used,997731-99999,45.2,-85.55,11.0,LCZ A dense trees,False
+station not used,724930-23230,37.718,-122.233,14.0,LCZ D low plants,False
+station not used,701625-26542,68.167,-151.767,15.0,LCZ E bare rock or paved,False
+station not used,994041-99999,37.507,-122.2,14.0,LCZ D low plants,False
+station not used,723300-99999,36.767,-90.467,6.0,LCZ 6 open low-rise,True
+station not used,724056-63805,36.895,-81.35,14.0,LCZ D low plants,False
+station not used,999999-14788,41.583,-71.417,0.0,,
+station not used,714700-99999,65.75,-111.25,15.0,LCZ E bare rock or paved,False
+station not used,726710-24164,42.578,-110.11,14.0,LCZ D low plants,False
+station not used,725025-94741,40.859,-74.056,14.0,LCZ D low plants,False
+station not used,722315-53917,30.049,-90.029,14.0,LCZ D low plants,False
+station not used,999999-94085,44.019,-100.353,14.0,LCZ D low plants,False
+station not used,724800-23157,37.371,-118.359,13.0,"LCZ C bush, scrub",False
+station not used,724075-13735,39.366,-75.078,14.0,LCZ D low plants,False
+station not used,724074-93780,39.941,-74.841,14.0,LCZ D low plants,False
+station not used,710200-99999,61.233,-123.733,11.0,LCZ A dense trees,False
+station not used,724769-94035,40.45,-105.017,14.0,LCZ D low plants,False
+station not used,719077-99999,60.051,-77.287,14.0,LCZ D low plants,False
+station not used,719430-99999,56.238,-120.74,14.0,LCZ D low plants,False
+station not used,747830-12849,26.079,-80.162,14.0,LCZ D low plants,False
+station not used,712690-99999,50.3,-110.083,14.0,LCZ D low plants,False
+station not used,724287-04848,41.563,-83.477,14.0,LCZ D low plants,False
+station not used,999999-53878,35.419,-82.557,14.0,LCZ D low plants,False
+station not used,725016-54790,40.821,-72.867,12.0,LCZ B scattered trees,False
+station not used,992210-99999,46.05,-131.02,0.0,,
+station not used,712360-99999,49.617,-114.483,12.0,LCZ B scattered trees,False
+station not used,702610-26411,64.803,-147.876,14.0,LCZ D low plants,False
+station not used,722920-23191,33.404,-118.415,12.0,LCZ B scattered trees,False
+station not used,725467-04973,40.751,-95.413,14.0,LCZ D low plants,False
+station not used,727850-24157,47.622,-117.528,16.0,LCZ F bare soil or sand,False
+station not used,999999-53151,33.439,-117.19,13.0,"LCZ C bush, scrub",False
+station not used,722192-23033,32.473,-100.466,14.0,LCZ D low plants,False
+station not used,717390-99999,48.57,-81.377,16.0,LCZ F bare soil or sand,False
+station not used,715360-99999,49.483,-112.683,14.0,LCZ D low plants,False
+station not used,719270-99999,48.817,-123.717,6.0,LCZ 6 open low-rise,True
+station not used,725036-14757,41.626,-73.882,14.0,LCZ D low plants,False
+station not used,997371-99999,37.17,-75.98,9.0,LCZ 9 sparsely built,True
+station not used,727827-24110,47.193,-119.315,16.0,LCZ F bare soil or sand,False
+station not used,726377-99999,43.63,-83.85,11.0,LCZ A dense trees,False
+station not used,727444-04979,47.049,-91.745,14.0,LCZ D low plants,False
+station not used,724089-13781,39.673,-75.601,14.0,LCZ D low plants,False
+station not used,725416-14864,43.717,-85.5,14.0,LCZ D low plants,False
+station not used,724094-54743,40.876,-74.283,12.0,LCZ B scattered trees,False
+station not used,725524-94958,41.623,-98.949,14.0,LCZ D low plants,False
+station not used,725750-24126,41.194,-112.017,14.0,LCZ D low plants,False
+station not used,726449-04891,45.199,-89.711,14.0,LCZ D low plants,False
+station not used,719670-99999,45.817,-72.533,14.0,LCZ D low plants,False
+station not used,999999-63868,34.66,-87.346,14.0,LCZ D low plants,False
+station not used,999999-63858,32.457,-87.242,14.0,LCZ D low plants,False
+station not used,711350-99999,49.167,-105.983,14.0,LCZ D low plants,False
+station not used,716270-94792,45.467,-73.733,8.0,LCZ 8 large low-rise,True
+station not used,724517-99999,38.35,-98.867,14.0,LCZ D low plants,False
+station not used,722186-04892,45.689,-85.566,11.0,LCZ A dense trees,False
+station not used,725315-99999,40.033,-88.267,14.0,LCZ D low plants,False
+station not used,713890-99999,46.683,-71.967,11.0,LCZ A dense trees,False
+station not used,725453-14930,41.407,-95.047,14.0,LCZ D low plants,False
+station not used,722600-03969,32.215,-98.178,14.0,LCZ D low plants,False
+station not used,722899-99999,33.967,-117.633,6.0,LCZ 6 open low-rise,True
+station not used,720261-53976,33.175,-97.828,14.0,LCZ D low plants,False
+station not used,723525-93986,34.989,-99.053,14.0,LCZ D low plants,False
+station not used,727730-24153,46.921,-114.094,14.0,LCZ D low plants,False
+station not used,722310-12916,29.998,-90.278,14.0,LCZ D low plants,False
+station not used,726830-94185,43.595,-118.958,13.0,"LCZ C bush, scrub",False
+station not used,727452-04912,47.842,-96.621,14.0,LCZ D low plants,False
+station not used,994060-99999,43.969,-68.128,14.0,LCZ D low plants,False
+station not used,997295-99999,41.694,-83.473,12.0,LCZ B scattered trees,False
+station not used,722248-00359,30.131,-93.376,14.0,LCZ D low plants,False
+station not used,718780-99999,52.183,-113.9,14.0,LCZ D low plants,False
+station not used,727930-24233,47.445,-122.314,14.0,LCZ D low plants,False
+station not used,722140-93805,30.394,-84.351,16.0,LCZ F bare soil or sand,False
+station not used,703050-99999,58.65,-162.067,,,
+station not used,722238-63873,31.35,-85.667,11.0,LCZ A dense trees,False
+station not used,722177-63811,35.195,-83.865,12.0,LCZ B scattered trees,False
+station not used,727476-94961,48.726,-94.612,14.0,LCZ D low plants,False
+station not used,712770-99999,55.083,-117.183,14.0,LCZ D low plants,False
+station not used,722688-93034,32.693,-103.213,16.0,LCZ F bare soil or sand,False
+station not used,999999-13928,31.633,-97.067,8.0,LCZ 8 large low-rise,True
+station not used,720110-53983,30.784,-98.662,14.0,LCZ D low plants,False
+station not used,726408-99999,43.75,-87.7,17.0,LCZ G water,False
+station not used,724464-53916,39.82,-93.577,14.0,LCZ D low plants,False
+station not used,727417-54825,45.407,-83.813,14.0,LCZ D low plants,False
+station not used,719900-99999,63.25,-130.033,15.0,LCZ E bare rock or paved,False
+station not used,724235-13810,38.23,-85.663,14.0,LCZ D low plants,False
+station not used,999999-53136,36.624,-116.023,16.0,LCZ F bare soil or sand,False
+station not used,994190-99999,47.079,-90.728,12.0,LCZ B scattered trees,False
+station not used,713620-99999,60.017,-111.917,11.0,LCZ A dense trees,False
+station not used,723300-03975,36.77,-90.322,14.0,LCZ D low plants,False
+station not used,718200-99999,44.217,-76.6,14.0,LCZ D low plants,False
+station not used,724689-03026,39.241,-102.282,14.0,LCZ D low plants,False
+station not used,702606-96401,62.826,-149.907,11.0,LCZ A dense trees,False
+station not used,725407-04854,45.017,-84.689,14.0,LCZ D low plants,False
+station not used,A00032-25715,52.22,-174.206,0.0,,
+station not used,763230-99999,26.933,-105.667,3.0,LCZ 3 compact low-rise,True
+station not used,702223-26602,64.935,-161.155,6.0,LCZ 6 open low-rise,True
+station not used,724050-13743,38.847,-77.035,14.0,LCZ D low plants,False
+station not used,725474-04915,41.007,-94.363,14.0,LCZ D low plants,False
+station not used,719493-99999,62.208,-133.376,14.0,LCZ D low plants,False
+station not used,723100-13883,33.942,-81.118,16.0,LCZ F bare soil or sand,False
+station not used,712530-99999,58.7,-113.867,17.0,LCZ G water,False
+station not used,999999-13983,38.967,-92.367,,,
+station not used,994012-99999,41.745,-124.183,0.0,,
+station not used,720393-00129,34.85,-102.333,14.0,LCZ D low plants,False
+station not used,727120-14607,46.87,-68.017,14.0,LCZ D low plants,False
+station not used,994070-99999,47.675,-124.485,14.0,LCZ D low plants,False
+station not used,726568-04961,44.123,-93.261,14.0,LCZ D low plants,False
+station not used,723119-13886,34.849,-82.35,14.0,LCZ D low plants,False
+station not used,725256-04857,41.779,-80.697,14.0,LCZ D low plants,False
+station not used,999999-53974,39.103,-96.61,14.0,LCZ D low plants,False
+station not used,724294-53844,39.757,-82.663,14.0,LCZ D low plants,False
+station not used,716820-99999,61.117,-122.85,11.0,LCZ A dense trees,False
+station not used,725217-53855,39.361,-84.521,14.0,LCZ D low plants,False
+station not used,722813-53146,31.606,-110.428,14.0,LCZ D low plants,False
+station not used,720295-53972,32.084,-97.097,14.0,LCZ D low plants,False
+station not used,724509-53939,38.068,-97.275,14.0,LCZ D low plants,False
+station not used,A00003-63844,35.223,-83.419,14.0,LCZ D low plants,False
+station not used,724674-94050,40.044,-107.888,14.0,LCZ D low plants,False
+station not used,994031-99999,42.74,-124.497,0.0,,
+station not used,703160-25624,55.221,-162.732,14.0,LCZ D low plants,False
+station not used,722244-00358,38.981,-76.922,12.0,LCZ B scattered trees,False
+station not used,722167-99999,38.25,-78.05,14.0,LCZ D low plants,False
+station not used,992030-99999,56.3,-148.17,0.0,,
+station not used,744104-14763,42.427,-73.289,14.0,LCZ D low plants,False
+station not used,712580-99999,51.75,-114.067,14.0,LCZ D low plants,False
+station not used,997313-99999,37.608,-75.686,9.0,LCZ 9 sparsely built,True
+station not used,711250-99999,54.125,-108.523,14.0,LCZ D low plants,False
+station not used,714400-99999,51.233,-112.983,14.0,LCZ D low plants,False
+station not used,722203-03041,38.483,-106.317,11.0,LCZ A dense trees,False
+station not used,703053-26654,61.775,-161.319,14.0,LCZ D low plants,False
+station not used,722580-13960,32.838,-96.836,8.0,LCZ 8 large low-rise,True
+station not used,711020-99999,53.017,-110.1,14.0,LCZ D low plants,False
+station not used,717850-99999,49.017,-122.767,6.0,LCZ 6 open low-rise,True
+station not used,725776-99999,43.6,-110.733,14.0,LCZ D low plants,False
+station not used,725385-99999,42.33,-82.97,6.0,LCZ 6 open low-rise,True
+station not used,720266-54809,41.275,-85.84,14.0,LCZ D low plants,False
+station not used,727119-94605,46.617,-69.533,11.0,LCZ A dense trees,False
+station not used,722274-54939,40.684,-92.901,14.0,LCZ D low plants,False
+station not used,720318-53965,33.11,-98.555,14.0,LCZ D low plants,False
+station not used,722445-03904,30.589,-96.365,14.0,LCZ D low plants,False
+station not used,724885-93102,39.417,-118.717,16.0,LCZ F bare soil or sand,False
+station not used,715780-99999,46.833,-71.183,17.0,LCZ G water,False
+station not used,725496-04976,42.597,-95.241,14.0,LCZ D low plants,False
+station not used,743945-14710,42.93,-71.436,15.0,LCZ E bare rock or paved,False
+station not used,722576-03902,31.067,-97.833,14.0,LCZ D low plants,False
+station not used,723450-13971,36.267,-93.157,14.0,LCZ D low plants,False
+station not used,994013-99999,48.863,-122.758,0.0,,
+station not used,724810-23203,37.383,-120.567,16.0,LCZ F bare soil or sand,False
+station not used,717500-54802,48.583,-86.3,17.0,LCZ G water,False
+station not used,722208-04224,48.708,-122.911,12.0,LCZ B scattered trees,False
+station not used,726510-14944,43.578,-96.754,14.0,LCZ D low plants,False
+station not used,722680-23009,33.307,-104.508,16.0,LCZ F bare soil or sand,False
+station not used,726660-24029,44.76,-106.974,14.0,LCZ D low plants,False
+station not used,713540-99999,53.567,-112.3,14.0,LCZ D low plants,False
+station not used,999999-63899,31.145,-87.052,9.0,LCZ 9 sparsely built,True
+station not used,722280-13876,33.565,-86.745,14.0,LCZ D low plants,False
+station not used,701620-26508,69.367,-152.133,14.0,LCZ D low plants,False
+station not used,726227-94790,43.989,-76.026,14.0,LCZ D low plants,False
+station not used,726394-99999,46.311,-85.457,14.0,LCZ D low plants,False
+station not used,723273-99999,36.0,-86.517,14.0,LCZ D low plants,False
+station not used,723556-99999,35.65,-95.367,14.0,LCZ D low plants,False
+station not used,722039-12885,26.199,-80.178,14.0,LCZ D low plants,False
+station not used,710455-99999,60.173,-132.743,14.0,LCZ D low plants,False
+station not used,725190-14771,43.111,-76.104,14.0,LCZ D low plants,False
+station not used,710514-99999,48.755,-86.344,14.0,LCZ D low plants,False
+station not used,710310-99999,48.42,-123.23,0.0,,
+station not used,725098-99999,42.183,-71.167,11.0,LCZ A dense trees,False
+station not used,702031-26620,64.7,-162.05,14.0,LCZ D low plants,False
+station not used,702700-99999,61.267,-149.65,14.0,LCZ D low plants,False
+station not used,718870-99999,50.702,-120.444,14.0,LCZ D low plants,False
+station not used,720386-00125,45.117,-95.133,14.0,LCZ D low plants,False
+station not used,712200-99999,54.296,-130.609,0.0,,
+station not used,725126-14736,40.3,-78.317,14.0,LCZ D low plants,False
+station not used,720278-03704,36.687,-77.483,14.0,LCZ D low plants,False
+station not used,722037-92809,26.0,-80.241,14.0,LCZ D low plants,False
+station not used,715020-99999,69.617,-135.433,15.0,LCZ E bare rock or paved,False
+station not used,724796-94128,41.787,-111.852,14.0,LCZ D low plants,False
+station not used,745057-53130,34.259,-118.413,8.0,LCZ 8 large low-rise,True
+station not used,724665-93010,39.273,-103.667,14.0,LCZ D low plants,False
+station not used,726115-54740,43.342,-72.521,12.0,LCZ B scattered trees,False
+station not used,744663-53950,39.639,-90.778,14.0,LCZ D low plants,False
+station not used,703860-25329,56.806,-132.937,6.0,LCZ 6 open low-rise,True
+station not used,722154-53885,34.722,-84.869,14.0,LCZ D low plants,False
+station not used,722673-99999,33.72,-96.67,14.0,LCZ D low plants,False
+station not used,727825-94239,47.397,-120.201,16.0,LCZ F bare soil or sand,False
+station not used,723160-13870,31.54,-82.507,14.0,LCZ D low plants,False
+station not used,726228-99999,44.383,-74.2,12.0,LCZ B scattered trees,False
+station not used,722904-23196,32.567,-116.967,16.0,LCZ F bare soil or sand,False
+station not used,703606-25629,59.067,-160.367,14.0,LCZ D low plants,False
+station not used,726407-99999,43.02,-87.95,5.0,LCZ 5 open mid-rise,True
+station not used,997266-99999,46.27,-84.19,17.0,LCZ G water,False
+station not used,994090-99999,48.223,-88.366,17.0,LCZ G water,False
+station not used,725097-14790,42.15,-70.933,12.0,LCZ B scattered trees,False
+station not used,724988-94704,42.57,-77.714,14.0,LCZ D low plants,False
+station not used,722342-54931,44.249,-95.607,14.0,LCZ D low plants,False
+station not used,717280-99999,48.517,-72.267,14.0,LCZ D low plants,False
+station not used,723416-13925,34.6,-91.574,14.0,LCZ D low plants,False
+station not used,725194-54778,42.644,-77.053,14.0,LCZ D low plants,False
+station not used,726504-54838,45.932,-89.269,14.0,LCZ D low plants,False
+station not used,997793-99999,46.083,-85.433,17.0,LCZ G water,False
+station not used,720594-00188,29.717,-95.383,8.0,LCZ 8 large low-rise,True
+station not used,746950-99999,35.667,-75.9,11.0,LCZ A dense trees,False
+station not used,711050-99999,50.25,-111.7,14.0,LCZ D low plants,False
+station not used,997994-99999,38.767,-76.7,17.0,LCZ G water,False
+station not used,742070-24201,47.083,-122.583,14.0,LCZ D low plants,False
+station not used,999999-14943,42.391,-96.379,14.0,LCZ D low plants,False
+station not used,723200-93801,34.348,-85.162,14.0,LCZ D low plants,False
+station not used,726404-04865,45.928,-89.731,14.0,LCZ D low plants,False
+station not used,710356-99999,64.7,-110.617,14.0,LCZ D low plants,False
+station not used,997356-99999,24.711,-81.107,8.0,LCZ 8 large low-rise,True
+station not used,714950-99999,51.367,-114.083,14.0,LCZ D low plants,False
+station not used,722692-00367,38.586,-77.711,14.0,LCZ D low plants,False
+station not used,999999-63895,34.454,-87.71,12.0,LCZ B scattered trees,False
+station not used,723030-13714,35.174,-79.009,14.0,LCZ D low plants,False
+station not used,723165-63821,36.223,-81.098,14.0,LCZ D low plants,False
+station not used,719460-99999,61.76,-121.237,,,
+station not used,720328-63832,39.0,-80.274,12.0,LCZ B scattered trees,False
+station not used,762580-99999,27.483,-109.917,8.0,LCZ 8 large low-rise,True
+station not used,712590-99999,51.117,-111.7,14.0,LCZ D low plants,False
+station not used,703886-99999,56.247,-134.65,0.0,,
+station not used,999999-94088,44.517,-104.436,12.0,LCZ B scattered trees,False
+station not used,724066-99999,39.7,-77.717,9.0,LCZ 9 sparsely built,True
+station not used,714540-99999,53.917,-106.067,11.0,LCZ A dense trees,False
+station not used,712070-99999,49.783,-123.167,11.0,LCZ A dense trees,False
+station not used,712020-99999,52.783,-112.433,14.0,LCZ D low plants,False
+station not used,717120-99999,45.117,-74.283,14.0,LCZ D low plants,False
+station not used,722560-13959,31.618,-97.228,14.0,LCZ D low plants,False
+station not used,723620-93040,34.067,-106.9,6.0,LCZ 6 open low-rise,True
+station not used,718210-99999,49.75,-77.8,11.0,LCZ A dense trees,False
+station not used,720320-53981,32.354,-97.434,14.0,LCZ D low plants,False
+station not used,744600-99999,41.367,-88.683,14.0,LCZ D low plants,False
+station not used,722126-04879,41.54,-87.532,14.0,LCZ D low plants,False
+station not used,727130-14604,46.683,-68.05,12.0,LCZ B scattered trees,False
+station not used,720284-04877,42.574,-84.811,14.0,LCZ D low plants,False
+station not used,994410-99999,29.857,-81.264,0.0,,
+station not used,992070-99999,38.47,-70.56,0.0,,
+station not used,722675-23021,33.6,-102.05,14.0,LCZ D low plants,False
+station not used,711630-99999,63.133,-117.25,16.0,LCZ F bare soil or sand,False
+station not used,726566-04965,43.983,-96.3,14.0,LCZ D low plants,False
+station not used,703644-27515,70.213,-150.994,14.0,LCZ D low plants,False
+station not used,717470-99999,48.75,-91.617,6.0,LCZ 6 open low-rise,True
+station not used,727924-24223,46.117,-122.894,8.0,LCZ 8 large low-rise,True
+station not used,999999-93243,37.238,-120.883,14.0,LCZ D low plants,False
+station not used,992040-99999,25.84,-89.66,0.0,,
+station not used,711600-99999,62.7,-109.15,17.0,LCZ G water,False
+station not used,998012-99999,42.1,-86.483,6.0,LCZ 6 open low-rise,True
+station not used,725566-99999,42.47,-98.688,14.0,LCZ D low plants,False
+station not used,720412-54943,41.828,-94.16,,,
+station not used,722174-23097,34.167,-101.717,16.0,LCZ F bare soil or sand,False
+station not used,710290-99999,70.75,-117.8,15.0,LCZ E bare rock or paved,False
+station not used,717300-99999,46.625,-80.799,14.0,LCZ D low plants,False
+station not used,726155-99999,43.567,-71.417,11.0,LCZ A dense trees,False
+station not used,725484-04942,42.778,-96.194,14.0,LCZ D low plants,False
+station not used,999999-14855,42.083,-87.833,6.0,LCZ 6 open low-rise,True
+station not used,712310-99999,49.733,-111.45,14.0,LCZ D low plants,False
+station not used,998204-99999,46.917,-124.117,0.0,,
+station not used,714850-99999,50.933,-127.65,0.0,,
+station not used,714640-99999,42.55,-80.05,17.0,LCZ G water,False
+station not used,997687-99999,40.082,-74.87,17.0,LCZ G water,False
+station not used,722032-54916,44.074,-93.553,14.0,LCZ D low plants,False
+station not used,718350-99999,51.45,-90.217,14.0,LCZ D low plants,False
+station not used,714380-99999,45.033,-80.367,17.0,LCZ G water,False
+station not used,723068-99999,35.85,-77.883,11.0,LCZ A dense trees,False
+station not used,727514-54910,46.381,-94.806,14.0,LCZ D low plants,False
+station not used,703610-25339,59.512,-139.671,14.0,LCZ D low plants,False
+station not used,724770-03170,39.601,-116.006,16.0,LCZ F bare soil or sand,False
+station not used,992710-99999,25.17,-94.42,0.0,,
+station not used,720436-00142,37.45,-94.733,14.0,LCZ D low plants,False
+station not used,713560-99999,64.317,-96.0,15.0,LCZ E bare rock or paved,False
+station not used,715240-99999,45.8,-73.433,14.0,LCZ D low plants,False
+station not used,722435-99999,29.633,-95.267,14.0,LCZ D low plants,False
+station not used,723270-13897,36.111,-86.688,14.0,LCZ D low plants,False

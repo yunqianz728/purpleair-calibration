@@ -1,0 +1,33 @@
+{
+ "Continental": {
+  "best_MAE": 0.8588,
+  "best_trial": 44,
+  "first_trial_MAE": 1.0306,
+  "range": [
+   0.8588,
+   2.8106
+  ],
+  "last5_spread": 0.0
+ },
+ "Arid": {
+  "best_MAE": 1.1952,
+  "best_trial": 45,
+  "first_trial_MAE": 1.2478,
+  "range": [
+   1.1952,
+   3.3791
+  ],
+  "last5_spread": 0.0
+ },
+ "Temperate": {
+  "best_MAE": 0.9381,
+  "best_trial": 36,
+  "first_trial_MAE": 1.0218,
+  "range": [
+   0.9381,
+   2.6196
+  ],
+  "last5_spread": 0.0
+ },
+ "_note": "Real Optuna TPE histories (seed 42, 50 trials) recorded by rerun_models.py; validation MAE is unweighted, on the 16 % validation subset of the training rows."
+}

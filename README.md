@@ -90,6 +90,19 @@ python train_deployment_models.py \
 Model metadata, validation metrics, and sample sizes are stored in
 [`app/models/model_metadata.json`](app/models/model_metadata.json).
 
+## Reproduce the paper
+
+The evaluation behind the manuscript — every model configuration, the four deployment protocols,
+the reviewer analyses and the figure code — is in [`paper/`](paper/README.md), together with the
+outputs it produced. It needs the paired dataset described in [`data/`](data/README.md), which is
+attached to the latest release.
+
+```bash
+python3 paper/analysis/make_parquet.py
+export PA_PARQUET="$PWD/paper/analysis/train.parquet"
+PA_OUT=paper/results_50trials python3 paper/analysis/make_table2.py
+```
+
 ## Repository map
 
 ```text
@@ -101,6 +114,13 @@ app/
   models/                        Three deployed XGBoost models + metadata
   utils/feature_engineering.py   Sensor-isolated temporal features
   utils/model_predictor.py       Model selection and provenance
+paper/
+  analysis/                      Model fitting, evaluation protocols, reviewer analyses
+  figures/                       Figure code
+  data/download_era5.py          Retrieval of the two ERA5 products from the CDS
+  results_50trials/              Outputs behind the reported numbers
+  results_20trials/              The earlier tuning budget, kept for comparison
+data/                             The paired dataset (see data/README.md)
 docs/                             Maintained usage and FAQ documentation
 legacy/                           Superseded prototypes and release utilities
 ```
@@ -121,8 +141,13 @@ legacy/                           Superseded prototypes and release utilities
 
 ## Data and software
 
-- Code archive: [10.5281/zenodo.18463819](https://doi.org/10.5281/zenodo.18463819)
-- ERA5 archive: [10.5281/zenodo.18485026](https://doi.org/10.5281/zenodo.18485026)
+- Paired dataset: attached to the [latest release](https://github.com/yunqianz728/purpleair-calibration/releases); see [`data/README.md`](data/README.md)
+- Code archive: [10.5281/zenodo.18463819](https://doi.org/10.5281/zenodo.18463819) (concept DOI, always the current version)
+- Gridded reanalysis archive: [10.5281/zenodo.18485026](https://doi.org/10.5281/zenodo.18485026)
+  — hourly `ssrd`, `strd`, `sshf` and `tp` from **ERA5-Land at 0.1°**, June 2022 to December 2024.
+  The 10 m wind components are not in that archive; fetch them with
+  [`paper/data/download_era5.py`](paper/data/download_era5.py), or take the sampled values from the
+  paired dataset, which already carries them.
 - PurpleAir data: <https://www2.purpleair.com/>
 - HadISD reference data: <https://www.metoffice.gov.uk/hadobs/hadisd/>
 - ERA5 source: <https://cds.climate.copernicus.eu/>
