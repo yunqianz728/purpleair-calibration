@@ -33,8 +33,8 @@ keywords:
 abstract: >
   A machine learning framework for calibrating PurpleAir temperature
   sensors using a single national XGBoost model with temporal features.
-  The final 63-feature model achieves mean absolute error of 0.64°C and
-  R-squared of 0.992 on the held-out test set. The study includes 797,744
+  The released 63-feature model achieves mean absolute error of 0.78°C and
+  R-squared of 0.987 on the held-out test set. The study includes 797,744
   hourly observations from 31 U.S. states.
 preferred-citation:
   type: article

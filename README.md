@@ -20,8 +20,8 @@ model provenance for every row, and downloadable calibrated data.
 
 PurpleAir devices showed a mean warm bias of 5.4°C, reaching approximately
 13.5°C during peak solar radiation. The final Temporal-National XGBoost model
-achieved 0.64°C mean absolute error (MAE), 0.87°C root mean squared error
-(RMSE), and R² = 0.992 on the held-out test set. A single national model
+achieved 0.78°C mean absolute error (MAE), 1.09°C root mean squared error
+(RMSE), and R² = 0.987 on the held-out test set. A single national model
 performed consistently across the evaluated temperature regimes and climate
 zones.
 
@@ -30,7 +30,7 @@ zones.
 | Workflow | Input | Held-out performance | Purpose |
 |---|---|---:|---|
 | Direct calibration | timestamp, temperature, humidity, latitude, longitude | Temporal: MAE 0.813°C; warm-up: MAE 1.149°C | Standard PurpleAir exports |
-| Final paper model | Direct inputs + SSHF, SSRD, STRD, TP, u10, v10 from ERA5 | MAE 0.64°C; RMSE 0.87°C | Exact 63-feature Temporal-National model |
+| Final paper model | Direct inputs + SSHF, SSRD, STRD, TP, u10, v10 from ERA5 | MAE 0.78°C; RMSE 1.09°C | Exact 63-feature Temporal-National model |
 
 Direct calibration uses a 49-feature sensor-only temporal model after six
 prior hourly readings. The first six hours and isolated readings use a

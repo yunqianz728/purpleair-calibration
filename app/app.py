@@ -275,8 +275,8 @@ with st.sidebar:
     st.caption("Open research software · Version 2.0")
     st.markdown("---")
     st.markdown("**Final study model**")
-    st.metric("Held-out MAE", "0.64°C")
-    st.caption("Temporal-National XGBoost · 63 features · R² 0.992")
+    st.metric("Held-out MAE", "0.78°C")
+    st.caption("Temporal-National XGBoost · 63 features · R² 0.987")
     st.markdown("---")
     st.markdown(f"[GitHub repository]({GITHUB_URL})")
     st.markdown(f"[Archived code]({ZENODO_CODE_URL})")
@@ -316,13 +316,13 @@ with calibrate_tab:
 
     if mode == "paper":
         st.info(
-            "Paper model: 0.64°C held-out MAE and 0.87°C RMSE. "
+            "Paper model: 0.78°C held-out MAE and 1.09°C RMSE. "
             "This workflow requires complete ERA5 inputs and runs the exact 63-feature model."
         )
     else:
         st.info(
             "Direct mode: 0.813°C held-out MAE after six prior hourly records; "
-            "1.149°C during warm-up. The paper model's 0.64°C MAE applies to the "
+            "1.149°C during warm-up. The paper model's 0.78°C MAE applies to the "
             "ERA5-enriched workflow."
         )
 
@@ -407,7 +407,7 @@ with method_tab:
     paper_col, direct_col = st.columns(2)
     with paper_col:
         st.markdown("### Final paper model")
-        st.write("A single Temporal-National XGBoost model uses 63 sensor, site, ERA5, and temporal features. It achieved 0.64°C MAE, 0.87°C RMSE, and R² = 0.992 on the held-out test set reported in the final manuscript.")
+        st.write("A single Temporal-National XGBoost model uses 63 sensor, site, ERA5, and temporal features. It achieved 0.78°C MAE, 1.09°C RMSE, and R² = 0.987 on the held-out test set.")
         st.info("Use this mode when your table already contains SSHF, SSRD, STRD, TP, u10, and v10 from ERA5 in the same units used by the archive.")
     with direct_col:
         st.markdown("### Direct calibration")

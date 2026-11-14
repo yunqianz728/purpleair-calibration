@@ -30,7 +30,7 @@ The app provides:
 - Row-level model provenance and history status
 - Interactive checks, calibrated CSV export, and a method report
 
-The final paper model achieved 0.64°C MAE, 0.87°C RMSE, and R² = 0.992 on the
+The final paper model achieved 0.78°C MAE, 1.09°C RMSE, and R² = 0.987 on the
 held-out test set. Direct calibration uses separately validated sensor-only
 models and displays their metrics in the Method & limits tab.
 

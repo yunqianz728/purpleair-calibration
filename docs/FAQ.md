@@ -14,7 +14,7 @@ The web app provides two explicitly labeled workflows:
 | Workflow | Required input | Held-out performance | Recommended use |
 |---|---|---:|---|
 | Direct calibration | Timestamp, temperature, humidity, latitude, longitude | Temporal MAE 0.813°C; warm-up MAE 1.149°C | Standard PurpleAir exports |
-| Final paper model | Direct inputs plus SSHF, SSRD, STRD, TP, u10, and v10 | MAE 0.64°C; RMSE 0.87°C; R² 0.992 | Exact manuscript model |
+| Final paper model | Direct inputs plus SSHF, SSRD, STRD, TP, u10, and v10 | MAE 0.78°C; RMSE 1.09°C; R² 0.987 | Exact released model |
 
 Direct calibration switches to its 49-feature temporal model after six prior
 continuous hourly records. Earlier and isolated readings use a 24-feature
@@ -22,7 +22,7 @@ instant model. Every output row records the model used.
 
 ## Does direct calibration reproduce the paper result?
 
-The 0.64°C paper result applies to the 63-feature Temporal-National model with
+The 0.78°C result applies to the 63-feature Temporal-National model with
 complete ERA5 inputs. Direct calibration uses separately trained sensor-only
 deployment models and reports their own validation metrics.
 

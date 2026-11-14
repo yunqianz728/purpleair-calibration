@@ -58,7 +58,7 @@ in the final manuscript. It requires all direct fields plus complete values for:
 - `u10`: 10-metre eastward wind; and
 - `v10`: 10-metre northward wind.
 
-The paper model achieved 0.64°C MAE, 0.87°C RMSE, and R² = 0.992 on the
+The paper model achieved 0.78°C MAE, 1.09°C RMSE, and R² = 0.987 on the
 held-out test set. Supply ERA5 variables in the units used by the archived
 study table. Missing weather values produce a validation error.
 

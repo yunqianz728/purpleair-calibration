@@ -2,10 +2,10 @@
   "paper": {
     "label": "Temporal-National (paper model)",
     "features": 63,
-    "test_mae_c": 0.64,
-    "test_rmse_c": 0.87,
-    "test_r2": 0.992,
-    "note": "Final manuscript Table 2; complete ERA5 inputs required."
+    "test_mae_c": 0.78,
+    "test_rmse_c": 1.089,
+    "test_r2": 0.9874,
+    "note": "Temporal-National configuration as released in v2.0.0, measured on the held-out 20% of the 797,744 observations (random_state=42); complete ERA5 inputs required. The manuscript reports a model of this configuration refit under the revised evaluation protocol."
   },
   "sensor_temporal": {
     "label": "Sensor-only temporal",
