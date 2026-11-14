@@ -62,3 +62,6 @@ optuna_studies/
 *.bak
 *~
 test_calibration_results.csv
+
+# Local agent instructions (contains machine-specific paths)
+AGENTS.md
