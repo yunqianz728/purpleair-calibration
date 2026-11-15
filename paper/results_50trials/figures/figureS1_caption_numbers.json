@@ -17,5 +17,11 @@
   "first_trial_MAE": 1.0375,
   "last5_spread": 0.0133
  },
- "_note": "Best-so-far validation MAE of the recorded Optuna TPE search (seed 42, 50 trials), XGBoost Spatial-ClimStrat, temperature-error target; validation MAE is unweighted, on the 16 % validation subset of the training rows."
+ "National": {
+  "best_MAE": 1.0133,
+  "best_trial": 44,
+  "first_trial_MAE": 1.2017,
+  "last5_spread": 0.0
+ },
+ "_note": "Best-so-far validation MAE of the recorded Optuna TPE search (seed 42, 50 trials), XGBoost Spatial-ClimStrat (and, as reference, Spatial-National), temperature-error target; validation MAE is unweighted, on the 16 % validation subset of the training rows."
 }

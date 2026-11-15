@@ -11,6 +11,12 @@ All notable user-facing changes are recorded here.
   model's MAE stays within 0.720-0.724 C, and every comparison holds in all
   five; seed 42 reproduces Table 2 exactly.
 
+### Changed
+
+- `paper/analysis/make_figure_s1.py`: Figure S1 also draws the unstratified
+  Spatial-National search (same features and target) as a reference curve;
+  its numbers are added to `results_50trials/figures/figureS1_caption_numbers.json`.
+
 ## [2.1.1] - 2026-11-14
 
 ### Added

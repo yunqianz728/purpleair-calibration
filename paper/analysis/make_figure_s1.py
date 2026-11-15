@@ -9,7 +9,8 @@ because the old figure stated what the data do not:
   * the data. The old curves came from `generate_realistic_convergence()`, which builds a smooth
     descent towards a target MAE with added noise. Here each curve is the best validation MAE reached
     so far in the actual 50-trial Optuna search recorded by rerun_models.py for the same
-    configuration (XGBoost, Spatial-ClimStrat, temperature-error target).
+    configuration (XGBoost, Spatial-ClimStrat, temperature-error target). A fourth reference curve,
+    added in R1, shows the unstratified Spatial-National model with the same features and target.
   * the three shaded bands keep their colours and boxed labels but now mark what actually divides the
     search: Optuna's TPE sampler draws its first 10 trials at random before the TPE model starts to
     guide it (n_startup_trials, default 10, as used by rerun_models.py), and the last five are the
@@ -45,9 +46,9 @@ plt.rcParams['savefig.dpi'] = 300
 plt.rcParams['font.size'] = 10
 
 
-def history(zone):
+def history(zone, config=CONFIG):
     """Trial numbers, each trial's validation MAE, and the best reached so far."""
-    t = sorted(json.load(open(os.path.join(M, CONFIG + zone + '.json')))['trials'], key=lambda x: x['trial'])
+    t = sorted(json.load(open(os.path.join(M, config + zone + '.json')))['trials'], key=lambda x: x['trial'])
     v = np.array([x['val_MAE'] for x in t])
     return np.arange(1, len(v) + 1), v, np.minimum.accumulate(v)
 
@@ -55,6 +56,8 @@ def history(zone):
 trials, raw_continental, mae_continental = history('D_Continental')
 _, raw_arid, mae_arid = history('B_Arid')
 _, raw_temperate, mae_temperate = history('C_Temperate')
+# the unstratified model with the same features and target, as a further reference
+_, raw_national, mae_national = history('National', 'Spatial-National__temp_error__')
 n_trials = len(trials)
 
 fig, ax = plt.subplots(figsize=(12, 7))
@@ -64,6 +67,8 @@ ax.plot(trials, mae_arid, '--', linewidth=1.5, alpha=0.3,
         color='#E85D75', label='Arid zone (reference)', zorder=1)
 ax.plot(trials, mae_temperate, '--', linewidth=1.5, alpha=0.3,
         color='#52B788', label='Temperate zone (reference)', zorder=1)
+ax.plot(trials, mae_national, '--', linewidth=1.5, alpha=0.45,
+        color='#7B5EA7', label='National model, unstratified (reference)', zorder=1)
 
 # phase background, as in the original, at the sampler's actual phases
 N_STARTUP = 10
@@ -111,9 +116,9 @@ ax.set_title('Convergence Behavior of Bayesian Optimization for XGBoost\n' +
              fontsize=14, fontweight='bold', pad=20)
 
 ax.set_xlim(0, n_trials + 1)
-top = max(mae_continental.max(), mae_arid.max(), mae_temperate.max())
-bottom = min(mae_continental.min(), mae_arid.min(), mae_temperate.min())
-ax.set_ylim(bottom * 0.95, top * 1.03)
+top = max(mae_continental.max(), mae_arid.max(), mae_temperate.max(), mae_national.max())
+bottom = min(mae_continental.min(), mae_arid.min(), mae_temperate.min(), mae_national.min())
+ax.set_ylim(bottom * 0.95, top * 1.08)   # 1.03 before; the fifth legend entry needs the room above the Arid curve
 ax.set_xticks(range(0, n_trials + 2, 5))
 lo, hi = ax.get_ylim()
 for (x, text, face, edge), yf in zip(phase_boxes, (0.86, 0.62, 0.62)):
@@ -123,7 +128,7 @@ for (x, text, face, edge), yf in zip(phase_boxes, (0.86, 0.62, 0.62)):
 ax.grid(True, alpha=0.3, linestyle='--', linewidth=0.8, zorder=0)
 
 handles, labels = ax.get_legend_handles_labels()
-order = [2, 3, 0, 1]   # main curve and best value first, as before
+order = [3, 4, 0, 1, 2]   # main curve and best value first, as before
 ax.legend([handles[i] for i in order], [labels[i] for i in order],
           loc='upper right', fontsize=10, framealpha=0.95,
           edgecolor='gray', fancybox=True)
@@ -137,12 +142,13 @@ plt.close('all')
 # numbers the caption quotes
 out = {}
 for name, raw, best in [('Continental', raw_continental, mae_continental),
-                        ('Arid', raw_arid, mae_arid), ('Temperate', raw_temperate, mae_temperate)]:
+                        ('Arid', raw_arid, mae_arid), ('Temperate', raw_temperate, mae_temperate),
+                        ('National', raw_national, mae_national)]:
     out[name] = {'best_MAE': round(float(best[-1]), 4), 'best_trial': int(np.argmin(raw)) + 1,
                  'first_trial_MAE': round(float(raw[0]), 4),
                  'last5_spread': round(float(best[-5:].max() - best[-5:].min()), 4)}
 out['_note'] = ('Best-so-far validation MAE of the recorded Optuna TPE search (seed 42, 50 trials), XGBoost '
-                'Spatial-ClimStrat, temperature-error target; validation MAE is unweighted, on the 16 % '
+                'Spatial-ClimStrat (and, as reference, Spatial-National), temperature-error target; validation MAE is unweighted, on the 16 % '
                 'validation subset of the training rows.')
 os.makedirs(os.path.join(BASE, 'figures'), exist_ok=True)
 json.dump(out, open(os.path.join(BASE, 'figures', 'figureS1_caption_numbers.json'), 'w'), indent=1)
