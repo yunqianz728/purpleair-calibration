@@ -1,0 +1,16 @@
+{
+ "station used": {
+  "n_classified": 67,
+  "n_built": 8,
+  "pct_built": 11.9
+ },
+ "station not used": {
+  "n_classified": 465,
+  "n_built": 42,
+  "pct_built": 9.0
+ },
+ "fisher_exact": {
+  "odds_ratio": 1.37,
+  "p_two_sided": 0.5
+ }
+}

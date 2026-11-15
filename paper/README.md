@@ -58,6 +58,7 @@ picks up where it stopped.
 | `uhi_preservation.py` | SI Section S10: whether calibration erases the urban heat signal |
 | `nlcd_points.py`, `selected_vs_unselected_stations.py` | imperviousness at every sensor and station, and the retained stations against 500 that were not |
 | `lcz_points.py` | Local Climate Zone at the same points, sampled from the global map over HTTP |
+| `lcz_station_test.py` | whether the retained stations are more often in a built LCZ than those not retained (SI Section S11) |
 | `bias_vs_impervious_gap.py` | whether the raw warm bias scales with the sensor–station imperviousness gap |
 | `error_timing.py` | the diurnal and seasonal error patterns of Figure 3 |
 | `per_sensor_mae.py` | per-sensor error by climate zone, the distribution in Figure 4(b) |
