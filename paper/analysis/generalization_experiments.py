@@ -83,12 +83,16 @@ def main():
     y = df[TARGET].values; w = df['Wsample'].values; groups = df['sensor_id'].values
     folds = list(GroupKFold(n_splits=5).split(df, groups=groups))
     summary = {}
-    for fs, qc in VARIANTS:
+    # PA_JOB=<i> (1-20) runs one variant x fold only, for cluster arrays; a final run without it assembles the summary.
+    job = int(os.environ.get('PA_JOB', 0))
+    for vi, (fs, qc) in enumerate(VARIANTS):
         name = f'{fs}_{qc}'; feats = FEATSETS[fs]; X = df[feats]
         pred = np.full(len(df), np.nan); fold_info = []
         for k, (a, b) in enumerate(folds):
             fpath = os.path.join(EXP, f'{name}_fold{k}.json')
             ppath = os.path.join(EXP, f'{name}_fold{k}_pred.npy')
+            if job and job != vi * 5 + k + 1:
+                continue
             if os.path.exists(fpath):
                 fold_info.append(json.load(open(fpath))); pred[b] = np.load(ppath); continue
             t0 = time.time()
@@ -104,6 +108,8 @@ def main():
             json.dump(info, open(fpath, 'w'), indent=1); fold_info.append(info)
             log(f'{name} fold {k}: MAE all {info["test_all"]["MAE"]:.3f} retained {info["test_retained"]["MAE"]:.3f} '
                 f'depth {best["max_depth"]} lr {best["learning_rate"]:.3f} trees {best["n_estimators"]} | {info["seconds"]}s')
+        if job:
+            continue
         ps = pd.Series(np.abs(pred - y)).groupby(groups).mean()
         keep = ~is_flag
         summary[name] = {'features': fs, 'qc': qc, 'n_features': len(feats),
