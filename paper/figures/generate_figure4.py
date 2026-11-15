@@ -56,7 +56,7 @@ pred = pd.read_parquet(PRED)
 test = df.loc[pred['row'].values].copy()
 test['predicted_station_temp'] = pred['pred'].values
 
-# unweighted, to match Table 2 and the per-zone medians quoted in Section 4.4; the original script
+# unweighted, to match Table 2 and the per-zone medians quoted in Section 4.2; the original script
 # weighted by Wsample, which made the figure disagree slightly with the text
 sensor_stats = test.groupby('sensor_id').agg({
     'sensor_lat': 'first', 'sensor_lon': 'first',

@@ -6,7 +6,7 @@ much more impervious a sensor's surroundings are than its station's. This regres
 mean bias on that gap, over all hours and over night hours separately, and also reports the bias by
 quartile of the gap so the reader can see the shape rather than only a slope.
 
-The result is quoted in the fourth limitation of Section 5.4 and in the reply to R1.5.
+The result is reported in SI Section S11, summarized in the fourth limitation of Section 5.4, and quoted in the reply to R1.5.
 
 Input : PA_PARQUET and <PA_OUT>/nlcd_points.csv (falls back to the default results directory,
         since NLCD imperviousness does not depend on the tuning budget)

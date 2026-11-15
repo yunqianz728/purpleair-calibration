@@ -333,7 +333,7 @@ def generate_figure(model_paths, output_path, xlabel_suffix=""):
     plt.savefig(output_path, dpi=300, bbox_inches='tight', facecolor='white')
     print(f"  Saved: {output_path}")
 
-    # R1 revision: write the pie percentages out, so SI Table S8 and Section 4.7 quote exactly what
+    # R1 revision: write the pie percentages out, so SI Table S8 and Section 4.3 quote exactly what
     # this figure draws rather than a separately computed set of SHAP values
     shares = {st: {g: round(v, 1) for g, v in d['group_importance'].items()}
               for st, d in shap_data.items()}

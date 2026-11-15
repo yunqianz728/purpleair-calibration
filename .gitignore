@@ -65,3 +65,7 @@ test_calibration_results.csv
 
 # Local agent instructions (contains machine-specific paths)
 AGENTS.md
+
+# rssi downloads from paper/analysis/fetch_rssi.py (PurpleAir data; fetch with your own key)
+paper/analysis/rssi/raw/
+paper/analysis/rssi/fetch_log.csv

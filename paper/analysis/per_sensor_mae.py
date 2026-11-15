@@ -1,6 +1,6 @@
 """Per-sensor test MAE for the national model, by climate zone.
 
-Section 4.4 quotes the median of these by zone (Continental / Temperate / Arid) and the count of
+Section 4.2 quotes the median of these by zone (Continental / Temperate / Arid) and the count of
 sensors above 1.0 C, and Figure 4(b) is the same distribution drawn as boxplots. The numbers were
 first produced inline while drafting; this script exists so they can be regenerated and so the
 Data Availability statement's claim that the evaluation code is provided is true of them too.
@@ -21,7 +21,7 @@ def main():
     df = pd.read_parquet(PARQUET, columns=['sensor_id', 'station temperature', 'MainGroup'])
     p = pd.read_parquet(os.path.join(BASE, 'pred_Temporal-National__station_temp__National.parquet'))
     d = df.loc[p['row'].values].copy()
-    # unweighted, matching Table 2 and Section 4.4; Figure 4 uses the same convention
+    # unweighted, matching Table 2 and Section 4.2; Figure 4 uses the same convention
     d['ae'] = np.abs(p['pred'].values - d['station temperature'].values)
     s = d.groupby(['MainGroup', 'sensor_id'])['ae'].agg(['mean', 'size']).reset_index()
     s.to_csv(os.path.join(BASE, 'per_sensor_mae.csv'), index=False)

@@ -1,0 +1,44 @@
+{
+ "coverage": {
+  "rows_with_rssi_%": 100.0,
+  "sensors_with_any_rssi": 98,
+  "sensors": 98,
+  "per_sensor_coverage_median_%": 100.0
+ },
+ "rssi_dBm": {
+  "median": -69.0,
+  "within_sensor_sd_median": 3.57,
+  "between_sensor_sd_of_means": 11.65
+ },
+ "leave_sensors_out": {
+  "baseline": {
+   "MAE": 1.9004,
+   "RMSE": 2.7744,
+   "n": 797744
+  },
+  "+rssi": {
+   "MAE": 1.9031,
+   "RMSE": 2.7716,
+   "n": 797744
+  },
+  "+rssi_mean": {
+   "MAE": 1.9209,
+   "RMSE": 2.7872,
+   "n": 797744
+  }
+ },
+ "baseline_reproduces_paper": true,
+ "paper_leave_sensors_out_MAE": 1.9004,
+ "random_split": {
+  "baseline": {
+   "MAE": 0.7239,
+   "RMSE": 1.0207,
+   "n": 159549
+  },
+  "+rssi": {
+   "MAE": 0.7233,
+   "RMSE": 1.0214,
+   "n": 159549
+  }
+ }
+}
