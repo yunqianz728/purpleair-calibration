@@ -63,6 +63,7 @@ picks up where it stopped.
 | `error_timing.py` | the diurnal and seasonal error patterns of Figure 3 |
 | `per_sensor_mae.py` | per-sensor error by climate zone, the distribution in Figure 4(b) |
 | `compare_budgets.py` | the 20-trial and 50-trial tuning budgets against each other |
+| `seed_robustness.py` | the national and stratified fits repeated under five random partitions and seeds (SI Section S3) |
 | `fetch_rssi.py`, `rssi_test.py` | Wi-Fi signal strength from the PurpleAir API, and whether it helps on unseen sensors (SI Section S12) |
 | `make_figure3.py`, `make_figure_s1.py`, `figures/*` | the figures |
 

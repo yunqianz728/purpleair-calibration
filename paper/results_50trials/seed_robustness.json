@@ -1,0 +1,83 @@
+{
+ "seeds": {
+  "42": {
+   "Temporal-National": 0.7239,
+   "Spatial-National": 0.961,
+   "Temporal-ClimStrat": 0.6709,
+   "Temporal-TempStrat": 0.7115
+  },
+  "1": {
+   "Temporal-National": 0.7228,
+   "Spatial-National": 0.9633,
+   "Temporal-ClimStrat": 0.6684,
+   "Temporal-TempStrat": 0.7076
+  },
+  "2": {
+   "Temporal-National": 0.7231,
+   "Spatial-National": 0.965,
+   "Temporal-ClimStrat": 0.6715,
+   "Temporal-TempStrat": 0.709
+  },
+  "3": {
+   "Temporal-National": 0.7212,
+   "Spatial-National": 0.9623,
+   "Temporal-ClimStrat": 0.668,
+   "Temporal-TempStrat": 0.7081
+  },
+  "4": {
+   "Temporal-National": 0.7204,
+   "Spatial-National": 0.9606,
+   "Temporal-ClimStrat": 0.6668,
+   "Temporal-TempStrat": 0.7085
+  }
+ },
+ "summary": {
+  "MAE": {
+   "Temporal-National": {
+    "mean": 0.722,
+    "sd": 0.001,
+    "min": 0.72,
+    "max": 0.724
+   },
+   "Spatial-National": {
+    "mean": 0.962,
+    "sd": 0.002,
+    "min": 0.961,
+    "max": 0.965
+   },
+   "Temporal-ClimStrat": {
+    "mean": 0.669,
+    "sd": 0.002,
+    "min": 0.667,
+    "max": 0.671
+   },
+   "Temporal-TempStrat": {
+    "mean": 0.709,
+    "sd": 0.002,
+    "min": 0.708,
+    "max": 0.712
+   }
+  },
+  "pct_vs_Temporal-National": {
+   "Temporal-ClimStrat": {
+    "mean": -7.4,
+    "min": -7.5,
+    "max": -7.1
+   },
+   "Temporal-TempStrat": {
+    "mean": -1.8,
+    "min": -2.1,
+    "max": -1.7
+   }
+  },
+  "temporal_advantage_pct": {
+   "mean": 25.0,
+   "min": 24.7,
+   "max": 25.1
+  },
+  "climstrat_better_in_every_seed": true,
+  "temporal_better_in_every_seed": true,
+  "seed42_reproduces_table2": true
+ },
+ "_note": "Table 2 rests on one 80/20 partition and one XGBoost seed (both 42). This repeats the final fit of the models behind the paper's comparisons under five seeds: for each seed s the 80/20 partition is redrawn with random_state=s, and the model is refitted on the new training rows with random_state=s and scored on the new test rows. Hyperparameters are held at the values tuned for the main partition (results50/models/*.json), so the spread reflects the data partition and the model's own randomness, not a new search; seed 42 therefore reproduces Table 2 exactly, which the script checks."
+}

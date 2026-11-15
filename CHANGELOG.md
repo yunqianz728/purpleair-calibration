@@ -2,6 +2,15 @@
 
 All notable user-facing changes are recorded here.
 
+## [Unreleased]
+
+### Added
+
+- `paper/analysis/seed_robustness.py`: the final fits behind the paper's
+  comparisons repeated under five random partitions and seeds. The national
+  model's MAE stays within 0.720-0.724 C, and every comparison holds in all
+  five; seed 42 reproduces Table 2 exactly.
+
 ## [2.1.1] - 2026-11-14
 
 ### Added
