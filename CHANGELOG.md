@@ -2,6 +2,26 @@
 
 All notable user-facing changes are recorded here.
 
+## [2.1.1] - 2026-11-14
+
+### Added
+
+- `paper/analysis/fetch_rssi.py` and `rssi_test.py`: Wi-Fi signal strength for
+  the 98 study sensors from the PurpleAir history API, and a test of whether it
+  improves calibration of sensors the model has not seen. It does not
+  (1.900 -> 1.903 C), and a per-sensor mean makes unseen sensors worse
+  (1.921 C). The checks that the API's sensors, positions and timestamps match
+  the paired data are included with their outputs; the downloaded values are
+  PurpleAir's and are not redistributed.
+
+### Changed
+
+- The manuscript now reports its newer analyses in the supplementary
+  information. `paper/README.md` and the script docstrings point to Sections
+  4.2-4.3 and SI Sections S7-S12 accordingly.
+- The paired dataset is attached to this release as well, unchanged
+  (same SHA-256), so that "download from the latest release" keeps working.
+
 ## [2.1.0] - 2026-11-14
 
 ### Added
