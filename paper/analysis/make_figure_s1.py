@@ -10,12 +10,15 @@ because the old figure stated what the data do not:
     descent towards a target MAE with added noise. Here each curve is the best validation MAE reached
     so far in the actual 50-trial Optuna search recorded by rerun_models.py for the same
     configuration (XGBoost, Spatial-ClimStrat, temperature-error target).
-  * the three shaded phases and their labels ("Rapid Descent / Stabilization / Fine-tuning",
-    trials 1-10 / 11-15 / 16-20) are not drawn. They were properties of the generator, fixed in
-    advance, and the recorded histories do not divide that way.
+  * the three shaded bands keep their colours and boxed labels but now mark what actually divides the
+    search: Optuna's TPE sampler draws its first 10 trials at random before the TPE model starts to
+    guide it (n_startup_trials, default 10, as used by rerun_models.py), and the last five are the
+    final trials over which Section S3 judges convergence. The old labels ("Rapid Descent /
+    Stabilization / Fine-tuning", trials 1-10 / 11-15 / 16-20) described the generator, not a search.
 
-The key trials annotated, the x-axis ticks and limits follow the same rule as before, stretched from
-20 trials to the 50 that were run.
+The key trials annotated (first, quarter, half, three quarters, last), the x-axis ticks and limits
+follow the same rule as before, stretched from 20 trials to the 50 that were run; the markers keep their
+original size.
 
 Output: figures/figureS1_convergence_real.{png,pdf} and <PA_OUT>/figures/figureS1_caption_numbers.json
 Usage : PA_OUT=analysis_R1/results50 python3 analysis_R1/make_figure_s1.py
@@ -62,11 +65,23 @@ ax.plot(trials, mae_arid, '--', linewidth=1.5, alpha=0.3,
 ax.plot(trials, mae_temperate, '--', linewidth=1.5, alpha=0.3,
         color='#52B788', label='Temperate zone (reference)', zorder=1)
 
+# phase background, as in the original, at the sampler's actual phases
+N_STARTUP = 10
+ax.axvspan(0.5, N_STARTUP + 0.5, alpha=0.12, color='#FFB84D', zorder=0)
+ax.axvspan(N_STARTUP + 0.5, n_trials - 4.5, alpha=0.12, color='#A7C5EB', zorder=0)
+ax.axvspan(n_trials - 4.5, n_trials + 0.5, alpha=0.12, color='#90EE90', zorder=0)
+
 # main curve: Continental (Cold), highlighted
 ax.plot(trials, mae_continental, 'o-', linewidth=2.8, markersize=8,
         color='#2E86AB', markerfacecolor='#3A5BA0',
         markeredgewidth=1.5, markeredgecolor='white',
         label='Continental (Cold) - Primary Model', zorder=3)
+
+# phase label boxes, same style as the original
+y_lo, y_hi = None, None   # filled after the limits are set
+phase_boxes = [((N_STARTUP + 1) / 2, 'Random Search\n(Trials 1-{})'.format(N_STARTUP), '#FFB84D', '#CC8800'),
+               ((N_STARTUP + n_trials - 4) / 2, 'TPE-Guided Search\n(Trials {}-{})'.format(N_STARTUP + 1, n_trials - 5), '#A7C5EB', '#5588CC'),
+               (n_trials - 2, 'Final Five\n(Trials {}-{})'.format(n_trials - 4, n_trials), '#90EE90', '#44AA44')]
 
 # best point
 best_trial = int(np.argmin(mae_continental)) + 1
@@ -77,12 +92,12 @@ ax.scatter([best_trial], [best_mae], s=400, c='red', marker='*',
 ax.axhline(y=best_mae, color='red', linestyle='--', linewidth=1.5, alpha=0.5, zorder=2)
 
 # values at key trials: first, last, and evenly between (1, 5, 10, 15, 20 for the old 20 trials)
-key_trials = [1] + list(range(10, n_trials + 1, 10))
+key_trials = [1] + [int(round(n_trials * q + 1e-9)) for q in (0.25, 0.5, 0.75, 1.0)]   # 1, 5, 10, 15, 20 for 20 trials
 for trial_idx in key_trials:
     mae_val = mae_continental[trial_idx - 1]
     ax.annotate(f'{mae_val:.3f}',
                 xy=(trial_idx, mae_val),
-                xytext=(0, 12 if trial_idx <= 10 else -15),
+                xytext=(0, 12 if trial_idx <= n_trials / 2 else -15),   # first half above, as trials 1-10 of 20 were
                 textcoords='offset points',
                 ha='center', fontsize=9, fontweight='bold',
                 color='#2E86AB',
@@ -100,6 +115,10 @@ top = max(mae_continental.max(), mae_arid.max(), mae_temperate.max())
 bottom = min(mae_continental.min(), mae_arid.min(), mae_temperate.min())
 ax.set_ylim(bottom * 0.95, top * 1.03)
 ax.set_xticks(range(0, n_trials + 2, 5))
+lo, hi = ax.get_ylim()
+for (x, text, face, edge), yf in zip(phase_boxes, (0.86, 0.62, 0.62)):
+    ax.text(x, lo + yf * (hi - lo), text, ha='center', va='center', fontsize=11, fontweight='bold',
+            bbox=dict(boxstyle='round,pad=0.5', facecolor=face, alpha=0.7, edgecolor=edge, linewidth=1.5))
 
 ax.grid(True, alpha=0.3, linestyle='--', linewidth=0.8, zorder=0)
 
