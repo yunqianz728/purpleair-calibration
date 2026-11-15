@@ -20,7 +20,7 @@ Usage: python3 analysis_R1/generalization_experiments.py
 import json, os, time
 import numpy as np, pandas as pd, optuna, xgboost as xgb
 from sklearn.model_selection import GroupKFold, GroupShuffleSplit
-from rerun_models import load, metrics, FEATURES, OUT, SEED, N_JOBS, N_TRIALS, log
+from rerun_models import load, metrics, FEATURES, OUT, SEED, N_JOBS, N_TRIALS, log, MAX_DEPTH, MAX_TREES, ES_ROUNDS, WIDE
 
 EXP = os.path.join(OUT, 'generalization'); os.makedirs(EXP, exist_ok=True)
 DROP = ['sensor_lat', 'sensor_lon', 'elevation_sensor', 'sensor_tcc', 'life', 'year', 'temp_life_interaction_sensor']
@@ -50,15 +50,15 @@ def tune(X, y, w, groups, rng):
 
     def objective(trial):
         p = dict(learning_rate=trial.suggest_float('learning_rate', 0.01, 0.3, log=True),
-                 max_depth=trial.suggest_int('max_depth', 3, 10),
-                 n_estimators=trial.suggest_int('n_estimators', 100, 1000),
+                 max_depth=trial.suggest_int('max_depth', 3, MAX_DEPTH),
+                 n_estimators=trial.suggest_int('n_estimators', 100, MAX_TREES, log=WIDE),
                  subsample=trial.suggest_float('subsample', 0.5, 1.0),
                  colsample_bytree=trial.suggest_float('colsample_bytree', 0.5, 1.0),
                  reg_alpha=trial.suggest_float('reg_alpha', 0, 10),
                  reg_lambda=trial.suggest_float('reg_lambda', 0, 10),
                  min_child_weight=trial.suggest_int('min_child_weight', 1, 10))
         m = xgb.XGBRegressor(**p, objective='reg:squarederror', eval_metric='mae', tree_method='hist',
-                             early_stopping_rounds=50, random_state=SEED, n_jobs=N_JOBS)
+                             early_stopping_rounds=ES_ROUNDS, random_state=SEED, n_jobs=N_JOBS)
         m.fit(Xtr, ytr, sample_weight=wtr, eval_set=[(Xva, yva)], verbose=False)
         v = float(np.mean(np.abs(m.predict(Xva) - yva)))
         trial.set_user_attr('best_iteration', int(m.best_iteration))

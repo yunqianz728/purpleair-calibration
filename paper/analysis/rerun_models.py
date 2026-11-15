@@ -28,7 +28,15 @@ CSV = os.path.join(HERE, '..', 'data', 'training_data_with_classification.csv.gz
 FEATS = json.load(open(os.path.join(HERE, 'feature_sets.json')))
 FEATURES = {'Temporal': FEATS['TEMPORAL_FEATURES'], 'Spatial': FEATS['SPATIAL_FEATURES']}
 TARGETS = {'station temperature': 'station_temp', 'temp_error': 'temp_error'}
-SEED, N_TRIALS, N_JOBS = 42, int(os.environ.get('PA_N_TRIALS', 20)), 8
+SEED, N_TRIALS = 42, int(os.environ.get('PA_N_TRIALS', 20))
+N_JOBS = int(os.environ.get('PA_N_JOBS', 8))
+# PA_SEARCH=wide widens the XGBoost search: depth up to 14, up to 20,000 trees (sampled on a log scale)
+# and early stopping after 100 rounds. In the default space, every 50-trial search ended at the depth
+# limit (10) and most near the tree limit (1,000), so the default results are capped by the space.
+WIDE = os.environ.get('PA_SEARCH', '') == 'wide'
+MAX_DEPTH, MAX_TREES, ES_ROUNDS = (14, 20000, 100) if WIDE else (10, 1000, 50)
+# PA_ONLY=<name>[,<name>...] runs only the named configurations (e.g. one per cluster job).
+ONLY = [x for x in os.environ.get('PA_ONLY', '').split(',') if x]
 optuna.logging.set_verbosity(optuna.logging.WARNING)
 
 STRATA = [('National', None, None)] + \
@@ -69,15 +77,15 @@ def tune_and_fit(X_tr2, y_tr2, w_tr2, X_va, y_va, X_tr, y_tr, w_tr):
 
     def objective(trial):
         p = dict(learning_rate=trial.suggest_float('learning_rate', 0.01, 0.3, log=True),
-                 max_depth=trial.suggest_int('max_depth', 3, 10),
-                 n_estimators=trial.suggest_int('n_estimators', 100, 1000),
+                 max_depth=trial.suggest_int('max_depth', 3, MAX_DEPTH),
+                 n_estimators=trial.suggest_int('n_estimators', 100, MAX_TREES, log=WIDE),
                  subsample=trial.suggest_float('subsample', 0.5, 1.0),
                  colsample_bytree=trial.suggest_float('colsample_bytree', 0.5, 1.0),
                  reg_alpha=trial.suggest_float('reg_alpha', 0, 10),
                  reg_lambda=trial.suggest_float('reg_lambda', 0, 10),
                  min_child_weight=trial.suggest_int('min_child_weight', 1, 10))
         m = xgb.XGBRegressor(**p, objective='reg:squarederror', eval_metric='mae', tree_method='hist',
-                             early_stopping_rounds=50, random_state=SEED, n_jobs=N_JOBS)
+                             early_stopping_rounds=ES_ROUNDS, random_state=SEED, n_jobs=N_JOBS)
         m.fit(X_tr2, y_tr2, sample_weight=w_tr2, eval_set=[(X_va, y_va)], verbose=False)
         val_mae = float(np.mean(np.abs(m.predict(X_va) - y_va)))   # unweighted validation MAE
         trial.set_user_attr('best_iteration', int(m.best_iteration))
@@ -103,6 +111,8 @@ def run_main():
             stratum = val or 'National'
             name = f'{feat_type}-{strat_type}__{tshort}__{stratum}'
             jpath = os.path.join(OUT, 'models', name + '.json')
+            if ONLY and name not in ONLY:
+                continue
             if os.path.exists(jpath):
                 log(f'skip {name} (done)'); continue
             feats = FEATURES[feat_type]

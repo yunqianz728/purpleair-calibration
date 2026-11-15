@@ -13,6 +13,10 @@ All notable user-facing changes are recorded here.
 
 ### Changed
 
+- `rerun_models.py`, `split_protocols.py`, `generalization_experiments.py`: an optional wider XGBoost
+  search (`PA_SEARCH=wide`: depth up to 14, up to 20,000 trees sampled on a log scale, early stopping
+  after 100 rounds) and `PA_ONLY` to run named configurations only. Defaults are unchanged.
+  `paper/analysis/cluster/` holds the SLURM array job that runs the 28 configurations.
 - `paper/analysis/make_figure_s1.py`: Figure S1 also draws the unstratified
   Spatial-National search (same features and target) as a reference curve;
   its numbers are added to `results_50trials/figures/figureS1_caption_numbers.json`.
