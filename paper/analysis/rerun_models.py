@@ -37,6 +37,15 @@ WIDE = os.environ.get('PA_SEARCH', '') == 'wide'
 MAX_DEPTH, MAX_TREES, ES_ROUNDS = (14, 20000, 100) if WIDE else (10, 1000, 50)
 # PA_ONLY=<name>[,<name>...] runs only the named configurations (e.g. one per cluster job).
 ONLY = [x for x in os.environ.get('PA_ONLY', '').split(',') if x]
+# PA_DEVICE=cuda trains every XGBoost model on a GPU (same 'hist' algorithm). It is applied by replacing
+# xgb.XGBRegressor, so the scripts that import this module use the same device without changes.
+DEVICE = os.environ.get('PA_DEVICE', '')
+if DEVICE:
+    class _XGBRegressorOnDevice(xgb.XGBRegressor):
+        def __init__(self, **kw):
+            kw.setdefault('device', DEVICE)
+            super().__init__(**kw)
+    xgb.XGBRegressor = _XGBRegressorOnDevice
 optuna.logging.set_verbosity(optuna.logging.WARNING)
 
 STRATA = [('National', None, None)] + \
