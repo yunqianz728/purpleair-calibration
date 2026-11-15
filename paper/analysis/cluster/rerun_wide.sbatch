@@ -5,8 +5,8 @@
 # a finished configuration is skipped on resubmission.
 #SBATCH --job-name=pa_wide
 #SBATCH --partition=mit_normal
-#SBATCH --cpus-per-task=32
-#SBATCH --mem=96G
+#SBATCH --cpus-per-task=16   # mit_normal allows 96 cores per user, so six tasks run at once
+#SBATCH --mem=60G
 #SBATCH --time=12:00:00
 #SBATCH --output=logs/pa_wide_%A_%a.out
 set -euo pipefail
