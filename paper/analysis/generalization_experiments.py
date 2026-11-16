@@ -41,13 +41,15 @@ def qc_flags(df):
     return flagged, r
 
 
-def tune(X, y, w, groups, rng, name=None):
+def tune(X, y, w, groups, rng, name=None, lock=None):
     gss = GroupShuffleSplit(n_splits=1, test_size=0.2, random_state=SEED)
     itr, iva = next(gss.split(X, groups=groups))
     itr = rng.choice(itr, size=len(itr) // 3, replace=False)
     Xtr, ytr, wtr, Xva, yva = X.iloc[itr], y[itr], w[itr], X.iloc[iva], y[iva]
 
     def objective(trial):
+        if lock:
+            os.utime(lock)   # keep the claim on this fold fresh while the search runs
         p = dict(learning_rate=trial.suggest_float('learning_rate', 0.01, 0.3, log=True),
                  max_depth=trial.suggest_int('max_depth', 3, MAX_DEPTH),
                  n_estimators=trial.suggest_int('n_estimators', 100, MAX_TREES, log=WIDE),
@@ -92,11 +94,19 @@ def main():
                 continue
             if os.path.exists(fpath):
                 fold_info.append(json.load(open(fpath))); pred[b] = np.load(ppath); continue
+            # The same fold may be queued on several partitions; the first job to start claims it with a
+            # lock file, refreshed at every trial. A claim older than two hours belongs to a job that died
+            # (a trial takes minutes) and is taken over; the search then resumes from its saved trials.
+            lock = fpath + '.lock'
+            if job:
+                if os.path.exists(lock) and time.time() - os.path.getmtime(lock) < 7200:
+                    log(f'{name} fold {k}: claimed by another job, skipping'); continue
+                open(lock, 'w').write(os.environ.get('SLURM_JOB_ID', 'local'))
             t0 = time.time()
             if qc == 'qc':
                 a = a[~is_flag[a]]
             rng = np.random.default_rng(SEED + k)
-            best, trials = tune(X.iloc[a], y[a], w[a], groups[a], rng, name=f'gen_{name}_fold{k}')
+            best, trials = tune(X.iloc[a], y[a], w[a], groups[a], rng, name=f'gen_{name}_fold{k}', lock=lock if job else None)
             m = xgb.XGBRegressor(**best, objective='reg:squarederror', tree_method='hist', random_state=SEED, n_jobs=N_JOBS)
             m.fit(X.iloc[a], y[a], sample_weight=w[a], verbose=False)
             pred[b] = m.predict(X.iloc[b]); np.save(ppath, pred[b])
