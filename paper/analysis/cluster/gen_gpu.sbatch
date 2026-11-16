@@ -1,7 +1,9 @@
 #!/bin/bash
 # Generalization experiments (4 variants x 5 sensor folds, each tuned) under the widened search, one
 # variant-fold per array task, on the general-account GPU QoS (two GPUs, separate from the AMF limit).
-#   sbatch --array=1-20%2 paper/analysis/cluster/gen_gpu.sbatch
+# Tasks 1-10 are the two variants on all sensors (full and reduced features), so the comparison between
+# them stays on one device; tasks 11-20 (the QC variants) run on CPU with gen_cpu.sbatch.
+#   sbatch --array=1-10%2 paper/analysis/cluster/gen_gpu.sbatch
 # Afterwards, one run without PA_JOB assembles generalization/summary.json from the saved folds.
 #SBATCH --job-name=pa_gen_gpu
 #SBATCH --partition=mit_normal_gpu

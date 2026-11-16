@@ -81,8 +81,43 @@ def splits(df):
     return tr, tr2, va, te
 
 
-def tune_and_fit(X_tr2, y_tr2, w_tr2, X_va, y_va, X_tr, y_tr, w_tr):
-    trials = []
+def run_study(objective, name=None):
+    """Run the Optuna search. Under PA_SEARCH=wide every finished trial is also written to
+    <OUT>/studies/<name>.log and logged, so a job stopped by a time limit resumes from the trials it
+    had finished instead of starting over. Sampling is unchanged: the same seeded TPE sampler, and an
+    uninterrupted run gives the same trials as before. Returns the study and the trial records."""
+    sampler = optuna.samplers.TPESampler(seed=SEED)
+    if WIDE and name:
+        from optuna.storages import JournalStorage
+        from optuna.storages.journal import JournalFileBackend
+        os.makedirs(os.path.join(OUT, 'studies'), exist_ok=True)
+        storage = JournalStorage(JournalFileBackend(os.path.join(OUT, 'studies', name + '.log')))
+        study = optuna.create_study(study_name=name, storage=storage, load_if_exists=True,
+                                    direction='minimize', sampler=sampler)
+    else:
+        study = optuna.create_study(direction='minimize', sampler=sampler)
+    done = [t for t in study.trials if t.state == optuna.trial.TrialState.COMPLETE]
+    t0 = [time.time()]
+
+    def progress(st, t):
+        if name and t.state == optuna.trial.TrialState.COMPLETE:
+            n = len([x for x in st.trials if x.state == optuna.trial.TrialState.COMPLETE])
+            log(f"trial {name} {n}/{N_TRIALS}: val {t.value:.4f} depth {t.params['max_depth']} "
+                f"lr {t.params['learning_rate']:.3f} trees {t.user_attrs['best_iteration'] + 1} | {time.time() - t0[0]:.0f}s")
+        t0[0] = time.time()
+
+    if done:
+        # a fresh sampler with the original seed would repeat the first random draws, so a resumed search
+        # continues with a seed derived from the number of trials already done
+        study.sampler = optuna.samplers.TPESampler(seed=SEED + 1000 + len(done))
+        log(f'resume {name}: {len(done)} of {N_TRIALS} trials already done')
+    study.optimize(objective, n_trials=max(0, N_TRIALS - len(done)), callbacks=[progress])
+    trials = [{'trial': t.number, 'val_MAE': t.value, 'best_iteration': t.user_attrs['best_iteration'], **t.params}
+              for t in sorted(study.trials, key=lambda t: t.number) if t.state == optuna.trial.TrialState.COMPLETE]
+    return study, trials
+
+
+def tune_and_fit(X_tr2, y_tr2, w_tr2, X_va, y_va, X_tr, y_tr, w_tr, name=None):
 
     def objective(trial):
         p = dict(learning_rate=trial.suggest_float('learning_rate', 0.01, 0.3, log=True),
@@ -98,11 +133,9 @@ def tune_and_fit(X_tr2, y_tr2, w_tr2, X_va, y_va, X_tr, y_tr, w_tr):
         m.fit(X_tr2, y_tr2, sample_weight=w_tr2, eval_set=[(X_va, y_va)], verbose=False)
         val_mae = float(np.mean(np.abs(m.predict(X_va) - y_va)))   # unweighted validation MAE
         trial.set_user_attr('best_iteration', int(m.best_iteration))
-        trials.append({'trial': trial.number, 'val_MAE': val_mae, 'best_iteration': int(m.best_iteration), **p})
         return val_mae
 
-    study = optuna.create_study(direction='minimize', sampler=optuna.samplers.TPESampler(seed=SEED))
-    study.optimize(objective, n_trials=N_TRIALS)
+    study, trials = run_study(objective, name)
     best = dict(study.best_params)
     best['n_estimators'] = study.best_trial.user_attrs['best_iteration'] + 1
     model = xgb.XGBRegressor(**best, objective='reg:squarederror', tree_method='hist',
@@ -130,7 +163,7 @@ def run_main():
             t0 = time.time()
             model, best, trials = tune_and_fit(df.loc[i_tr2, feats], df.loc[i_tr2, target], df.loc[i_tr2, 'Wsample'],
                                                df.loc[i_va, feats], df.loc[i_va, target].values,
-                                               df.loc[i_tr, feats], df.loc[i_tr, target], df.loc[i_tr, 'Wsample'])
+                                               df.loc[i_tr, feats], df.loc[i_tr, target], df.loc[i_tr, 'Wsample'], name=name)
             p_te = model.predict(df.loc[i_te, feats]); p_tr = model.predict(df.loc[i_tr, feats])
             res = {'config': f'{feat_type}-{strat_type}', 'feature_type': feat_type, 'stratification': strat_type,
                    'stratum': stratum, 'target': target, 'n_features': len(feats),

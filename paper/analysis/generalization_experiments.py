@@ -20,7 +20,7 @@ Usage: python3 analysis_R1/generalization_experiments.py
 import json, os, time
 import numpy as np, pandas as pd, optuna, xgboost as xgb
 from sklearn.model_selection import GroupKFold, GroupShuffleSplit
-from rerun_models import load, metrics, FEATURES, OUT, SEED, N_JOBS, N_TRIALS, log, MAX_DEPTH, MAX_TREES, ES_ROUNDS, WIDE
+from rerun_models import load, metrics, FEATURES, OUT, SEED, N_JOBS, N_TRIALS, log, MAX_DEPTH, MAX_TREES, ES_ROUNDS, WIDE, run_study
 
 EXP = os.path.join(OUT, 'generalization'); os.makedirs(EXP, exist_ok=True)
 DROP = ['sensor_lat', 'sensor_lon', 'elevation_sensor', 'sensor_tcc', 'life', 'year', 'temp_life_interaction_sensor']
@@ -41,12 +41,11 @@ def qc_flags(df):
     return flagged, r
 
 
-def tune(X, y, w, groups, rng):
+def tune(X, y, w, groups, rng, name=None):
     gss = GroupShuffleSplit(n_splits=1, test_size=0.2, random_state=SEED)
     itr, iva = next(gss.split(X, groups=groups))
     itr = rng.choice(itr, size=len(itr) // 3, replace=False)
     Xtr, ytr, wtr, Xva, yva = X.iloc[itr], y[itr], w[itr], X.iloc[iva], y[iva]
-    trials = []
 
     def objective(trial):
         p = dict(learning_rate=trial.suggest_float('learning_rate', 0.01, 0.3, log=True),
@@ -62,11 +61,9 @@ def tune(X, y, w, groups, rng):
         m.fit(Xtr, ytr, sample_weight=wtr, eval_set=[(Xva, yva)], verbose=False)
         v = float(np.mean(np.abs(m.predict(Xva) - yva)))
         trial.set_user_attr('best_iteration', int(m.best_iteration))
-        trials.append({'trial': trial.number, 'val_MAE': v, 'best_iteration': int(m.best_iteration), **p})
         return v
 
-    study = optuna.create_study(direction='minimize', sampler=optuna.samplers.TPESampler(seed=SEED))
-    study.optimize(objective, n_trials=N_TRIALS)
+    study, trials = run_study(objective, name)
     best = dict(study.best_params)
     best['n_estimators'] = study.best_trial.user_attrs['best_iteration'] + 1
     return best, trials
@@ -99,7 +96,7 @@ def main():
             if qc == 'qc':
                 a = a[~is_flag[a]]
             rng = np.random.default_rng(SEED + k)
-            best, trials = tune(X.iloc[a], y[a], w[a], groups[a], rng)
+            best, trials = tune(X.iloc[a], y[a], w[a], groups[a], rng, name=f'gen_{name}_fold{k}')
             m = xgb.XGBRegressor(**best, objective='reg:squarederror', tree_method='hist', random_state=SEED, n_jobs=N_JOBS)
             m.fit(X.iloc[a], y[a], sample_weight=w[a], verbose=False)
             pred[b] = m.predict(X.iloc[b]); np.save(ppath, pred[b])
