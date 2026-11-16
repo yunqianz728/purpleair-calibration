@@ -43,7 +43,11 @@ def test_public_links_and_version_are_consistent():
     app = (ROOT / "app" / "app.py").read_text(encoding="utf-8")
     repository_url = "https://github.com/yunqianz728/purpleair-calibration"
     space_url = "https://huggingface.co/spaces/yunqianz/purpleair-calibration"
-    assert "version: 2.0.0" in citation
+    # one version everywhere: CITATION.cff, the README badge, and the latest release in CHANGELOG.md
+    version = re.search(r"^version: (\S+)$", citation, re.M).group(1)
+    changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    assert f"badge/version-{version}-" in readme, f"README badge does not show {version}"
+    assert re.search(r"^## \[(\d[^\]]*)\]", changelog, re.M).group(1) == version, "CHANGELOG's latest release differs"
     assert repository_url in citation and repository_url in readme and repository_url in app
     assert space_url in readme
 

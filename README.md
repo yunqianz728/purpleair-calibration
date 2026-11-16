@@ -2,7 +2,7 @@
 
 [![Live app](https://img.shields.io/badge/Live_app-open-1769aa)](https://huggingface.co/spaces/yunqianz/purpleair-calibration)
 [![Tests](https://github.com/yunqianz728/purpleair-calibration/actions/workflows/test.yml/badge.svg)](https://github.com/yunqianz728/purpleair-calibration/actions/workflows/test.yml)
-[![Version](https://img.shields.io/badge/version-2.0.0-15548a.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-2.1.1-15548a.svg)](CHANGELOG.md)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18463819.svg)](https://doi.org/10.5281/zenodo.18463819)
 [![License: MIT](https://img.shields.io/badge/License-MIT-167c8b.svg)](LICENSE)
 
