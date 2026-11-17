@@ -24,8 +24,11 @@ python3 paper/analysis/make_parquet.py
 export PA_PARQUET="$PWD/paper/analysis/train.parquet"
 ```
 
-`PA_OUT` selects where results are written and read; the two directories here were produced with
-`PA_OUT=paper/results_50trials` and `PA_OUT=paper/results_20trials`.
+`PA_OUT` selects where results are written and read. The manuscript reports `results_wide/`, produced
+with the widened XGBoost search (`PA_SEARCH=wide`: tree depth up to 14, up to 20,000 boosting rounds
+with early stopping after 100, 50 trials per configuration). `results_50trials/` and
+`results_20trials/` hold the earlier runs in the original search space (depth up to 10, up to 1,000
+rounds) at 50 and 20 trials; SI Section S3 describes why the space was widened.
 
 ## Running it
 
@@ -33,8 +36,9 @@ export PA_PARQUET="$PWD/paper/analysis/train.parquet"
 writes a record per model. The rest depend on its output.
 
 ```bash
-PA_OUT=paper/results_50trials python3 paper/analysis/rerun_models.py     # hours, not minutes
-PA_OUT=paper/results_50trials python3 paper/analysis/make_table2.py      # Table 2
+export PA_SEARCH=wide PA_N_TRIALS=50 PA_OUT=paper/results_wide
+python3 paper/analysis/rerun_models.py     # days on a laptop; paper/analysis/cluster/ splits it into SLURM jobs
+python3 paper/analysis/make_table2.py      # Table 2
 ```
 
 `run_queue.sh` runs the remaining experiments in sequence; each is resumable, so an interrupted run
@@ -47,7 +51,7 @@ picks up where it stopped.
 | `rerun_models.py` | every configuration in Table 2, one JSON per model with metrics, hyperparameters and trial history |
 | `make_table2.py` | Table 2 itself |
 | `split_protocols.py` | the chronological and blocked-by-week protocols (SI Section S7, Table S12) |
-| `scenario_ladder.py` | the four deployment scenarios, 0.72 / 0.94 / 1.13 / 1.90 °C |
+| `scenario_ladder.py` | the four deployment scenarios, 0.60 / 0.90 / 1.08 / 1.82 °C |
 | `warmup_experiment.py` | SI Section S8, Table S13: how much of a new sensor's error a week, a month or a season of its own record recovers |
 | `generalization_experiments.py` | leave-sensors-out performance, and the effect of dropping per-sensor constants |
 | `grouped_sensitivity.py` | GroupKFold over sensors |
@@ -64,6 +68,8 @@ picks up where it stopped.
 | `per_sensor_mae.py` | per-sensor error by climate zone, the distribution in Figure 4(b) |
 | `compare_budgets.py` | the 20-trial and 50-trial tuning budgets against each other |
 | `seed_robustness.py` | the national and stratified fits repeated under five random partitions and seeds (SI Section S3) |
+| `search_space_summary.py` | where the tuned models sit in the original and the widened search space, and the change in test MAE (SI Section S3) |
+| `capacity_curves.py`, `make_figure_capacity.py` | validation error against the number of boosting rounds for the national and stratified designs with identical hyperparameters (SI Section S3, Figure S2) |
 | `fetch_rssi.py`, `rssi_test.py` | Wi-Fi signal strength from the PurpleAir API, and whether it helps on unseen sensors (SI Section S12) |
 | `make_figure3.py`, `make_figure_s1.py`, `figures/*` | the figures |
 
@@ -86,14 +92,15 @@ python3 paper/analysis/fetch_rssi.py --check             # key type, balance, co
 python3 paper/analysis/fetch_rssi.py --verify-location   # each sensor's API position vs the paired one
 python3 paper/analysis/fetch_rssi.py --verify-time       # timestamp alignment in every time zone
 python3 paper/analysis/fetch_rssi.py                     # the download, resumable
-PA_OUT=paper/results_50trials python3 paper/analysis/rssi_test.py
+PA_SEARCH=wide PA_OUT=paper/results_wide python3 paper/analysis/rssi_test.py
 ```
 
-`rssi/verify_time.json` and `rssi/verify_location.csv` are the outputs of those checks as run for the paper: in all five time zones the API's hourly temperature matches the paired sensor temperature to 0.0 °F at zero lag, so the API's UTC timestamp is the paired `time_utc` minus one hour, the shift the paired dataset applies to meet ERA5's end-of-period convention. `rssi_test.py` refuses to join the two unless that check reports zero lag. The downloaded values themselves are PurpleAir data and are not redistributed here; `results_50trials/rssi_test.json` holds the result.
+`rssi/verify_time.json` and `rssi/verify_location.csv` are the outputs of those checks as run for the paper: in all five time zones the API's hourly temperature matches the paired sensor temperature to 0.0 °F at zero lag, so the API's UTC timestamp is the paired `time_utc` minus one hour, the shift the paired dataset applies to meet ERA5's end-of-period convention. `rssi_test.py` refuses to join the two unless that check reports zero lag. The downloaded values themselves are PurpleAir data and are not redistributed here; `results_wide/rssi_test.json` holds the result.
 
 ## What is not here
 
-- **The fitted model files.** The `.ubj` boosters come to about 700 MB. The JSON record beside each
+- **The fitted model files.** The `.ubj` boosters come to about 700 MB for the 50-trial run and about
+  18 GB for the widened search. The JSON record beside each
   one carries its metrics, its hyperparameters and its full trial history, which is what the paper
   reports; `rerun_models.py` refits them from the same seed.
 - **The four-algorithm comparison** (SI Table S5). LightGBM, CatBoost and RandomForest were fitted

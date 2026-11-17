@@ -1,0 +1,45 @@
+{
+ "uncalibrated_MAE_all_rows": 6.548,
+ "n_rows": 797744,
+ "ladder": {
+  "random rows": {
+   "MAE": 0.601,
+   "n_test": 159549,
+   "uncalibrated_MAE": 6.56,
+   "per_sensor_abs_bias_median": 0.031,
+   "RMSE": 0.883,
+   "reduction_%": 90.8
+  },
+  "blocked by week": {
+   "MAE": 0.898,
+   "n_test": 150374,
+   "per_sensor_abs_bias_median": 0.105,
+   "RMSE": 1.285,
+   "uncalibrated_MAE": 6.666,
+   "reduction_%": 86.5
+  },
+  "chronological per sensor": {
+   "MAE": 1.076,
+   "n_test": 159589,
+   "per_sensor_abs_bias_median": 0.277,
+   "RMSE": 1.504,
+   "uncalibrated_MAE": 6.302,
+   "reduction_%": 82.9
+  },
+  "leave sensors out": {
+   "MAE": 1.82,
+   "RMSE": 2.661,
+   "n_test": 797744,
+   "uncalibrated_MAE": 6.548,
+   "per_sensor_abs_bias_median": 0.924,
+   "reduction_%": 72.2
+  }
+ },
+ "adjacency": {
+  "share_of_test_rows_with_labelled_neighbour_hour": 0.956,
+  "naive_neighbour_mean_MAE_on_those_rows": 0.621,
+  "model_MAE_on_those_rows": 0.596,
+  "model_MAE_on_rows_without_neighbour": 0.727,
+  "n_without_neighbour": 7005
+ }
+}

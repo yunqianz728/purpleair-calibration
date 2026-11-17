@@ -1,0 +1,12 @@
+{
+ "source": "analysis_R1/results_wide/capacity_curves.json",
+ "rounds": 20000,
+ "national_at_1000": 0.72475,
+ "national_at_end": 0.64688,
+ "tempstrat_pct_at_1000": -0.8686771421926642,
+ "tempstrat_pct_at_end": 4.477857838307986,
+ "climstrat_pct_at_1000": -5.12109097271013,
+ "climstrat_pct_at_end": -0.5841542026618685,
+ "tempstrat_crossing_round": 1285,
+ "climstrat_crossing_round": null
+}

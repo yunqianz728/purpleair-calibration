@@ -1,0 +1,29 @@
+{
+ "n_us_hadisd": 3026,
+ "n_selected_matched": 69,
+ "n_sampled_unselected": 500,
+ "layer": "mrlc_display:NLCD_2021_Impervious_L48",
+ "no_data_dropped": {
+  "selected": 2,
+  "not selected": 147
+ },
+ "selected": {
+  "n": 67,
+  "median": 18.0,
+  "mean": 28.1,
+  "q1": 0.0,
+  "q3": 46.5,
+  "pct_above_20": 44.8,
+  "pct_below_5": 35.8
+ },
+ "not selected": {
+  "n": 353,
+  "median": 4.0,
+  "mean": 21.2,
+  "q1": 0.0,
+  "q3": 37.0,
+  "pct_above_20": 33.4,
+  "pct_below_5": 51.0
+ },
+ "mannwhitney_p": 0.025
+}

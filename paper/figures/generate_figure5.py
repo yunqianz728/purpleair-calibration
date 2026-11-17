@@ -335,9 +335,19 @@ def generate_figure(model_paths, output_path, xlabel_suffix=""):
 
     # R1 revision: write the pie percentages out, so SI Table S8 and Section 4.3 quote exactly what
     # this figure draws rather than a separately computed set of SHAP values
-    shares = {st: {g: round(v, 1) for g, v in d['group_importance'].items()}
+    shares = {st: {g: round(float(v), 1) for g, v in d['group_importance'].items()}
               for st, d in shap_data.items()}
     shares['_n_rows_per_stratum'] = SHAP_SAMPLE_SIZE
+    # and a fuller record of the same shares (<PA_OUT>/figure5_pie_shares.json, written in
+    # __main__): group shares to two decimals and every feature's share, from the same SHAP values
+    PIE_SHARES[xlabel_suffix] = {}
+    for st, d in shap_data.items():
+        m = np.abs(d['shap_values']).mean(axis=0)
+        fp = pd.Series(100 * m / m.sum(), index=list(d['X_sample'].columns)).sort_values(ascending=False)
+        PIE_SHARES[xlabel_suffix][st] = {
+            'group_pct': {g: round(float(v), 2) for g, v in d['group_importance'].items()},
+            'feature_pct': {f: round(float(v), 2) for f, v in fp.items()},
+            'top_features': list(fp.index[:MAX_DISPLAY]), 'n_rows': int(len(d['X_sample']))}
     side = os.path.splitext(output_path)[0] + '_groups.json'
     json.dump(shares, open(side, 'w'), indent=1)
     print(f"  Group shares: {side}")
@@ -351,11 +361,18 @@ def generate_figure(model_paths, output_path, xlabel_suffix=""):
 # =====================================================================
 # Main
 # =====================================================================
+PIE_SHARES = {}
+
 if __name__ == '__main__':
     # Generate new Figure 5 (temp_error target) for main text
     generate_figure(MODEL_PATHS, OUTPUT_FIGURE, xlabel_suffix="temperature error")
 
     # Generate SI figure (station_temp target)
     generate_figure(MODEL_PATHS_STATION, OUTPUT_FIGURE_SI, xlabel_suffix="model output")
+
+    pie = os.environ.get('PA_PIE_OUT', f'{BASE}/figure5_pie_shares.json')
+    json.dump({'figure5': PIE_SHARES['temperature error'], 'figure_s2': PIE_SHARES['model output']},
+              open(pie, 'w'), indent=1)
+    print(f"  Pie shares: {pie}")
 
     print("\nDone!")

@@ -1,0 +1,27 @@
+{
+ "Cold": {
+  "Temporal": 51.7,
+  "Temperature": 4.1,
+  "Radiation": 3.0,
+  "Humidity": 8.1,
+  "Geographic": 17.3,
+  "Other": 15.8
+ },
+ "Normal": {
+  "Temporal": 44.2,
+  "Temperature": 3.6,
+  "Radiation": 7.2,
+  "Humidity": 11.4,
+  "Geographic": 13.9,
+  "Other": 19.7
+ },
+ "Hot": {
+  "Temporal": 45.3,
+  "Temperature": 3.3,
+  "Radiation": 14.4,
+  "Humidity": 9.0,
+  "Geographic": 11.7,
+  "Other": 16.3
+ },
+ "_n_rows_per_stratum": 2000
+}

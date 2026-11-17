@@ -1,0 +1,39 @@
+{
+ "no_site_ids": {
+  "dropped": [
+   "sensor_lat",
+   "sensor_lon",
+   "elevation_sensor",
+   "sensor_tcc"
+  ],
+  "n_features": 59,
+  "overall": {
+   "MAE": 1.7660062721682004,
+   "RMSE": 2.488406631356315,
+   "R2": 0.9342563322291086,
+   "bias": 0.10866370194358843,
+   "n": 797744
+  },
+  "per_sensor_MAE_median": 1.6315644541845704
+ },
+ "no_site_ids_no_life_year": {
+  "dropped": [
+   "sensor_lat",
+   "sensor_lon",
+   "elevation_sensor",
+   "sensor_tcc",
+   "life",
+   "year",
+   "temp_life_interaction_sensor"
+  ],
+  "n_features": 56,
+  "overall": {
+   "MAE": 1.6212130661531663,
+   "RMSE": 2.3118436226152856,
+   "R2": 0.9432549297856743,
+   "bias": 0.15555543657791757,
+   "n": 797744
+  },
+  "per_sensor_MAE_median": 1.5773567267660744
+ }
+}

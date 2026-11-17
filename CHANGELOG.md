@@ -6,10 +6,26 @@ All notable user-facing changes are recorded here.
 
 ### Added
 
+- `paper/results_wide/`: every result the revised manuscript reports, from the
+  widened XGBoost search (`PA_SEARCH=wide`, 50 trials per configuration). Test
+  MAE fell in all 28 configurations, by 13.4% on average; the national model
+  reaches 0.60 C (0.72 C in `results_50trials/`). The boosters are not
+  included; each model's JSON record carries its metrics, hyperparameters and
+  trial history.
+- `paper/analysis/search_space_summary.py`: where the tuned models sit in the
+  original and the widened search space. In the original space all 28 chose
+  the greatest depth allowed and 21 ended within 10% of the round limit; in the
+  widened space none reaches the depth limit.
+- `paper/analysis/capacity_curves.py` and `make_figure_capacity.py`: validation
+  error after every boosting round, up to 20,000, for the national model and
+  the two stratified designs fitted with identical hyperparameters (SI Figure
+  S2). The national model gains more from additional rounds, so the comparison
+  between stratified and national models depends on the capacity the search
+  allows.
 - `paper/analysis/seed_robustness.py`: the final fits behind the paper's
-  comparisons repeated under five random partitions and seeds. The national
-  model's MAE stays within 0.720-0.724 C, and every comparison holds in all
-  five; seed 42 reproduces Table 2 exactly.
+  comparisons repeated under five random partitions and seeds. Under the
+  widened search the national model's MAE stays within 0.596-0.601 C, and
+  every comparison holds in all five; seed 42 reproduces Table 2 exactly.
 
 ### Changed
 
@@ -20,6 +36,13 @@ All notable user-facing changes are recorded here.
 - `paper/analysis/make_figure_s1.py`: Figure S1 also draws the unstratified
   Spatial-National search (same features and target) as a reference curve;
   its numbers are added to `results_50trials/figures/figureS1_caption_numbers.json`.
+  `PA_FIG_DIR` draws it into another folder.
+- `paper/analysis/make_figure3.py`: the calibrated axis uses at most two
+  decimals, so its tick labels no longer run into the y-axis label.
+- `paper/figures/generate_figure5.py`: also writes `figure5_pie_shares.json`,
+  the group and per-feature SHAP shares behind the pie charts, to two decimals.
+- `paper/README.md`: the commands now reproduce the widened search, and the
+  scenario figures quoted are those of `results_wide/`.
 
 ## [2.1.1] - 2026-11-14
 

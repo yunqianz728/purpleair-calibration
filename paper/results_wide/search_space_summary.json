@@ -1,0 +1,70 @@
+{
+ "original": {
+  "n_configs": 28,
+  "depth_ceiling": 10,
+  "trees_ceiling": 1000,
+  "n_at_depth_ceiling": 28,
+  "depth_counts": {
+   "10": 28
+  },
+  "n_trees_ge_90pct_of_ceiling": 21,
+  "trees_median": 936.0,
+  "trees_min": 572,
+  "trees_max": 1000
+ },
+ "widened": {
+  "n_configs": 28,
+  "depth_ceiling": 14,
+  "trees_ceiling": 20000,
+  "n_at_depth_ceiling": 0,
+  "depth_counts": {
+   "7": 1,
+   "8": 4,
+   "9": 11,
+   "10": 3,
+   "11": 6,
+   "12": 3
+  },
+  "n_trees_ge_90pct_of_ceiling": 14,
+  "trees_median": 17940.0,
+  "trees_min": 9170,
+  "trees_max": 19959
+ },
+ "test_MAE_change_pct": {
+  "n_configs": 28,
+  "n_improved": 28,
+  "mean": -13.36907411105266,
+  "min": -21.862543587237337,
+  "max": -6.802840315072567,
+  "by_config": {
+   "Spatial-ClimStrat__station_temp__B_Arid": -10.728332662006046,
+   "Spatial-ClimStrat__station_temp__C_Temperate": -16.861306426823454,
+   "Spatial-ClimStrat__station_temp__D_Continental": -16.935997786263847,
+   "Spatial-ClimStrat__temp_error__B_Arid": -7.413687709715133,
+   "Spatial-ClimStrat__temp_error__C_Temperate": -14.243058174582623,
+   "Spatial-ClimStrat__temp_error__D_Continental": -14.295677656710238,
+   "Spatial-National__station_temp__National": -21.862543587237337,
+   "Spatial-National__temp_error__National": -21.27758104595593,
+   "Spatial-TempStrat__station_temp__Cold": -11.74112923745727,
+   "Spatial-TempStrat__station_temp__Hot": -13.654878132248394,
+   "Spatial-TempStrat__station_temp__Normal": -18.188131294852596,
+   "Spatial-TempStrat__temp_error__Cold": -11.903174938398998,
+   "Spatial-TempStrat__temp_error__Hot": -12.039307736073113,
+   "Spatial-TempStrat__temp_error__Normal": -14.733500113182874,
+   "Temporal-ClimStrat__station_temp__B_Arid": -6.802840315072567,
+   "Temporal-ClimStrat__station_temp__C_Temperate": -10.656310553954263,
+   "Temporal-ClimStrat__station_temp__D_Continental": -14.357251769200142,
+   "Temporal-ClimStrat__temp_error__B_Arid": -9.115261758433613,
+   "Temporal-ClimStrat__temp_error__C_Temperate": -11.320247871231913,
+   "Temporal-ClimStrat__temp_error__D_Continental": -13.635045109807953,
+   "Temporal-National__station_temp__National": -16.911776665881273,
+   "Temporal-National__temp_error__National": -14.393023182015218,
+   "Temporal-TempStrat__station_temp__Cold": -10.870179119735878,
+   "Temporal-TempStrat__station_temp__Hot": -10.040095576552554,
+   "Temporal-TempStrat__station_temp__Normal": -15.10517277943112,
+   "Temporal-TempStrat__temp_error__Cold": -12.036802068373632,
+   "Temporal-TempStrat__temp_error__Hot": -9.834980398818393,
+   "Temporal-TempStrat__temp_error__Normal": -13.376781439458185
+  }
+ }
+}

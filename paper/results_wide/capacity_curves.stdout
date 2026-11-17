@@ -1,0 +1,8 @@
+2026-11-15 22:47:58 capacity_curves: data (797744, 99)
+2026-11-15 23:06:12 capacity National: val MAE 0.7248 at 1,000 rounds, 0.6469 at 20,000
+2026-11-15 23:11:11 capacity TempStrat:Cold: val MAE 0.6669 at 1,000 rounds, 0.6289 at 20,000
+2026-11-15 23:20:14 capacity TempStrat:Normal: val MAE 0.7205 at 1,000 rounds, 0.6704 at 20,000
+2026-11-15 23:25:56 capacity TempStrat:Hot: val MAE 0.7650 at 1,000 rounds, 0.7316 at 20,000
+2026-11-15 23:28:57 capacity ClimStrat:B_Arid: val MAE 0.9043 at 1,000 rounds, 0.8792 at 20,000
+2026-11-15 23:36:49 capacity ClimStrat:C_Temperate: val MAE 0.6944 at 1,000 rounds, 0.6537 at 20,000
+2026-11-15 23:43:37 capacity ClimStrat:D_Continental: val MAE 0.6066 at 1,000 rounds, 0.5515 at 20,000

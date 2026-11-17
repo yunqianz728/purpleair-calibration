@@ -135,7 +135,7 @@ ax.legend([handles[i] for i in order], [labels[i] for i in order],
 
 plt.tight_layout()
 for ext in ('png', 'pdf'):
-    plt.savefig(os.path.join(ROOT, 'figures', f'figureS1_convergence_real.{ext}'),
+    plt.savefig(os.path.join(os.environ.get('PA_FIG_DIR') or os.path.join(ROOT, 'figures'), f'figureS1_convergence_real.{ext}'),
                 dpi=300, bbox_inches='tight', facecolor='white')
 plt.close('all')
 

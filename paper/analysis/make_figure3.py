@@ -15,6 +15,7 @@ import numpy as np, pandas as pd
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 BASE = os.environ.get('PA_OUT') or os.path.join(HERE, 'results')
@@ -44,6 +45,8 @@ def panel(ax_hi, ax_lo, x, raw, cal, xticks, xticklabels, xlabel, letter, legend
 
     ax_hi.set_ylim(*pad(raw.min(), raw.max()))
     ax_lo.set_ylim(*pad(cal.min(), cal.max()))
+    # at most two decimals on the calibrated axis: three-decimal labels run into the shared y label
+    ax_lo.yaxis.set_major_locator(MaxNLocator(nbins=5, steps=[1, 2, 5, 10]))
     ax_hi.spines['bottom'].set_visible(False)
     ax_hi.tick_params(bottom=False, labelbottom=False)
     ax_lo.set_xticklabels(xticklabels)
