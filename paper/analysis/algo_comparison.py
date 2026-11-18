@@ -16,6 +16,7 @@ cluster array can run them in parallel. Searches resume from their journal after
 Output: <PA_OUT>/algo_comparison/<name>.json   (test metrics, best parameters, trial history)
 Usage : PA_PARQUET=... PA_OUT=... PA_ONLY=Temporal-National__station_temp__LightGBM python3 algo_comparison.py
         python3 algo_comparison.py --list
+        python3 algo_comparison.py --depth-check   (CatBoost at depths 14 and 16, after the search)
 """
 import json, os, sys, time
 import numpy as np, optuna
@@ -119,7 +120,37 @@ def run(name, df):
     log(f"{name}: test MAE {res['test']['MAE']:.4f} RMSE {res['test']['RMSE']:.4f}")
 
 
+def depth_check(name, df, depths=(14, 16)):
+    """CatBoost's tuned depth sat at the top of its range (12). Refit at greater depths with the other
+    tuned parameters kept, early stopping on the validation set as in the search, then on the full
+    training set with that number of rounds; test MAE beside the depth-12 result."""
+    fs, tk, algo = name.split('__')[0].split('-')[0], name.split('__')[1], name.split('__')[2]
+    feats, target = FEATURES[fs], TARGETS[tk]
+    tr, tr2, va, te = splits(df)
+    X, y, w = df[feats], df[target], df['Wsample']
+    ref = json.load(open(os.path.join(D, name + '.json')))
+    out = {'name': name, 'depth_12': {'test': ref['test'], 'iterations': ref['best_params']['iterations']}}
+    for d in depths:
+        t0 = time.time()
+        p = {k: v for k, v in ref['best_params'].items() if k != 'iterations'} | {'depth': d, 'iterations': MAX_ROUNDS}
+        m = make(algo, p)
+        m.fit(X.loc[tr2], y.loc[tr2], sample_weight=w.loc[tr2], eval_set=(X.loc[va], y.loc[va]))
+        it = int(m.get_best_iteration()) + 1
+        val = float(np.mean(np.abs(m.predict(X.loc[va]) - y.loc[va].values)))
+        m = make(algo, p | {'iterations': it}, es=False)
+        m.fit(X.loc[tr], y.loc[tr], sample_weight=w.loc[tr])
+        out[f'depth_{d}'] = {'val_MAE': val, 'iterations': it, 'test': metrics(y.loc[te].values, m.predict(X.loc[te])),
+                             'seconds': round(time.time() - t0)}
+        log(f"{name} depth {d}: val {val:.4f}, test MAE {out[f'depth_{d}']['test']['MAE']:.4f}, {it} rounds")
+        json.dump(out, open(os.path.join(D, name + '__depth_check.json'), 'w'), indent=1)
+
+
 def main():
+    if '--depth-check' in sys.argv:     # after the search: CatBoost beyond depth 12 (PA_ONLY selects runs)
+        df = load()
+        for name in [x for x in os.environ.get('PA_ONLY', '').split(',') if x] or [n for n in NAMES if 'CatBoost' in n]:
+            depth_check(name, df)
+        return
     if '--list' in sys.argv:
         print('\n'.join(NAMES)); return
     only = [x for x in os.environ.get('PA_ONLY', '').split(',') if x] or NAMES
