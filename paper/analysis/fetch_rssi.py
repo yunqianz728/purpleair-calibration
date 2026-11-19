@@ -1,4 +1,9 @@
-"""Download hourly Wi-Fi signal strength (rssi) for the 98 study sensors from the PurpleAir API.
+"""Download hourly Wi-Fi signal strength (rssi) or barometric pressure for the 98 study sensors.
+
+--field rssi (default) or --field pressure picks the PurpleAir history field; each goes to its own
+folder, paper/analysis/<field>/raw. Pressure (hPa, from the sensor's own BME280) answers Reviewer 1's
+comment R1.6 the way rssi answers R1.4. The identity and timestamp checks below do not depend on
+the field and are run once, into paper/analysis/rssi/.
 
 Reviewer 1 asked whether a device-status signal such as Wi-Fi strength could proxy the internal
 heating of the electronics. PurpleAir's history endpoint serves `rssi` for past periods, so this
@@ -19,8 +24,8 @@ PurpleAir timestamp by one hour to meet ERA5's end-of-period convention, so a pa
 time_utc corresponds to the PurpleAir hour time_utc - 1 h. The raw files keep PurpleAir's own
 timestamps; rssi_test.py applies the shift when it joins them.
 
-Output: analysis_R1/rssi/raw/<sensor>.csv  (time_stamp [UTC epoch], rssi [dBm]), resumable
-        analysis_R1/rssi/fetch_log.csv        one line per request: sensor, window, rows, status
+Output: paper/analysis/rssi/raw/<sensor>.csv  (time_stamp [UTC epoch], rssi [dBm]), resumable
+        paper/analysis/rssi/fetch_log.csv        one line per request: sensor, window, rows, status
 Before the download, two checks establish that what comes back belongs to the right sensor, place
 and hour (a few thousand points in all):
   --verify-location  asks the API for every sensor's coordinates and compares them with the
@@ -32,11 +37,13 @@ and hour (a few thousand points in all):
                      the API's timestamps and the paired data's; it must be zero for the join used
                      by rssi_test.py.
 
-Usage : python3 analysis_R1/fetch_rssi.py --check            key type, balance and cost estimate
-        python3 analysis_R1/fetch_rssi.py --verify-location  sensor identity and position
-        python3 analysis_R1/fetch_rssi.py --verify-time      timestamp alignment, per time zone
-        python3 analysis_R1/fetch_rssi.py --one 143214       a single one-day request, real cost
-        python3 analysis_R1/fetch_rssi.py                    the full download (resumes)
+Usage : (add --field pressure to any of these for pressure)
+        python3 paper/analysis/fetch_rssi.py --check            key type, balance and cost estimate
+        python3 paper/analysis/fetch_rssi.py --verify-location  sensor identity and position
+        python3 paper/analysis/fetch_rssi.py --verify-time      timestamp alignment, per time zone
+        python3 paper/analysis/fetch_rssi.py --one 143214       one full-length request: window accepted? real cost
+        (--average 360 or 1440 for 6-hour or daily means, e.g. for pressure, which varies slowly)
+        python3 paper/analysis/fetch_rssi.py                    the full download (resumes)
 """
 import argparse, csv, json, math, os, ssl, sys, time, urllib.error, urllib.parse, urllib.request
 import pandas as pd
@@ -48,14 +55,19 @@ except ImportError:
     SSL_CTX = ssl.create_default_context()
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(HERE, 'rssi', 'raw')
-LOG = os.path.join(HERE, 'rssi', 'fetch_log.csv')
+FIELD = 'rssi'                     # set from --field in main()
+OUT = os.path.join(HERE, FIELD, 'raw')
+LOG = os.path.join(HERE, FIELD, 'fetch_log.csv')
 PARQUET = os.environ.get('PA_PARQUET') or os.path.join(HERE, 'train.parquet')
 API = 'https://api.purpleair.com/v1'
-AVERAGE = 60                       # minutes; matches the hourly paired data
-WINDOW_DAYS = 14                   # longest span the API accepts at a 60-minute average
+AVERAGE = 60                       # minutes; matches the hourly paired data (set from --average)
+# longest span the history endpoint accepts for each averaging period, in days
+MAX_SPAN_DAYS = {60: 14, 360: 90, 1440: 365}
+WINDOW_DAYS = MAX_SPAN_DAYS[AVERAGE]
 PAUSE = 1.0                        # seconds between requests
 POINTS_PER_REQUEST, POINTS_PER_ROW = 2, 1
+# points per returned row, by field: measured with --one (pressure: 714 points for 356 rows, 2026-11-18)
+ROW_COST = {'rssi': 1, 'pressure': 2}
 MARGIN = 20_000                    # stop with this many points still unspent
 
 
@@ -119,7 +131,8 @@ def windows(start, end):
 def estimate(g):
     hours = int(((g['end'] - g['start']) / 3600).sum())
     calls = int(sum(len(windows(a, b)) for a, b in zip(g['start'], g['end'])))
-    return calls, hours, calls * POINTS_PER_REQUEST + hours * POINTS_PER_ROW
+    rows = hours * 60 // AVERAGE
+    return calls, rows, calls * POINTS_PER_REQUEST + rows * POINTS_PER_ROW
 
 
 def done_windows(sensor):
@@ -141,11 +154,11 @@ def log(sensor, a, b, rows, status, note=''):
 
 def fetch(sensor, a, b):
     s, d = get(f'/sensors/{sensor}/history',
-               {'start_timestamp': a, 'end_timestamp': b, 'average': AVERAGE, 'fields': 'rssi'})
+               {'start_timestamp': a, 'end_timestamp': b, 'average': AVERAGE, 'fields': FIELD})
     if s != 200:
         return s, [], (d.get('description') or d.get('error') or str(d))[:200]
     f = d.get('fields', [])
-    it, ir = f.index('time_stamp'), f.index('rssi')
+    it, ir = f.index('time_stamp'), f.index(FIELD)
     return s, [(r[it], r[ir]) for r in d.get('data', [])], ''
 
 
@@ -156,7 +169,7 @@ def save(sensor, rows):
     with open(p, 'a', newline='') as f:
         w = csv.writer(f)
         if new:
-            w.writerow(['time_stamp', 'rssi'])
+            w.writerow(['time_stamp', FIELD])
         w.writerows(rows)
 
 
@@ -230,13 +243,26 @@ def verify_time(days=3):
 
 
 def main():
+    global FIELD, OUT, LOG, AVERAGE, WINDOW_DAYS, MARGIN, POINTS_PER_ROW
     ap = argparse.ArgumentParser()
     ap.add_argument('--check', action='store_true')
     ap.add_argument('--verify-location', action='store_true')
     ap.add_argument('--verify-time', action='store_true')
     ap.add_argument('--one', type=int)
+    ap.add_argument('--field', choices=['rssi', 'pressure'], default='rssi')
+    ap.add_argument('--margin', type=int, default=MARGIN,
+                    help='points to leave unspent; the per-sensor check stops before going below it')
+    ap.add_argument('--average', type=int, choices=sorted(MAX_SPAN_DAYS), default=60,
+                    help='averaging period in minutes; 360 or 1440 cost 1/6 or 1/24 of the hourly points')
     a = ap.parse_args()
+    MARGIN = a.margin
+    FIELD, AVERAGE = a.field, a.average
+    POINTS_PER_ROW = ROW_COST[FIELD]
+    WINDOW_DAYS = MAX_SPAN_DAYS[AVERAGE]
+    folder = FIELD if AVERAGE == 60 else f'{FIELD}_{AVERAGE}min'   # never mix resolutions in one folder
+    OUT, LOG = os.path.join(HERE, folder, 'raw'), os.path.join(HERE, folder, 'fetch_log.csv')
     os.makedirs(os.path.dirname(LOG), exist_ok=True)
+    os.makedirs(os.path.join(HERE, 'rssi'), exist_ok=True)   # the checks write there
 
     g = periods()
     calls, hours, cost = estimate(g)
@@ -245,7 +271,8 @@ def main():
         sys.exit(f'The key was not accepted ({s}): {k.get("description") or k}')
     left = remaining_points()
     print(f'key type: {k.get("api_key_type")} | points remaining: {left:,}')
-    print(f'{len(g)} sensors, {calls:,} requests, up to {hours:,} hourly rows -> at most {cost:,} points')
+    print(f'field {FIELD}, {AVERAGE}-min averages: {len(g)} sensors, {calls:,} requests, up to {hours:,} rows'
+          f' -> at most {cost:,} points ({POINTS_PER_ROW} point(s) per row; --one measures the real rate) | output {OUT}')
     if a.check:
         print('enough for the full download' if left - MARGIN >= cost else
               f'NOT enough: short by about {cost + MARGIN - left:,} points')
@@ -256,11 +283,14 @@ def main():
         verify_time(); print(f'points left: {remaining_points():,}'); return
 
     if a.one:
+        # one full-length request: confirms the API accepts the window used for this average, and its cost
         t0 = int(g.loc[a.one, 'start'])
+        t1 = min(t0 + WINDOW_DAYS * 86400, int(g.loc[a.one, 'end']))
         before = left
-        s, rows, note = fetch(a.one, t0, t0 + 86400)
+        s, rows, note = fetch(a.one, t0, t1)
         after = remaining_points()
-        print(f'sensor {a.one}, one day: status {s}, {len(rows)} rows, {before - after} points used {note}')
+        print(f'sensor {a.one}, {(t1 - t0) / 86400:.0f} days at {AVERAGE} min: status {s}, {len(rows)} rows, '
+              f'{before - after} points used {note}')
         print('first rows:', rows[:3])
         return
 
@@ -268,7 +298,7 @@ def main():
         todo = [w for w in windows(int(r.start), int(r.end)) if w not in done_windows(sensor)]
         if not todo:
             continue
-        need = len(todo) * POINTS_PER_REQUEST + sum((b - a_) // 3600 for a_, b in todo) * POINTS_PER_ROW
+        need = len(todo) * POINTS_PER_REQUEST + sum((b - a_) // (60 * AVERAGE) for a_, b in todo) * POINTS_PER_ROW
         left = remaining_points()
         if left - MARGIN < need:
             print(f'stopping before sensor {sensor}: it needs ~{need:,} points, {left:,} remain')

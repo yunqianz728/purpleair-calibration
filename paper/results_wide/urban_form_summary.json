@@ -1,0 +1,105 @@
+{
+ "n": {
+  "sensor": 98,
+  "station not used": 500,
+  "station used": 69
+ },
+ "missing": {
+  "building_height_m": 0,
+  "population_per_km2": 0,
+  "canopy_cover_share": 5,
+  "canopy_height_m": 5
+ },
+ "median": {
+  "building_height_m": {
+   "sensor": 1.737,
+   "station not used": 0.002,
+   "station used": 0.044
+  },
+  "population_per_km2": {
+   "sensor": 1111.738,
+   "station not used": 0.0,
+   "station used": 0.0
+  },
+  "canopy_cover_share": {
+   "sensor": 0.107,
+   "station not used": 0.0,
+   "station used": 0.0
+  },
+  "canopy_height_m": {
+   "sensor": 5.86,
+   "station not used": 0.0,
+   "station used": 0.0
+  }
+ },
+ "q25_q75": {
+  "building_height_m": {
+   "sensor": [
+    0.458,
+    2.651
+   ],
+   "station not used": [
+    0.0,
+    0.043
+   ],
+   "station used": [
+    0.008,
+    0.153
+   ]
+  },
+  "population_per_km2": {
+   "sensor": [
+    97.086,
+    2529.171
+   ],
+   "station not used": [
+    0.0,
+    4.133
+   ],
+   "station used": [
+    0.0,
+    5.641
+   ]
+  },
+  "canopy_cover_share": {
+   "sensor": [
+    0.045,
+    0.19
+   ],
+   "station not used": [
+    0.0,
+    0.062
+   ],
+   "station used": [
+    0.0,
+    0.013
+   ]
+  },
+  "canopy_height_m": {
+   "sensor": [
+    4.816,
+    7.211
+   ],
+   "station not used": [
+    0.0,
+    5.57
+   ],
+   "station used": [
+    0.0,
+    5.04
+   ]
+  }
+ },
+ "used_vs_not_used_p": {
+  "building_height_m": 0.0,
+  "population_per_km2": 0.5941,
+  "canopy_cover_share": 0.2058,
+  "canopy_height_m": 0.471
+ },
+ "sensors_vs_stations_used_p": {
+  "building_height_m": 5.8e-16,
+  "population_per_km2": 6.4e-16,
+  "canopy_cover_share": 1.6e-14,
+  "canopy_height_m": 2e-11
+ }
+}

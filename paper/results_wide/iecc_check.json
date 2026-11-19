@@ -1,0 +1,45 @@
+{
+ "n_temperate_sensors": 33,
+ "crosstab_regime_by_iecc": {
+  "2A": {
+   "Dry": 0,
+   "Moist": 2
+  },
+  "3A": {
+   "Dry": 0,
+   "Moist": 4
+  },
+  "3B": {
+   "Dry": 7,
+   "Moist": 0
+  },
+  "3C": {
+   "Dry": 8,
+   "Moist": 0
+  },
+  "4A": {
+   "Dry": 0,
+   "Moist": 1
+  },
+  "4C": {
+   "Dry": 10,
+   "Moist": 0
+  },
+  "5B": {
+   "Dry": 1,
+   "Moist": 0
+  }
+ },
+ "agreement_moist_eq_IECC_A": "33 of 33",
+ "iecc_zones_dry_group": [
+  "3B",
+  "3C",
+  "4C",
+  "5B"
+ ],
+ "iecc_zones_moist_group": [
+  "2A",
+  "3A",
+  "4A"
+ ]
+}

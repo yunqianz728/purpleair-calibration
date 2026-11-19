@@ -1,0 +1,77 @@
+sensor_id,summer_Td,regime,State,county,IECC21,Moisture21,koppen,iecc
+143214,14.48,Dry,Minnesota,Hennepin,6.0,A,D_Continental,6A
+143226,18.16,Moist,Minnesota,Hennepin,6.0,A,D_Continental,6A
+145358,16.64,Moist,Maryland,Baltimore,4.0,A,C_Temperate,4A
+145470,13.84,Dry,Minnesota,Hennepin,6.0,A,D_Continental,6A
+147312,10.94,Dry,California,Sacramento,3.0,B,C_Temperate,3B
+148611,11.33,Dry,California,Santa Clara,3.0,C,C_Temperate,3C
+150948,9.09,Dry,Oregon,Douglas,4.0,C,C_Temperate,4C
+151686,7.35,Dry,Alaska,Kenai Peninsula,7.0,,D_Continental,7
+154883,5.18,Dry,Nevada,Washoe,5.0,B,B_Arid,5B
+155809,16.5,Moist,New Jersey,Mercer,5.0,A,D_Continental,5A
+156903,17.89,Moist,Missouri,St. Louis,4.0,A,D_Continental,4A
+157877,14.39,Dry,Minnesota,Hennepin,6.0,A,D_Continental,6A
+158197,12.09,Dry,California,Santa Clara,3.0,C,C_Temperate,3C
+161045,12.03,Dry,California,Sacramento,3.0,B,C_Temperate,3B
+161597,10.73,Dry,Washington,King,4.0,C,C_Temperate,4C
+162283,10.03,Dry,Washington,Snohomish,4.0,C,C_Temperate,4C
+162317,9.54,Dry,Washington,Snohomish,4.0,C,C_Temperate,4C
+162461,15.37,Moist,Nebraska,Lancaster,5.0,A,D_Continental,5A
+165105,10.0,Dry,Washington,King,4.0,C,C_Temperate,4C
+166335,9.33,Dry,California,Stanislaus,3.0,B,B_Arid,3B
+167039,9.71,Dry,Washington,Pierce,4.0,C,C_Temperate,4C
+167367,9.72,Dry,California,Stanislaus,3.0,B,B_Arid,3B
+169697,14.19,Dry,California,Los Angeles,3.0,B,C_Temperate,3B
+169949,16.08,Moist,Illinois,DuPage,5.0,A,D_Continental,5A
+169959,14.85,Dry,Illinois,DuPage,5.0,A,D_Continental,5A
+169963,14.64,Dry,Illinois,DuPage,5.0,A,D_Continental,5A
+171181,10.08,Dry,Washington,Pierce,4.0,C,C_Temperate,4C
+174061,11.28,Dry,California,Sacramento,3.0,B,C_Temperate,3B
+175973,4.88,Dry,Wyoming,Teton,7.0,,D_Continental,7
+176751,5.16,Dry,Montana,Lewis and Clark,6.0,B,B_Arid,6B
+179619,16.1,Moist,Michigan,Wayne,5.0,A,D_Continental,5A
+180825,10.89,Dry,Washington,King,4.0,C,C_Temperate,4C
+182191,22.02,Moist,Texas,Harris,2.0,A,C_Temperate,2A
+182389,15.8,Moist,Ohio,Lucas,5.0,A,D_Continental,5A
+183611,8.7,Dry,California,Sacramento,3.0,B,C_Temperate,3B
+184003,15.06,Moist,Minnesota,Hennepin,6.0,A,D_Continental,6A
+185935,2.15,Dry,Colorado,Arapahoe,5.0,B,B_Arid,5B
+188155,16.16,Moist,Pennsylvania,Lehigh,5.0,A,D_Continental,5A
+188297,4.49,Dry,Colorado,Gunnison,7.0,,B_Arid,7
+188701,9.35,Dry,Alaska,Haines,6.0,A,D_Continental,6A
+190223,8.32,Dry,Oregon,Douglas,4.0,C,C_Temperate,4C
+190581,11.75,Dry,California,Santa Clara,3.0,C,C_Temperate,3C
+191573,8.46,Dry,Idaho,Canyon,5.0,B,B_Arid,5B
+192969,0.97,Dry,Oregon,Grant,5.0,B,B_Arid,5B
+193171,14.13,Dry,Minnesota,Hennepin,6.0,A,D_Continental,6A
+194103,7.7,Dry,California,Mendocino,3.0,C,C_Temperate,3C
+194173,6.42,Dry,California,Mendocino,3.0,C,C_Temperate,3C
+194783,15.69,Moist,Connecticut,New Haven,5.0,A,D_Continental,5A
+195003,15.32,Moist,Connecticut,Hartford,5.0,A,D_Continental,5A
+195333,14.73,Dry,Nebraska,Dawson,5.0,A,D_Continental,5A
+195917,8.7,Dry,California,Yuba,3.0,B,C_Temperate,3B
+196833,15.73,Moist,Nebraska,Lancaster,5.0,A,D_Continental,5A
+198641,15.57,Moist,California,San Diego,3.0,B,B_Arid,3B
+202233,10.47,Dry,Montana,Fallon,6.0,B,B_Arid,6B
+204067,18.89,Moist,Oklahoma,Pittsburg,3.0,A,C_Temperate,3A
+204375,21.73,Moist,Maine,Cumberland,6.0,A,D_Continental,6A
+204891,0.22,Dry,Nevada,Washoe,5.0,B,B_Arid,5B
+205451,6.18,Dry,California,Siskiyou,5.0,B,C_Temperate,5B
+206827,14.3,Dry,California,Los Angeles,3.0,B,C_Temperate,3B
+210111,10.02,Dry,California,Santa Clara,3.0,C,C_Temperate,3C
+211523,18.53,Moist,Texas,Wise,3.0,A,C_Temperate,3A
+212013,19.05,Moist,Tennessee,Shelby,3.0,A,C_Temperate,3A
+215435,10.94,Dry,California,Santa Clara,3.0,C,C_Temperate,3C
+215467,10.5,Dry,California,Santa Clara,3.0,C,C_Temperate,3C
+216045,14.34,Dry,Nebraska,Lincoln,5.0,A,D_Continental,5A
+217457,6.52,Dry,Oregon,Jackson,4.0,C,C_Temperate,4C
+218089,21.1,Moist,South Carolina,Charleston,3.0,A,C_Temperate,3A
+223271,22.16,Moist,Texas,Fort Bend,2.0,A,C_Temperate,2A
+223304,15.42,Moist,Michigan,Wayne,5.0,A,D_Continental,5A
+225515,11.34,Dry,Washington,Mason,4.0,C,C_Temperate,4C
+229187,15.9,Moist,Illinois,Will,5.0,A,D_Continental,5A
+229525,16.19,Moist,Illinois,Will,5.0,A,D_Continental,5A
+229551,15.96,Moist,Illinois,Will,5.0,A,D_Continental,5A
+229563,16.14,Moist,Illinois,Will,5.0,A,D_Continental,5A
+229567,15.79,Moist,Illinois,Will,5.0,A,D_Continental,5A
+230019,15.74,Moist,Illinois,Will,5.0,A,D_Continental,5A

@@ -1,0 +1,64 @@
+{
+ "coverage": {
+  "rows_with_pressure_%": 99.9,
+  "sensors_with_any": 98,
+  "sensors": 98,
+  "rows_with_pressure_lag_%": 99.8
+ },
+ "pressure_hPa": {
+  "median": 998.0,
+  "within_sensor_sd_median": 5.73,
+  "between_sensor_sd_of_means": 55.29
+ },
+ "check_vs_elevation": {
+  "r": 0.994,
+  "median_abs_diff_hPa": 4.3
+ },
+ "leave_sensors_out": {
+  "baseline": {
+   "MAE": 1.8208,
+   "RMSE": 2.6666,
+   "n": 797744
+  },
+  "+pressure": {
+   "MAE": 1.8177,
+   "RMSE": 2.6512,
+   "n": 797744
+  },
+  "+pressure_anom": {
+   "MAE": 1.7826,
+   "RMSE": 2.5937,
+   "n": 797744
+  },
+  "+pressure_anom_lag": {
+   "MAE": 1.7864,
+   "RMSE": 2.6046,
+   "n": 797744
+  }
+ },
+ "random_split": {
+  "baseline": {
+   "MAE": 0.6016,
+   "RMSE": 0.8839,
+   "n": 159549
+  },
+  "+pressure": {
+   "MAE": 0.5908,
+   "RMSE": 0.8696,
+   "n": 159549
+  },
+  "+pressure_anom": {
+   "MAE": 0.5881,
+   "RMSE": 0.866,
+   "n": 159549
+  },
+  "+pressure_anom_lag": {
+   "MAE": 0.5855,
+   "RMSE": 0.8624,
+   "n": 159549
+  }
+ },
+ "baseline_from": "rssi_test.json (same hyperparameters, folds and partition)",
+ "pressure_resolution_min": 1440,
+ "note_lag": "pressure_anom_lag: the daily mean of the UTC day that ended last before the hour, minus the sensor's mean; uses no reading later than the hour"
+}

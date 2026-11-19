@@ -1,0 +1,42 @@
+{
+ "coverage_%": {
+  "impervious": 96.7,
+  "impervious_gap": 96.7
+ },
+ "sensor_impervious_median": 63.5,
+ "leave_sensors_out": {
+  "baseline": {
+   "MAE": 1.8208,
+   "RMSE": 2.6666,
+   "n": 797744
+  },
+  "+impervious": {
+   "MAE": 1.8412,
+   "RMSE": 2.6763,
+   "n": 797744
+  },
+  "+impervious_gap": {
+   "MAE": 1.8114,
+   "RMSE": 2.6591,
+   "n": 797744
+  }
+ },
+ "random_split": {
+  "baseline": {
+   "MAE": 0.6016,
+   "RMSE": 0.8839,
+   "n": 159549
+  },
+  "+impervious": {
+   "MAE": 0.5984,
+   "RMSE": 0.8793,
+   "n": 159549
+  },
+  "+impervious_gap": {
+   "MAE": 0.5993,
+   "RMSE": 0.8802,
+   "n": 159549
+  }
+ },
+ "baseline_from": "rssi_test.json (same hyperparameters, folds and partition)"
+}

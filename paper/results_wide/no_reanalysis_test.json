@@ -1,0 +1,60 @@
+{
+ "n_features": {
+  "all": 63,
+  "without_reanalysis": 49
+ },
+ "removed": [
+  "ssrd",
+  "ssrd_1h_ago",
+  "ssrd_2h_ago",
+  "ssrd_change",
+  "ssrd_sum_3h",
+  "ssrd_sum_6h",
+  "diurnal_radiation",
+  "strd",
+  "sshf",
+  "tp",
+  "u10",
+  "v10",
+  "wind_speed",
+  "wind_direction"
+ ],
+ "random": {
+  "all_features": {
+   "MAE": 0.6016,
+   "RMSE": 0.8839,
+   "R2": 0.9917,
+   "bias": 0.0039,
+   "n": 159549,
+   "seconds": 873
+  },
+  "without_reanalysis": {
+   "MAE": 0.6419,
+   "RMSE": 0.9268,
+   "R2": 0.9909,
+   "bias": 0.0041,
+   "n": 159549,
+   "seconds": 658
+  },
+  "change_%": 6.7
+ },
+ "chronological": {
+  "all_features": {
+   "MAE": 1.0757,
+   "RMSE": 1.5044,
+   "R2": 0.9745,
+   "bias": -0.0453,
+   "n": 159589,
+   "seconds": 238
+  },
+  "without_reanalysis": {
+   "MAE": 1.1588,
+   "RMSE": 1.6172,
+   "R2": 0.9706,
+   "bias": -0.0272,
+   "n": 159589,
+   "seconds": 187
+  },
+  "change_%": 7.7
+ }
+}

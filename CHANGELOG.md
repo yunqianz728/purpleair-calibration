@@ -6,6 +6,34 @@ All notable user-facing changes are recorded here.
 
 ### Added
 
+- `paper/results_wide/algo_comparison/summary.json`: LightGBM and CatBoost
+  re-fitted under the protocol and widened search of the main results, for the
+  four unstratified configurations (SI Section S4). LightGBM comes within about
+  2% of XGBoost in test MAE (0.615 against 0.602 C for the national model, and
+  about 1% better in the other three); CatBoost stays 5-12% behind, also at
+  depths 14 and 16. Full per-trial histories are produced by
+  `algo_comparison.py`.
+- `paper/analysis/pressure_test.py`: the sensor's own barometric pressure
+  (daily means from the PurpleAir API, fetched with
+  `fetch_rssi.py --field pressure --average 1440`) as an additional predictor.
+  The raw reading leaves error on sensors withheld from training unchanged;
+  the pressure anomaly (relative to the sensor's mean) lowers it by about 2%,
+  also when only the previous day's value is used.
+- `paper/analysis/impervious_test.py`: NLCD imperviousness at the sensor, and
+  the sensor-station difference, as additional predictors; on sensors withheld
+  from training they change the error by about 1% or less (+1.1% and -0.5%).
+- `paper/analysis/no_reanalysis_test.py`: the national model without the 14
+  ERA5 / ERA5-Land predictors, which are released about five days late. Forward
+  error rises from 1.08 to 1.16 C (7.7%).
+- `paper/analysis/longer_ensemble_test.py`: the national model with the round
+  limit doubled to 40,000; test MAE falls by only 1.2% (0.594 against 0.601 C).
+- `paper/analysis/urban_form_points.py`: building height and population (GHSL
+  R2023A) and tree canopy (Meta / WRI canopy height map) at every sensor and
+  station, read block by block over HTTP.
+- `paper/analysis/iecc_check.py`: the dewpoint split of the temperate sensors
+  against the 2021 IECC moisture regimes (PNNL county map, not redistributed);
+  they agree for all 33 sensors.
+
 - `paper/results_wide/`: every result the revised manuscript reports, from the
   widened XGBoost search (`PA_SEARCH=wide`, 50 trials per configuration). Test
   MAE fell in all 28 configurations, by 13.4% on average; the national model

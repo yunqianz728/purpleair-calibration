@@ -1,0 +1,21 @@
+{
+ "old_rounds": 19956,
+ "ceiling": 40000,
+ "rounds_run": 40000,
+ "best_rounds": 39999,
+ "stopped_early": false,
+ "val_MAE_at_old_rounds": 0.63073,
+ "val_MAE_at_best": 0.62549,
+ "val_change_%": -0.831,
+ "seconds_search": 1983,
+ "test_at_best_rounds": {
+  "MAE": 0.594,
+  "RMSE": 0.8763,
+  "R2": 0.9918,
+  "bias": 0.004,
+  "n": 159549
+ },
+ "test_reference_MAE": 0.6015,
+ "test_change_%": -1.25,
+ "seconds_refit": 2345
+}
