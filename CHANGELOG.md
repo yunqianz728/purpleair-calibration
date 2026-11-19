@@ -57,6 +57,9 @@ All notable user-facing changes are recorded here.
 
 ### Changed
 
+- `paper/analysis/fetch_rssi.py`: `--field pressure` downloads the sensor's
+  barometric pressure instead of Wi-Fi signal strength, and `--average 360` or
+  `1440` requests 6-hour or daily means. The default (hourly rssi) is unchanged.
 - `rerun_models.py`, `split_protocols.py`, `generalization_experiments.py`: an optional wider XGBoost
   search (`PA_SEARCH=wide`: depth up to 14, up to 20,000 trees sampled on a log scale, early stopping
   after 100 rounds) and `PA_ONLY` to run named configurations only. Defaults are unchanged.
